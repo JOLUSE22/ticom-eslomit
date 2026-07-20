@@ -1,26 +1,48 @@
 {
-  "name": "TICOM-ESLOMIT - Sistema de Inventario",
+  "name": "TICOM-ESLOMIT Sistema de Inventario",
   "short_name": "TICOM",
   "description": "Sistema de Inventario y Gestión - Escuadrón 18 Lomitas - GNA",
   "start_url": "/ticom-eslomit/TICOM_Sistema_Gestion_2026.html",
   "scope": "/ticom-eslomit/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0B3566",
   "theme_color": "#0B3566",
-  "lang": "es",
+  "lang": "es-AR",
+  "id": "ticom-eslomit-gna-2026",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/JOLUSE22/ticom-eslomit/main/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/JOLUSE22/ticom-eslomit/main/icon-512.png",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "TICOM Sistema de Inventario"
     }
   ]
 }
