@@ -2,6 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0B3566">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TICOM">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SISTEMA DE INVENTARIO TICOM-ESLOMIT</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1870,6 +1876,15 @@ function fetchWO(lat,lon,city,fb){var k='4b6b8b4f8c69e6d6b9e9a1c2d3e4f5a6';var u
 function simWeather(n){var m={'Las Lomitas':{t:28,d:'Variable, zona chaquena',h:68,w:14},'Buenos Aires':{t:21,d:'Parcialmente nublado',h:72,w:15}};var d=m[n]||{t:26,d:'Variable',h:65,w:12};setWUI('&#9729;',d.t,d.d+' (sin conexion)',n,d.h,d.w);}
 function setWUI(ico,temp,desc,city,hum,wind){var el;el=document.getElementById('wico');if(el)el.innerHTML=ico;el=document.getElementById('wtemp');if(el)el.textContent=temp+'C';el=document.getElementById('wdesc');if(el)el.textContent=desc;el=document.getElementById('wcity');if(el)el.textContent=city;el=document.getElementById('whum');if(el)el.textContent=hum+'%';el=document.getElementById('wwind');if(el)el.textContent=wind+' km/h';el=document.getElementById('wtime');if(el)el.textContent='Actualizado: '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});}
 
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js')
+      .then(function(reg){ console.log('SW registrado'); })
+      .catch(function(e){ console.log('SW error:', e); });
+  });
+}
 </script>
 </body>
 </html>
