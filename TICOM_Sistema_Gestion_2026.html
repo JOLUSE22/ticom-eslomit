@@ -654,6 +654,7 @@ table.dt tr:hover td{background:#EEF6FF}
   <button class="tab" id="nav-docs" onclick="showTab('docs',this)"><span class="tab-icon">📄</span><span class="tab-txt">Documentos</span></button>
   <button class="tab admin-only" id="nav-usuarios" onclick="showTab('usuarios',this)"><span class="tab-icon">👤</span><span class="tab-txt">Usuarios</span></button>
   <button class="tab admin-only" id="nav-backup" onclick="showTab('backup',this)"><span class="tab-icon">💾</span><span class="tab-txt">Backup</span></button>
+  <button class="tab" id="nav-archivos" onclick="showTab('archivos',this)"><span class="tab-icon">☁️</span><span class="tab-txt">Archivos Drive</span></button>
   <button class="tab" id="nav-historial" onclick="showTab('historial',this)"><span class="tab-icon">📁</span><span class="tab-txt">Historial</span></button>
 </div>
 <div>
@@ -1233,28 +1234,115 @@ table.dt tr:hover td{background:#EEF6FF}
 </div>
 
 <!-- ══ HISTORIAL ══ -->
-<div id="tab-historial" class="panel">
-  <div class="card">
-    <div class="card-title"><span class="ct-icon">📁</span>Historial de exportaciones (sesión actual)</div>
-    <div class="logbox" id="exportLog" style="min-height:80px">Sin exportaciones aún en esta sesión.</div>
+<div id="tab-archivos" class="panel">
+  <div class="card" id="driveNotConnected">
+    <div class="card-title"><span>☁️</span> Google Drive — Archivos TICOM</div>
+    <div style="text-align:center;padding:30px 20px">
+      <div style="font-size:48px;margin-bottom:12px">☁️</div>
+      <div style="font-size:14px;font-weight:700;color:var(--navy2);margin-bottom:8px">Conectar con Google Drive</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.7;max-width:400px;margin-left:auto;margin-right:auto">
+        Subí PST, backups, documentos de mantenimiento y cualquier archivo.<br>
+        Se guardan en tu Google Drive personal en una carpeta <strong>TICOM-ESLOMIT</strong>.
+      </div>
+      <button class="btn btn-primary" onclick="driveAuth()" style="font-size:13px;padding:11px 24px">
+        <span style="font-size:16px">🔑</span> Conectar con Google Drive
+      </button>
+    </div>
   </div>
-  <div class="card">
-    <div class="card-title"><span class="ct-icon">ℹ️</span>Acerca del sistema</div>
-    <table style="width:100%;font-size:12px;border-collapse:collapse">
-      <tr><td style="padding:6px 0;color:var(--text3);width:180px;font-weight:600">Sistema</td><td>SISTEMA DE INVENTARIO TICOM-ESLOMIT</td></tr>
-      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Versión</td><td>2026.6 — Permanencia live, Reset pass, Eliminar equipos</td></tr>
-      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Unidad</td><td>Escuadrón 18 "Lomitas" — Sección TICOM — Las Lomitas, Formosa</td></tr>
-      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Módulos</td><td>Dashboard · Personal · Equipos · OTs · Actas/VPN · Documentos · Usuarios · Backup</td></tr>
-      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">PDF</td><td>jsPDF 2.5.1 — generación local, sin servidor</td></tr>
-      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Almacenamiento</td><td>localStorage del navegador (permanente, compartido en este equipo)</td></tr>
-      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Roles</td><td>Admin (acceso total) · Normal (lectura + respuesta OT)</td></tr>
-    </table>
+
+  <div id="driveConnected" style="display:none">
+    <div class="card" style="border:1.5px solid #34a853;background:linear-gradient(135deg,#f0fff4,#fff)">
+      <div class="card-title" style="color:#1a7a3a;border-bottom-color:#a7f3c0">
+        <span>✅</span> Google Drive conectado
+        <span id="driveUserInfo" style="margin-left:8px;font-size:11px;color:#1a7a3a;font-weight:400"></span>
+        <button class="btn btn-sm btn-danger" style="margin-left:auto" onclick="driveDisconnect()">Desconectar</button>
+      </div>
+
+      <!-- Subir archivo -->
+      <div style="margin-bottom:16px">
+        <div class="sec-div">📤 Subir archivo a Drive</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1;min-width:200px">
+            <label>Categoría</label>
+            <select id="driveCategoria" style="margin-bottom:8px">
+              <option value="PST">📧 Backup PST / Correo Outlook</option>
+              <option value="BACKUP">💾 Backup del sistema</option>
+              <option value="MTO">🔧 Documentación de Mantenimiento</option>
+              <option value="INFORME">📋 Informe técnico</option>
+              <option value="FOTO">📷 Fotografía</option>
+              <option value="OTRO">📄 Otro</option>
+            </select>
+            <label>Descripción</label>
+            <input id="driveDesc" placeholder="Ej: Backup PST Julio 2026 - Segovia" style="margin-bottom:8px">
+          </div>
+          <div style="flex:1;min-width:200px">
+            <label>Archivo</label>
+            <div class="adj-box" onclick="document.getElementById('driveFileInput').click()" style="margin-bottom:8px">
+              <span class="adj-icon">📎</span>
+              <span id="driveFileLabel">Seleccionar archivo...</span>
+              <input type="file" id="driveFileInput" style="display:none" onchange="driveFileSelected(this)">
+            </div>
+            <div id="driveFileInfo" style="font-size:11px;color:var(--text3);margin-bottom:8px"></div>
+            <button class="btn btn-success" onclick="driveUpload()" id="btnDriveUpload" disabled>
+              ☁️ Subir a Drive
+            </button>
+          </div>
+        </div>
+        <div class="logbox" id="driveUploadLog" style="margin-top:8px">-</div>
+      </div>
+
+      <!-- Lista de archivos -->
+      <div class="sec-div">📁 Archivos en Drive — carpeta TICOM-ESLOMIT</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <select id="driveFiltroCategoria" onchange="driveListFiles()" style="max-width:200px;margin:0;font-size:12px">
+          <option value="">— Todas las categorías —</option>
+          <option value="PST">PST / Correo</option>
+          <option value="BACKUP">Backup</option>
+          <option value="MTO">Mantenimiento</option>
+          <option value="INFORME">Informe</option>
+          <option value="FOTO">Foto</option>
+          <option value="OTRO">Otro</option>
+        </select>
+        <button class="btn btn-sm btn-primary" onclick="driveListFiles()">🔄 Actualizar lista</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="dt">
+          <thead><tr><th>Archivo</th><th>Categoría</th><th>Descripción</th><th>Tamaño</th><th>Fecha</th><th>Acciones</th></tr></thead>
+          <tbody id="driveFilesList"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Cargando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
-</div><!-- /app -->
-
-<!-- ══════════════════ MODALES ══════════════════ -->
+<div id="tab-historial" class="panel">
+  <div class="stat-grid" id="historialStats" style="margin-bottom:14px"></div>
+  <div class="card">
+    <div class="card-title">
+      <span>📋</span> Registro de Accesos al Sistema
+      <button class="btn btn-sm btn-danger admin-only" style="margin-left:auto" onclick="clearLogs()">🗑 Limpiar</button>
+    </div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+      Cada inicio de sesión queda registrado con nombre, fecha, hora y dispositivo.
+    </p>
+    <div class="tbl-wrap">
+      <table class="dt">
+        <thead><tr><th style="width:30px">#</th><th>Usuario</th><th>Rol</th><th>Fecha / Hora</th><th>Dispositivo / SO</th><th>IP / Ubicación</th><th>Idioma</th></tr></thead>
+        <tbody id="historialBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">ℹ️ Acerca del sistema</div>
+    <table style="width:100%;font-size:12px;border-collapse:collapse">
+      <tr><td style="padding:6px 0;color:var(--text3);width:180px;font-weight:600">Sistema</td><td>SISTEMA DE INVENTARIO TICOM-ESLOMIT</td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Versión</td><td>2026.7</td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Unidad</td><td>Escuadrón 18 "Lomitas" - TICOM - Las Lomitas, Formosa</td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">Firebase</td><td>ticom-1827c — Sincronización en tiempo real</td></tr>
+      <tr><td style="padding:6px 0;color:var(--text3);font-weight:600">URL</td><td><a href="https://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html" target="_blank" style="color:var(--navy2)">joluse22.github.io/ticom-eslomit</a></td></tr>
+    </table>
+  </div>
+</div><!-- ══════════════════ MODALES ══════════════════ -->
 
 <!-- Modal Personal -->
 
@@ -1458,7 +1546,7 @@ function emergencyReset(){
   if(!confirm('Esto borrara todos los datos locales y restaurara los datos iniciales.\\n\\nConfirmar?'))return;
   try{localStorage.removeItem(LS_KEY);}catch(e){}
   DB=JSON.parse(JSON.stringify(DB_INITIAL)); saveDB();
-  document.getElementById('resetMsg').textContent='Datos reseteados. DNI: 32695288 / Pass: Rubio.87';
+  document.getElementById('resetMsg').textContent='Datos reseteados correctamente. Ingresá con tu usuario.';
   document.getElementById('lgDni').value='32695288';
   document.getElementById('lgPass').value='';
   document.getElementById('loginErr').textContent='';
@@ -1484,6 +1572,57 @@ function doLogin(){
   document.querySelectorAll('.admin-only').forEach(function(el){
     el.style.display=user.rol==='admin'?'':'none';
   });
+  // Registrar acceso con info detallada
+  if(!DB.logs) DB.logs=[];
+  var ua = navigator.userAgent;
+  var os = 'Desconocido';
+  if(ua.includes('Windows NT 10')) os='Windows 10/11';
+  else if(ua.includes('Windows NT 6.3')) os='Windows 8.1';
+  else if(ua.includes('Windows NT 6.1')) os='Windows 7';
+  else if(ua.includes('Windows')) os='Windows';
+  else if(ua.includes('Android')) os='Android '+((ua.match(/Android ([\d.]+)/)||[])[1]||'');
+  else if(ua.includes('iPhone')||ua.includes('iPad')) os='iOS '+((ua.match(/OS ([\d_]+)/)||[])[1]||'').replace(/_/g,'.');
+  else if(ua.includes('Mac OS X')) os='macOS';
+  else if(ua.includes('Linux')) os='Linux';
+  var browser = 'Otro';
+  if(ua.includes('Edg/')) browser='Edge';
+  else if(ua.includes('OPR/')||ua.includes('Opera')) browser='Opera';
+  else if(ua.includes('Chrome')) browser='Chrome';
+  else if(ua.includes('Firefox')) browser='Firefox';
+  else if(ua.includes('Safari')) browser='Safari';
+  var disp = (ua.includes('Mobile')||ua.includes('Android'))?'Móvil':'PC';
+  var logEntry = {
+    dni: user.dni,
+    nombre: user.nombre,
+    rol: user.rol,
+    fecha: new Date().toLocaleDateString('es-AR'),
+    hora: new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),
+    ts: new Date().toISOString(),
+    os: os,
+    browser: browser,
+    disp: disp,
+    idioma: navigator.language||'?',
+    resolucion: screen.width+'x'+screen.height,
+    ip: '...',
+    ciudad: '...',
+    pais: '...'
+  };
+  DB.logs.unshift(logEntry);
+  if(DB.logs.length > 200) DB.logs = DB.logs.slice(0,200);
+  saveDB();
+  // Obtener IP y ubicación aproximada
+  fetch('https://ipapi.co/json/')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(DB.logs[0] && DB.logs[0].dni===user.dni){
+        DB.logs[0].ip = d.ip||'?';
+        DB.logs[0].ciudad = (d.city||'?')+', '+(d.region||'');
+        DB.logs[0].pais = d.country_name||'?';
+        DB.logs[0].isp = d.org||'?';
+        saveDB();
+        renderHistorial();
+      }
+    }).catch(function(){});
   initApp();
 }
 function doLogout(){
@@ -1495,7 +1634,7 @@ function doLogout(){
 function initApp(){
   document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.value)d.value=today;});
   startClock(); checkNet(); renderDashboard(); renderPersonal(); renderEquipos();
-  renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados();
+  renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial();
   setTimeout(function(){tickPerms();autoWeather();},500);
 }
 function startClock(){setInterval(function(){var n=new Date();document.getElementById('clockVal').textContent=n.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);}
@@ -1507,6 +1646,7 @@ function showTab(id,el){
   var panel=document.getElementById('tab-'+id);
   if(panel) panel.classList.add('active');
   if(el) el.classList.add('active');
+  if(id==='historial') renderHistorial();
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -1856,8 +1996,256 @@ function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nom
 function exportBackup(){var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='TICOM_BACKUP_'+today+'.json';a.click();URL.revokeObjectURL(url);document.getElementById('expLog').textContent='Backup exportado: TICOM_BACKUP_'+today+'.json';}
 function previewImport(){var file=document.getElementById('importFile').files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{importData=JSON.parse(e.target.result);var nP=(importData.per||[]).length,nO=(importData.ot||[]).length,nU=(importData._users||[]).length;document.getElementById('importPreview').innerHTML='Valido: '+nP+' personal, '+nO+' OTs, '+nU+' usuarios.';document.getElementById('btnImport').disabled=false;}catch(err){document.getElementById('importPreview').textContent='Archivo JSON invalido.';document.getElementById('btnImport').disabled=true;importData=null;}};reader.readAsText(file);}
 function doImport(){if(!importData)return;if(!confirm('Reemplazar TODOS los datos?'))return;DB=importData;saveDB();renderPersonal();renderEquipos();renderOTList();renderUsuarios();renderDashboard();renderDocsGuardados();importData=null;document.getElementById('btnImport').disabled=true;document.getElementById('importPreview').textContent='';document.getElementById('importFile').value='';}
+// ════ GOOGLE DRIVE INTEGRATION ════
+const DRIVE_CLIENT_ID = '165498961066-p1omcnhqpsk4c4npnbtkjgsnaf4jnmj6.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FOLDER_NAME = 'TICOM-ESLOMIT';
+let driveToken = null;
+let driveFolderId = null;
+let driveSelectedFile = null;
+
+function driveAuth(){
+  const params = new URLSearchParams({
+    client_id: DRIVE_CLIENT_ID,
+    redirect_uri: window.location.href.split('?')[0],
+    response_type: 'token',
+    scope: DRIVE_SCOPE,
+    prompt: 'select_account'
+  });
+  window.location.href = 'https://accounts.google.com/o/oauth2/auth?' + params.toString();
+}
+
+function driveCheckToken(){
+  // Verificar si hay token en la URL (redirect de OAuth)
+  var hash = window.location.hash;
+  if(hash && hash.includes('access_token')){
+    var params = new URLSearchParams(hash.substring(1));
+    driveToken = params.get('access_token');
+    // Limpiar URL
+    history.replaceState(null, '', window.location.pathname);
+    driveShowConnected();
+    driveGetUserInfo();
+    driveGetOrCreateFolder();
+  }
+  // Verificar token guardado
+  var saved = localStorage.getItem('ticom_drive_token');
+  if(saved && !driveToken){
+    driveToken = saved;
+    driveVerifyToken();
+  }
+}
+
+function driveVerifyToken(){
+  if(!driveToken) return;
+  fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token='+driveToken)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error){ driveToken=null; localStorage.removeItem('ticom_drive_token'); return; }
+      driveShowConnected();
+      driveGetUserInfo();
+      driveGetOrCreateFolder();
+    }).catch(function(){driveToken=null;});
+}
+
+function driveShowConnected(){
+  localStorage.setItem('ticom_drive_token', driveToken);
+  document.getElementById('driveNotConnected').style.display='none';
+  document.getElementById('driveConnected').style.display='block';
+}
+
+function driveDisconnect(){
+  driveToken=null; driveFolderId=null;
+  localStorage.removeItem('ticom_drive_token');
+  document.getElementById('driveNotConnected').style.display='block';
+  document.getElementById('driveConnected').style.display='none';
+}
+
+function driveGetUserInfo(){
+  if(!driveToken) return;
+  fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: {Authorization: 'Bearer '+driveToken}
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById('driveUserInfo');
+      if(el) el.textContent='— '+d.email;
+    }).catch(function(){});
+}
+
+function driveGetOrCreateFolder(){
+  if(!driveToken) return;
+  // Buscar carpeta TICOM-ESLOMIT
+  fetch("https://www.googleapis.com/drive/v3/files?q=name%3D'TICOM-ESLOMIT'+and+mimeType%3D'application%2Fvnd.google-apps.folder'+and+trashed%3Dfalse&fields=files(id,name)", {
+    headers: {Authorization: 'Bearer '+driveToken}
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      if(d.files && d.files.length > 0){
+        driveFolderId = d.files[0].id;
+        driveListFiles();
+      } else {
+        // Crear carpeta
+        fetch('https://www.googleapis.com/drive/v3/files', {
+          method: 'POST',
+          headers: {Authorization: 'Bearer '+driveToken, 'Content-Type': 'application/json'},
+          body: JSON.stringify({name: DRIVE_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder'})
+        }).then(function(r){return r.json();})
+          .then(function(d){driveFolderId=d.id; driveListFiles();});
+      }
+    }).catch(function(){});
+}
+
+function driveFileSelected(input){
+  var file = input.files[0];
+  if(!file) return;
+  driveSelectedFile = file;
+  document.getElementById('driveFileLabel').textContent = file.name;
+  document.getElementById('driveFileInfo').textContent = 'Tamaño: '+(file.size/1024/1024).toFixed(2)+' MB — Tipo: '+file.type;
+  document.getElementById('btnDriveUpload').disabled = false;
+}
+
+function driveUpload(){
+  if(!driveToken || !driveSelectedFile || !driveFolderId) return;
+  var desc = document.getElementById('driveDesc').value || driveSelectedFile.name;
+  var cat = document.getElementById('driveCategoria').value;
+  var logEl = document.getElementById('driveUploadLog');
+  logEl.textContent = '⏳ Subiendo '+driveSelectedFile.name+'...';
+  document.getElementById('btnDriveUpload').disabled = true;
+
+  // Metadata del archivo
+  var metadata = {
+    name: driveSelectedFile.name,
+    parents: [driveFolderId],
+    description: cat+' | '+desc+' | Subido por: '+(currentUser?currentUser.nombre:'?')+' | '+new Date().toLocaleString('es-AR')
+  };
+
+  var form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
+  form.append('file', driveSelectedFile);
+
+  fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,size,createdTime,webViewLink', {
+    method: 'POST',
+    headers: {Authorization: 'Bearer '+driveToken},
+    body: form
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      if(d.id){
+        logEl.textContent = '✅ Subido correctamente: '+d.name;
+        driveSelectedFile = null;
+        document.getElementById('driveFileInput').value = '';
+        document.getElementById('driveFileLabel').textContent = 'Seleccionar archivo...';
+        document.getElementById('driveFileInfo').textContent = '';
+        document.getElementById('driveDesc').value = '';
+        document.getElementById('btnDriveUpload').disabled = true;
+        driveListFiles();
+      } else {
+        logEl.textContent = '❌ Error al subir: '+(d.error?d.error.message:'desconocido');
+        document.getElementById('btnDriveUpload').disabled = false;
+      }
+    }).catch(function(e){
+      logEl.textContent = '❌ Error de conexión: '+e.message;
+      document.getElementById('btnDriveUpload').disabled = false;
+    });
+}
+
+function driveListFiles(){
+  if(!driveToken || !driveFolderId) return;
+  var filtro = document.getElementById('driveFiltroCategoria')?document.getElementById('driveFiltroCategoria').value:'';
+  fetch("https://www.googleapis.com/drive/v3/files?q='"+driveFolderId+"'+in+parents+and+trashed%3Dfalse&fields=files(id,name,size,createdTime,description,webViewLink)&orderBy=createdTime+desc", {
+    headers: {Authorization: 'Bearer '+driveToken}
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      var files = d.files||[];
+      if(filtro) files = files.filter(function(f){return (f.description||'').startsWith(filtro);});
+      var tbody = document.getElementById('driveFilesList');
+      if(!files.length){
+        tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Sin archivos en esta categoría.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = files.map(function(f){
+        var parts = (f.description||'').split(' | ');
+        var cat = parts[0]||'?';
+        var desc = parts[1]||f.name;
+        var autor = parts[2]||'?';
+        var size = f.size?(parseFloat(f.size)/1024/1024).toFixed(2)+' MB':'-';
+        var fecha = f.createdTime?new Date(f.createdTime).toLocaleString('es-AR'):'-';
+        var catIcon = {PST:'📧',BACKUP:'💾',MTO:'🔧',INFORME:'📋',FOTO:'📷',OTRO:'📄'}[cat]||'📄';
+        return '<tr>'+
+          '<td style="font-weight:600;font-size:12px">'+f.name+'</td>'+
+          '<td><span class="badge b-blue">'+catIcon+' '+cat+'</span></td>'+
+          '<td style="font-size:11px">'+desc+'<br><span style="color:var(--text3)">'+autor+'</span></td>'+
+          '<td style="font-size:11px">'+size+'</td>'+
+          '<td style="font-size:11px">'+fecha+'</td>'+
+          '<td style="white-space:nowrap">'+
+            '<a href="'+f.webViewLink+'" target="_blank" class="btn btn-sm btn-primary">👁 Ver</a> '+
+            '<button class="btn btn-sm btn-danger" onclick="driveDelete(\'' + "' + f.id + '" + '\')">🗑</button>'+
+          '</td>'+
+          '</tr>';
+      }).join('');
+    }).catch(function(){});
+}
+
+function driveDelete(fileId){
+  if(!confirm('¿Eliminar este archivo de Drive?')) return;
+  fetch('https://www.googleapis.com/drive/v3/files/'+fileId, {
+    method: 'DELETE',
+    headers: {Authorization: 'Bearer '+driveToken}
+  }).then(function(){driveListFiles();});
+}
+
+// Verificar token al cargar
+window.addEventListener('load', function(){ setTimeout(driveCheckToken, 500); });
+
+function clearLogs(){
+  if(!confirm('¿Borrar todo el historial de accesos?')) return;
+  DB.logs=[];
+  saveDB();
+  renderHistorial();
+}
 function clearLocalData(){if(!confirm('Limpiar localStorage y resetear?'))return;try{localStorage.removeItem(LS_KEY);}catch(e){}DB=JSON.parse(JSON.stringify(DB_INITIAL));saveDB();renderPersonal();renderEquipos();renderOTList();renderUsuarios();renderDashboard();renderDocsGuardados();alert('Datos reseteados.');}
 
+function renderHistorial(){
+  var el=document.getElementById('historialBody');
+  if(!el)return;
+  var logs=(DB.logs||[]);
+  if(!logs.length){
+    el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Sin accesos registrados aún.</td></tr>';
+    return;
+  }
+  el.innerHTML=logs.map(function(l,i){
+    var rolB=l.rol==='admin'?'<span class="badge b-amber">ADMIN</span>':'<span class="badge b-blue">NORMAL</span>';
+    var dispIcon=(l.disp||'').includes('Móvil')?'📱':'💻';
+    var ipInfo=l.ip&&l.ip!=='...'?l.ip:'<span style="color:var(--text3)">obteniendo...</span>';
+    var ubicacion=l.ciudad&&l.ciudad!=='...'?(l.ciudad+' — '+l.pais):'<span style="color:var(--text3)">...</span>';
+    return '<tr>'+
+      '<td style="font-size:11px;color:var(--text3);text-align:center">'+(i+1)+'</td>'+
+      '<td><div style="font-weight:700">'+l.nombre+'</div><div style="font-family:monospace;font-size:10px;color:var(--text3)">DNI: '+l.dni+'</div></td>'+
+      '<td>'+rolB+'</td>'+
+      '<td style="font-size:11px"><div style="font-weight:600">'+l.fecha+'</div><div style="color:var(--text3)">'+l.hora+'</div></td>'+
+      '<td style="font-size:11px">'+
+        '<div>'+dispIcon+' '+(l.disp||'?')+'</div>'+
+        '<div style="color:var(--text3)">'+(l.os||'?')+'</div>'+
+        '<div style="color:var(--text3)">'+(l.browser||'?')+'</div>'+
+        '<div style="color:var(--text3);font-size:10px">'+(l.resolucion||'')+'</div>'+
+      '</td>'+
+      '<td style="font-size:11px">'+
+        '<div style="font-family:monospace;font-weight:600">'+ipInfo+'</div>'+
+        '<div style="color:var(--text3)">'+ubicacion+'</div>'+
+        '<div style="color:var(--text3);font-size:10px">'+(l.isp||'')+'</div>'+
+      '</td>'+
+      '<td style="font-size:11px;color:var(--text3)">'+(l.idioma||'?')+'</td>'+
+      '</tr>';
+  }).join('');
+  // Stats
+  var statsEl=document.getElementById('historialStats');
+  if(statsEl){
+    var hoy=new Date().toLocaleDateString('es-AR');
+    var hoyCount=logs.filter(function(l){return l.fecha===hoy;}).length;
+    var unicos=[...new Set(logs.map(function(l){return l.dni;}))].length;
+    statsEl.innerHTML=
+      '<div class="stat-card"><div class="stat-icon">📋</div><div><div class="stat-val">'+logs.length+'</div><div class="stat-lbl">Total accesos</div></div></div>'+
+      '<div class="stat-card"><div class="stat-icon">📅</div><div><div class="stat-val">'+hoyCount+'</div><div class="stat-lbl">Accesos hoy</div></div></div>'+
+      '<div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-val">'+unicos+'</div><div class="stat-lbl">Usuarios únicos</div></div></div>';
+  }
+}
 function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo'].forEach(function(d){document.getElementById('df-'+d).style.display=d===v?'block':'none';});}
 function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}doc.adjunto=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
 function renderDocsGuardados(){var el=document.getElementById('docsGuardadosBody');if(!el)return;var docs=(DB.docs||[]).slice().reverse();if(!docs.length){el.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr>';return;}el.innerHTML=docs.map(function(d){return '<tr><td style="font-weight:600">'+(d.nro||'')+'</td><td><span class="badge b-blue">'+(d.tipo||'')+'</span></td><td>'+(d.titulo||'')+'</td><td style="font-size:11px">'+(d.fecha||'')+'</td><td style="font-size:11px">'+(d.autor||'')+'</td></tr>';}).join('');}
