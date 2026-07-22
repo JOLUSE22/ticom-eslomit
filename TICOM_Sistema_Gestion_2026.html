@@ -650,7 +650,6 @@ table.dt tr:hover td{background:#EEF6FF}
   <button class="tab" id="nav-personal" onclick="showTab('personal',this)"><span class="tab-icon">👥</span><span class="tab-txt">Personal</span></button>
   <button class="tab" id="nav-equipos" onclick="showTab('equipos',this)"><span class="tab-icon">📡</span><span class="tab-txt">Equipos</span></button>
   <button class="tab" id="nav-ot" onclick="showTab('ot',this)"><span class="tab-icon">📋</span><span class="tab-txt">Órdenes de Trabajo</span></button>
-  <button class="tab" id="nav-actas" onclick="showTab('actas',this)"><span class="tab-icon">🔐</span><span class="tab-txt">Actas / VPN</span></button>
   <button class="tab" id="nav-docs" onclick="showTab('docs',this)"><span class="tab-icon">📄</span><span class="tab-txt">Documentos</span></button>
   <button class="tab admin-only" id="nav-usuarios" onclick="showTab('usuarios',this)"><span class="tab-icon">👤</span><span class="tab-txt">Usuarios</span></button>
   <button class="tab admin-only" id="nav-backup" onclick="showTab('backup',this)"><span class="tab-icon">💾</span><span class="tab-txt">Backup</span></button>
@@ -775,6 +774,9 @@ table.dt tr:hover td{background:#EEF6FF}
     <div class="card">
       <div class="card-title"><span class="ct-icon">📋</span>Órdenes de Trabajo
         <button class="btn btn-primary btn-sm admin-only" style="margin-left:auto" onclick="openOTForm(null)">+ Nueva OT</button>
+      </div>
+      <div id="otUserBanner" style="display:none;background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#856404;font-weight:600">
+        👤 Estás viendo solo las Órdenes de Trabajo asignadas a vos.
       </div>
       <div class="filter-bar">
         <input id="otFiltro" placeholder="🔍 Buscar..." oninput="renderOTList()" style="max-width:220px">
@@ -1013,6 +1015,7 @@ table.dt tr:hover td{background:#EEF6FF}
       <option value="provision">Nota de Provisión Interna</option>
       <option value="transferencia">Nota de Transferencia</option>
       <option value="memo">Memorándum</option>
+      <option value="acta">🔐 Acta / VPN</option>
     </select>
   </div>
   <div id="df-recibo"><div class="grid2">
@@ -1101,6 +1104,41 @@ table.dt tr:hover td{background:#EEF6FF}
     </div>
     <div class="card"><div class="card-title"><span class="ct-icon">👁</span>Vista previa</div><div class="preview" id="pv-memo">Complete y presione Vista previa.</div></div>
   </div></div>
+  </div>
+
+  <div id="df-acta" style="display:none"><div class="grid2">
+    <div class="card"><div class="card-title">🔐 Acta / VPN</div>
+      <label>Tipo</label>
+      <select id="aTipo"><option>Acta de Confidencialidad</option><option>Acta de VPN</option><option>Acta de Acceso al Sistema</option><option>Memorandum interno</option></select>
+      <div class="row"><div class="col"><label>N° Documento</label><input id="aNum" value="ACTA-2026-001"></div><div class="col"><label>Fecha</label><input type="date" id="aFecha"></div></div>
+      <label>Sistema / Aplicación</label><input id="aSis" placeholder="Ej: VPN, NAS...">
+      <label>Unidad</label><input id="aEmp" placeholder="Ej: Escuadrón 18 Lomitas">
+      <label>Apellido y Nombre</label><input id="aFirm" placeholder="Apellido y nombre">
+      <label>Grado / Cargo</label><input id="aCargo" placeholder="Ej: Sargento (TSTC)">
+      <label>DNI / MI / CE</label><input id="aDni2" placeholder="Número de documento">
+      <label>N° Expediente GDE</label><input id="aGDE" placeholder="Ej: GDE-ESLOMIT-2026-001">
+      <label>Observaciones</label><textarea id="aObs"></textarea>
+      <div class="adj-box" onclick="document.getElementById('adjFileActa').click()">
+        <span class="adj-icon">📎</span><span class="adj-label" id="adjLblActa">Adjuntar PDF...</span>
+        <input type="file" id="adjFileActa" accept=".pdf" style="display:none" onchange="loadAdj('acta',this)">
+      </div>
+      <div id="adjPreviewActa" style="display:none">
+        <div class="adj-info"><span class="adj-fname" id="adjFnameActa"></span>
+        <button class="btn btn-sm btn-danger" onclick="clearAdj('acta')">✕</button></div>
+        <iframe id="adjFrameActa" class="adj-frame"></iframe>
+      </div>
+      <div class="act-row">
+        <button class="btn" onclick="prevActa()">👁 Vista previa</button>
+        <button class="btn btn-success" onclick="guardarDoc('acta')">💾 Guardar</button>
+        <button class="btn btn-pdf" onclick="exportPDF('acta')">📄 PDF</button>
+      </div>
+      <div class="logbox" id="acta-dlog">-</div>
+    </div>
+    <div class="card"><div class="card-title">Vista previa</div>
+      <div class="preview" id="actaPrev" style="min-height:380px">Complete y presione Vista previa.</div>
+    </div>
+  </div></div>
+
   <div class="card" style="margin-top:14px">
     <div class="card-title"><span class="ct-icon">&#128193;</span>Documentos guardados</div>
     <div class="tbl-wrap">
@@ -1638,11 +1676,28 @@ function doLogout(){
   document.getElementById('lgPass').value=''; document.getElementById('lgDni').value='';
 }
 function initApp(){
+  resetInactTimer();
   document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.value)d.value=today;});
   startClock(); checkNet(); renderDashboard(); renderPersonal(); renderEquipos();
   renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial();
   setTimeout(function(){tickPerms();autoWeather();},500);
 }
+// ════ AUTO-LOGOUT POR INACTIVIDAD (1 minuto) ════
+var _inactTimer = null;
+var _INACT_MS = 60000; // 1 minuto
+function resetInactTimer(){
+  clearTimeout(_inactTimer);
+  if(!currentUser) return;
+  _inactTimer = setTimeout(function(){
+    if(!currentUser) return;
+    alert('Sesión cerrada por inactividad. Ingresá tus credenciales nuevamente.');
+    doLogout();
+  }, _INACT_MS);
+}
+['click','keydown','mousemove','touchstart','scroll'].forEach(function(ev){
+  document.addEventListener(ev, resetInactTimer, true);
+});
+
 function startClock(){setInterval(function(){var n=new Date();document.getElementById('clockVal').textContent=n.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);}
 function checkNet(){var on=navigator.onLine;document.getElementById('ndot').className='sdot '+(on?'son':'soff');document.getElementById('nstat').textContent=on?'En linea':'Sin conexion';document.getElementById('netBadge').className='net-badge '+(on?'net-on':'net-off');}
 window.addEventListener('online',checkNet);window.addEventListener('offline',checkNet);
@@ -1653,6 +1708,10 @@ function showTab(id,el){
   if(panel) panel.classList.add('active');
   if(el) el.classList.add('active');
   if(id==='historial') renderHistorial();
+  if(id==='archivos'){
+    driveCheckToken();
+    if(driveToken) driveListFiles();
+  }
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -1830,7 +1889,19 @@ function clearEqAdj(){eqAdjData=null;var el=document.getElementById('eqAdjLabel'
 
 function renderOTList(){
   var filtro=(document.getElementById('otFiltro').value||'').toLowerCase(),estF=document.getElementById('otFiltroEst').value,priF=document.getElementById('otFiltroPri').value;
-  var data=DB.ot.filter(function(o){return(!filtro||JSON.stringify(o).toLowerCase().includes(filtro))&&(!estF||o.est===estF)&&(!priF||o.pri===priF);});
+  var isAdmin=currentUser&&currentUser.rol==='admin';
+  var data=DB.ot.filter(function(o){
+    var matchFiltro=!filtro||JSON.stringify(o).toLowerCase().includes(filtro);
+    var matchEst=!estF||o.est===estF;
+    var matchPri=!priF||o.pri===priF;
+    // Usuario normal: solo ve OTs asignadas a él
+    var matchUser=isAdmin||(o.asg&&o.asg.toLowerCase().includes((currentUser.nombre||'').toLowerCase()))||
+                  (o.asg&&o.asg.includes(currentUser.dni));
+    return matchFiltro&&matchEst&&matchPri&&matchUser;
+  });
+  // Banner informativo para usuarios normales
+  var bannerEl=document.getElementById('otUserBanner');
+  if(bannerEl) bannerEl.style.display=isAdmin?'none':'block';
   var tbody=document.getElementById('bodyOTList');tbody.innerHTML='';
   data.forEach(function(o){
     var estCls=(o.est||'').replace(' ','-').toLowerCase();
@@ -2034,11 +2105,15 @@ function driveCheckToken(){
   if(hash && hash.includes('access_token')){
     var params = new URLSearchParams(hash.substring(1));
     driveToken = params.get('access_token');
-    // Limpiar URL
     history.replaceState(null, '', window.location.pathname);
     driveShowConnected();
     driveGetUserInfo();
     driveGetOrCreateFolder();
+    // Ir automáticamente al tab Archivos Drive después de autenticar
+    setTimeout(function(){
+      var tabBtn = document.getElementById('nav-archivos');
+      if(tabBtn) showTab('archivos', tabBtn);
+    }, 800);
   }
   // Verificar token guardado
   var saved = localStorage.getItem('ticom_drive_token');
@@ -2053,11 +2128,20 @@ function driveVerifyToken(){
   fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token='+driveToken)
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d.error){ driveToken=null; localStorage.removeItem('ticom_drive_token'); return; }
+      if(d.error){
+        driveToken=null;
+        localStorage.removeItem('ticom_drive_token');
+        document.getElementById('driveNotConnected').style.display='block';
+        document.getElementById('driveConnected').style.display='none';
+        return;
+      }
       driveShowConnected();
       driveGetUserInfo();
       driveGetOrCreateFolder();
-    }).catch(function(){driveToken=null;});
+    }).catch(function(){
+      driveToken=null;
+      localStorage.removeItem('ticom_drive_token');
+    });
 }
 
 function driveShowConnected(){
@@ -2259,8 +2343,9 @@ function renderHistorial(){
       '<div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-val">'+unicos+'</div><div class="stat-lbl">Usuarios únicos</div></div></div>';
   }
 }
-function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo'].forEach(function(d){document.getElementById('df-'+d).style.display=d===v?'block':'none';});}
-function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}doc.adjunto=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
+function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});}
+function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}
+  else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}doc.adjunto=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
 function renderDocsGuardados(){var el=document.getElementById('docsGuardadosBody');if(!el)return;var docs=(DB.docs||[]).slice().reverse();if(!docs.length){el.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr>';return;}el.innerHTML=docs.map(function(d){return '<tr><td style="font-weight:600">'+(d.nro||'')+'</td><td><span class="badge b-blue">'+(d.tipo||'')+'</span></td><td>'+(d.titulo||'')+'</td><td style="font-size:11px">'+(d.fecha||'')+'</td><td style="font-size:11px">'+(d.autor||'')+'</td></tr>';}).join('');}
 function prevDoc(t){var el=document.getElementById('pv-'+t);if(el)el.textContent=toText(buildDoc(t));}
 function prevActa(){document.getElementById('actaPrev').textContent=toText(buildActa());}
