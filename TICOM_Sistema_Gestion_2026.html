@@ -1570,7 +1570,13 @@ function doLogin(){
   document.getElementById('userLabel').textContent=user.nombre+(user.rol==='admin'?' ADMIN':' NORMAL');
   document.getElementById('roleDot').className='role-dot'+(user.rol==='admin'?' admin':'');
   document.querySelectorAll('.admin-only').forEach(function(el){
-    el.style.display=user.rol==='admin'?'':'none';
+    var isAdmin=user.rol==='admin';
+    if(!isAdmin){ el.style.display='none'; return; }
+    var tag=el.tagName.toLowerCase();
+    if(tag==='button'||tag==='a') el.style.display='inline-flex';
+    else if(tag==='tr') el.style.display='table-row';
+    else if(tag==='td'||tag==='th') el.style.display='table-cell';
+    else el.style.display='';
   });
   // Registrar acceso con info detallada
   if(!DB.logs) DB.logs=[];
@@ -1730,7 +1736,14 @@ function calcPerm(fp){if(!fp)return{txt:'Sin fecha',cls:'b-gray'};var d=new Date
 function tickPerms(){
   document.querySelectorAll('.perm-live').forEach(function(el){var r=calcPerm(el.dataset.fp);el.textContent=r.txt;el.className='perm-live badge '+r.cls;});
   var isAdmin=currentUser&&currentUser.rol==='admin';
-  document.querySelectorAll('.admin-only').forEach(function(el){el.style.display=isAdmin?'':'none';});
+  document.querySelectorAll('.admin-only').forEach(function(el){
+    if(!isAdmin){ el.style.display='none'; return; }
+    var tag=el.tagName.toLowerCase();
+    if(tag==='button'||tag==='a') el.style.display='inline-flex';
+    else if(tag==='tr') el.style.display='table-row';
+    else if(tag==='td'||tag==='th') el.style.display='table-cell';
+    else el.style.display='';
+  });
 }
 setInterval(tickPerms,1000);
 
