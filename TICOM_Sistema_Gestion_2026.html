@@ -11,11 +11,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SISTEMA DE INVENTARIO TICOM-ESLOMIT</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ══ FIREBASE — Sincronización automática en tiempo real ══
-window._fbReady = false;
-window.FB_CONFIG = {
+var FB_CONFIG = {
   apiKey: "AIzaSyA_BVNowD3uF9_um4991rq2sJ0L0RmLrpU",
   authDomain: "ticom-1827c.firebaseapp.com",
   databaseURL: "https://ticom-1827c-default-rtdb.firebaseio.com",
@@ -25,81 +26,93 @@ window.FB_CONFIG = {
   appId: "1:165498961066:web:4e31725adb33ec0cfd24d3"
 };
 
+var _fbApp = null;
+var _fbDB = null;
+var _fbRef = null;
+window._fbReady = false;
+window._fbPush = null;
+window._lastSaveTs = 0;
+
 function initFirebase(){
-  if(!window.FB_CONFIG.databaseURL) return;
-  const s = document.createElement('script');
-  s.type = 'module';
-  s.textContent = `
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getDatabase, ref, set, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-    try {
-      const app = initializeApp(${JSON.stringify(window.FB_CONFIG)});
-      const db  = getDatabase(app);
-      const dbRef = ref(db, 'ticom_eslomit');
-      window._fbReady = true;
+  try {
+    if(typeof firebase === 'undefined'){
+      console.warn('Firebase SDK no cargó todavía, reintentando...');
+      setTimeout(initFirebase, 1000);
+      return;
+    }
+    _fbApp = firebase.initializeApp(FB_CONFIG);
+    _fbDB = firebase.database();
+    _fbRef = _fbDB.ref('ticom_eslomit');
+    window._fbReady = true;
 
-      // ── PUSH: guardar DB completa en Firebase ──
-      window._fbPush = function(data){
-        set(dbRef, Object.assign({}, data, {_ts: Date.now()}))
-          .then(()=>{ updateFbBadge(true); })
-          .catch(e=>{ console.warn('FB push error:', e); updateFbBadge(false); });
-      };
+    // PUSH: guardar en Firebase
+    window._fbPush = function(data){
+      _fbRef.set(Object.assign({}, data, {_ts: Date.now()}))
+        .then(function(){ updateFbBadge(true); })
+        .catch(function(e){ console.warn('FB push error:', e); updateFbBadge(false); });
+    };
 
-      // ── LISTEN: escuchar cambios remotos y aplicarlos localmente ──
-      let localTs = 0;
-      onValue(dbRef, snap => {
-        const v = snap.val();
-        if(!v || !v._ts) return;
-        if(v._ts <= localTs) return; // ignorar si es más viejo que el local
-        localTs = v._ts;
-        // Solo aplicar si vino de OTRO dispositivo (timestamp diferente)
-        const currentTs = window._lastSaveTs || 0;
-        if(v._ts !== currentTs){
-          delete v._ts;
-          try{ localStorage.setItem('ticom_eslomit_db_v7', JSON.stringify(v)); }catch(e){}
-          if(window.DB){
-            window.DB = v;
-            if(typeof renderDashboard==='function') renderDashboard();
-            if(typeof renderPersonal==='function') renderPersonal();
-            if(typeof renderEquipos==='function') renderEquipos();
-            if(typeof renderOTList==='function') renderOTList();
-            if(typeof renderUsuarios==='function') renderUsuarios();
-            if(typeof renderUsuariosAdmin==='function') renderUsuariosAdmin();
-            if(typeof renderDocsGuardados==='function') renderDocsGuardados();
-            showFbToast('Datos actualizados desde otro dispositivo');
-          }
+    // LISTEN: escuchar cambios remotos
+    _fbRef.on('value', function(snap){
+      var v = snap.val();
+      if(!v || !v._ts) return;
+      var currentTs = window._lastSaveTs || 0;
+      // Si los datos de Firebase son más nuevos que los locales, aplicar
+      if(v._ts > currentTs){
+        var clean = Object.assign({}, v);
+        delete clean._ts;
+        try{ localStorage.setItem('ticom_eslomit_db_v7', JSON.stringify(clean)); }catch(e){}
+        // Solo re-renderizar si ya está logueado y los datos son de otro dispositivo
+        if(window.DB && window.currentUser && currentTs > 0){
+          window.DB = clean;
+          if(typeof renderDashboard==='function') renderDashboard();
+          if(typeof renderPersonal==='function') renderPersonal();
+          if(typeof renderEquipos==='function') renderEquipos();
+          if(typeof renderOTList==='function') renderOTList();
+          if(typeof renderUsuarios==='function') renderUsuarios();
+          if(typeof renderUsuariosAdmin==='function') renderUsuariosAdmin();
+          if(typeof renderDocsGuardados==='function') renderDocsGuardados();
+          showFbToast('🔄 Datos sincronizados');
+        } else if(!window.currentUser){
+          // Sin login aún: guardar en localStorage para cuando inicie sesión
+          window.DB = clean;
         }
-        updateFbBadge(true);
-      });
-
+      }
       updateFbBadge(true);
-      document.dispatchEvent(new Event('fb-ready'));
-    } catch(e){ console.warn('Firebase init error:', e); updateFbBadge(false); }
-  `;
-  document.head.appendChild(s);
+    });
+
+    updateFbBadge(true);
+    console.log('Firebase conectado OK');
+  } catch(e){
+    console.warn('Firebase init error:', e);
+    updateFbBadge(false);
+  }
 }
 
 function updateFbBadge(ok){
-  const el = document.getElementById('fbBadge');
+  var el = document.getElementById('fbBadge');
   if(!el) return;
+  el.innerHTML = ok
+    ? '<span style="font-size:10px">🔥</span> Firebase ✓'
+    : '<span style="font-size:10px">☁️</span> Sin Firebase';
   el.className = 'fb-badge ' + (ok ? 'fb-on' : 'fb-off');
-  el.querySelector ? (el.querySelector('span') || el).textContent = ok ? 'Firebase ✓' : 'Sin Firebase' : null;
-  if(el.innerHTML !== undefined)
-    el.innerHTML = ok
-      ? '<span style="font-size:10px">🔥</span> Firebase ✓'
-      : '<span style="font-size:10px">☁️</span> Sin Firebase';
 }
 
 function showFbToast(msg){
   var t = document.getElementById('fbToast');
-  if(!t){ t=document.createElement('div');t.id='fbToast';
-    t.style.cssText='position:fixed;bottom:20px;right:20px;background:#1d4ed8;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:opacity .4s';
-    document.body.appendChild(t);}
-  t.textContent=msg; t.style.opacity='1';
-  clearTimeout(t._to); t._to=setTimeout(()=>{t.style.opacity='0';},3000);
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'fbToast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1d4ed8;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:opacity .4s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._to);
+  t._to = setTimeout(function(){ t.style.opacity = '0'; }, 3000);
 }
 
-window.addEventListener('load', initFirebase);
+window.addEventListener('load', function(){ setTimeout(initFirebase, 300); });
 </script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -1714,6 +1727,27 @@ function doLogout(){
 }
 function initApp(){
   resetInactTimer();
+  // Push inicial a Firebase al iniciar sesión
+  setTimeout(function(){
+    if(window._fbReady && window._fbPush){
+      window._lastSaveTs = Date.now();
+      window._fbPush(JSON.parse(JSON.stringify(DB)));
+      console.log('Firebase: push inicial enviado');
+    } else {
+      // Reintentar hasta 10 veces
+      var intentos = 0;
+      var retry = setInterval(function(){
+        intentos++;
+        if(window._fbReady && window._fbPush){
+          window._lastSaveTs = Date.now();
+          window._fbPush(JSON.parse(JSON.stringify(DB)));
+          console.log('Firebase: push enviado en intento '+intentos);
+          clearInterval(retry);
+        }
+        if(intentos >= 10) clearInterval(retry);
+      }, 1000);
+    }
+  }, 2000);
   document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.value)d.value=today;});
   startClock(); checkNet(); renderDashboard(); renderPersonal(); renderEquipos();
   renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial();
