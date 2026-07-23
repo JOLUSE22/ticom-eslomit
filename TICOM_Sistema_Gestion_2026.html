@@ -617,9 +617,24 @@ table.dt tr:hover td{background:#EEF6FF}
       <input type="password" id="lgPass" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
       <button class="btn-login" onclick="doLogin()">INGRESAR AL SISTEMA</button>
       <div id="loginErr"></div>
-      <hr style="border:none;border-top:1px solid #dde;margin:14px 0">
-      <button onclick="emergencyReset()" style="width:100%;padding:9px;background:#fff8e1;color:#856404;border:1px solid #ffc107;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">⚠️ Problemas para ingresar — Resetear datos locales</button>
-      <div id="resetMsg" style="font-size:11px;color:#555;text-align:center;margin-top:6px;min-height:16px"></div>
+      <button onclick="showResetPass()" style="width:100%;margin-top:10px;padding:9px;background:transparent;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">
+        🔑 Olvidé mi contraseña
+      </button>
+      <div id="resetPassBox" style="display:none;margin-top:12px;padding:14px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:10px">
+        <div style="font-size:12px;font-weight:700;color:#1d4ed8;margin-bottom:8px">Restablecer contraseña</div>
+        <div style="font-size:11.5px;color:#374151;margin-bottom:10px;line-height:1.6">
+          Ingresá tu DNI, tu contraseña actual y la nueva contraseña.
+        </div>
+        <input id="rpDni" placeholder="Tu DNI" style="width:100%;padding:8px 11px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:13px;font-family:inherit;margin-bottom:8px;outline:none">
+        <input type="password" id="rpPassActual" placeholder="Contraseña actual" style="width:100%;padding:8px 11px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:13px;font-family:inherit;margin-bottom:8px;outline:none">
+        <input type="password" id="rpPass1" placeholder="Nueva contraseña" style="width:100%;padding:8px 11px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:13px;font-family:inherit;margin-bottom:8px;outline:none">
+        <input type="password" id="rpPass2" placeholder="Repetir contraseña" style="width:100%;padding:8px 11px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:13px;font-family:inherit;margin-bottom:8px;outline:none">
+        <button onclick="solicitarResetPass()" style="width:100%;padding:9px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
+          Solicitar cambio de contraseña
+        </button>
+        <div id="rpMsg" style="font-size:11px;text-align:center;margin-top:8px;min-height:14px"></div>
+      </div>
+      <div id="resetMsg" style="display:none"></div>
     </div>
     <div class="login-footer">TICOM · Las Lomitas, Formosa · Uso Interno GNA</div>
   </div>
@@ -1104,7 +1119,6 @@ table.dt tr:hover td{background:#EEF6FF}
     </div>
     <div class="card"><div class="card-title"><span class="ct-icon">👁</span>Vista previa</div><div class="preview" id="pv-memo">Complete y presione Vista previa.</div></div>
   </div></div>
-  </div>
 
   <div id="df-acta" style="display:none"><div class="grid2">
     <div class="card"><div class="card-title">🔐 Acta / VPN</div>
@@ -1179,6 +1193,7 @@ table.dt tr:hover td{background:#EEF6FF}
       <div class="card-title" style="color:#1d4ed8;border-bottom-color:#bfdbfe">
         <span>👥</span> Usuarios Normales
         <button id="btnNuevoUsuario" class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openModal('modalUser');initUserForm('normal')">+ Nuevo usuario</button>
+      <button class="btn btn-warn btn-sm" onclick="showResetSolicitudes()" id="btnResetPend" style="display:none">🔑 Solicitudes <span id="resetPendCount" style="background:#dc2626;color:#fff;border-radius:99px;padding:1px 7px;font-size:10px;margin-left:4px">0</span></button>
       </div>
       <p style="font-size:12px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;margin-bottom:12px;line-height:1.6">
         Pueden ver el sistema y responder Órdenes de Trabajo. <strong>No pueden editar ni gestionar usuarios.</strong>
@@ -1481,6 +1496,16 @@ table.dt tr:hover td{background:#EEF6FF}
 </div>
 
 <!-- Modal Usuario -->
+<div id="modalResetSolic" class="modal-overlay">
+  <div class="modal-box modal-sm">
+    <div class="modal-title">🔑 Solicitudes de cambio de contraseña</div>
+    <div id="resetSolicList"></div>
+    <div class="act-row" style="margin-top:14px">
+      <button class="btn" onclick="closeModal('modalResetSolic')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <div id="modalUser" class="modal-overlay">
   <div class="modal-box modal-sm">
     <div class="modal-title">👤 <span id="userModalTitle">Nuevo Usuario</span></div>
@@ -1669,6 +1694,34 @@ function doLogin(){
     }).catch(function(){});
   initApp();
 }
+function showResetPass(){
+  var box=document.getElementById('resetPassBox');
+  if(box) box.style.display=box.style.display==='none'?'block':'none';
+}
+function solicitarResetPass(){
+  var dni=document.getElementById('rpDni').value.trim();
+  var passActual=document.getElementById('rpPassActual')?document.getElementById('rpPassActual').value:'';
+  var p1=document.getElementById('rpPass1').value;
+  var p2=document.getElementById('rpPass2').value;
+  var msg=document.getElementById('rpMsg');
+  if(!dni||!passActual||!p1||!p2){msg.style.color='#dc2626';msg.textContent='Completá todos los campos.';return;}
+  if(p1!==p2){msg.style.color='#dc2626';msg.textContent='Las contraseñas nuevas no coinciden.';return;}
+  if(p1.length<4){msg.style.color='#dc2626';msg.textContent='Mínimo 4 caracteres.';return;}
+  var user=DB._users.find(function(u){return u.dni===dni;});
+  if(!user){msg.style.color='#dc2626';msg.textContent='DNI no encontrado en el sistema.';return;}
+  if(user.rol==='admin'){msg.style.color='#dc2626';msg.textContent='Los admins usan el panel de Usuarios.';return;}
+  if(user.pass!==passActual){msg.style.color='#dc2626';msg.textContent='La contraseña actual es incorrecta.';return;}
+  // Cambiar directo
+  user.pass=p1;
+  saveDB();
+  msg.style.color='#16a34a';
+  msg.textContent='✅ Contraseña cambiada correctamente. Ya podés ingresar.';
+  setTimeout(function(){
+    document.getElementById('resetPassBox').style.display='none';
+    document.getElementById('lgDni').value=dni;
+    document.getElementById('lgPass').value=p1;
+  },1500);
+}
 function doLogout(){
   currentUser=null;
   document.getElementById('loginScreen').style.display='flex';
@@ -1754,6 +1807,7 @@ function renderDashboard(){
   var estados={completada:0,pendiente:0,'En proceso':0,Cancelado:0};
   DB.ot.forEach(function(o){if(estados[o.est]!==undefined)estados[o.est]++;else estados.pendiente++;});
   setTimeout(function(){drawOTChart(estados);},100);
+  checkResetPendientes();
   var colors={completada:'#2E7D32',pendiente:'#E65100','En proceso':'#1565C0',Cancelado:'#9E9E9E'};
   var labels={completada:'Completadas',pendiente:'Pendientes','En proceso':'En proceso',Cancelado:'Canceladas'};
   var legEl=document.getElementById('otChartLegend');
@@ -2013,6 +2067,48 @@ function switchUserTab(tipo, el){
   if(tipo==='normal'&&sn){sn.style.background='#eff6ff';sn.style.color='#1d4ed8';}
   if(tipo==='admin'&&sa){sa.style.background='#fffbeb';sa.style.color='#92400e';}
 }
+function showResetSolicitudes(){
+  var solic=(DB.resetSolicitudes||[]).filter(function(s){return s.estado==='pendiente';});
+  var el=document.getElementById('resetSolicList');
+  if(!solic.length){
+    el.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">Sin solicitudes pendientes.</div>';
+  } else {
+    el.innerHTML=solic.map(function(s,i){
+      return '<div style="background:#f8faff;border:1px solid #bfdbfe;border-radius:10px;padding:12px;margin-bottom:10px">'+
+        '<div style="font-weight:700;font-size:13px">'+s.nombre+'</div>'+
+        '<div style="font-family:monospace;font-size:11px;color:var(--text3)">DNI: '+s.dni+' — '+s.fecha+' '+s.hora+'</div>'+
+        '<div style="display:flex;gap:8px;margin-top:10px">'+
+          '<button class="btn btn-success btn-sm" onclick="aprobarReset('+i+')">✅ Aprobar</button>'+
+          '<button class="btn btn-danger btn-sm" onclick="rechazarReset('+i+')">❌ Rechazar</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+  openModal('modalResetSolic');
+}
+function aprobarReset(idx){
+  var solic=DB.resetSolicitudes.filter(function(s){return s.estado==='pendiente';})[idx];
+  if(!solic)return;
+  var user=DB._users.find(function(u){return u.dni===solic.dni;});
+  if(user){ user.pass=solic.nuevaPass; }
+  solic.estado='aprobada';
+  saveDB();renderUsuarios();renderUsuariosAdmin();checkResetPendientes();
+  showResetSolicitudes();
+}
+function rechazarReset(idx){
+  var solic=DB.resetSolicitudes.filter(function(s){return s.estado==='pendiente';})[idx];
+  if(!solic)return;
+  solic.estado='rechazada';
+  saveDB();checkResetPendientes();showResetSolicitudes();
+}
+function checkResetPendientes(){
+  if(!currentUser||currentUser.rol!=='admin')return;
+  var pend=(DB.resetSolicitudes||[]).filter(function(s){return s.estado==='pendiente';}).length;
+  var btn=document.getElementById('btnResetPend');
+  var cnt=document.getElementById('resetPendCount');
+  if(btn) btn.style.display=pend>0?'inline-flex':'none';
+  if(cnt) cnt.textContent=pend;
+}
 function renderUsuariosAdmin(){
   var tbody=document.getElementById('bodyUsuariosAdmin');if(!tbody)return;
   var admins=DB._users.filter(function(u){return u.rol==='admin';});
@@ -2089,14 +2185,39 @@ let driveFolderId = null;
 let driveSelectedFile = null;
 
 function driveAuth(){
-  const params = new URLSearchParams({
+  var params = new URLSearchParams({
     client_id: DRIVE_CLIENT_ID,
-    redirect_uri: window.location.href.split('?')[0],
+    redirect_uri: window.location.href.split('?')[0].split('#')[0],
     response_type: 'token',
     scope: DRIVE_SCOPE,
-    prompt: 'select_account'
+    prompt: 'select_account',
+    include_granted_scopes: 'true'
   });
-  window.location.href = 'https://accounts.google.com/o/oauth2/auth?' + params.toString();
+  var authUrl = 'https://accounts.google.com/o/oauth2/auth?' + params.toString();
+  // Abrir popup
+  var popup = window.open(authUrl, 'driveAuth', 'width=500,height=600,left=200,top=100');
+  if(!popup){ 
+    // Si el popup fue bloqueado, usar redirect
+    window.location.href = authUrl;
+    return;
+  }
+  // Escuchar cuando el popup vuelve con el token
+  var checkPopup = setInterval(function(){
+    try {
+      if(popup.closed){ clearInterval(checkPopup); return; }
+      var hash = popup.location.hash;
+      if(hash && hash.includes('access_token')){
+        var p2 = new URLSearchParams(hash.substring(1));
+        driveToken = p2.get('access_token');
+        popup.close();
+        clearInterval(checkPopup);
+        localStorage.setItem('ticom_drive_token', driveToken);
+        driveShowConnected();
+        driveGetUserInfo();
+        driveGetOrCreateFolder();
+      }
+    } catch(e){ /* cross-origin, seguir esperando */ }
+  }, 500);
 }
 
 function driveCheckToken(){
@@ -2133,6 +2254,18 @@ function driveVerifyToken(){
         localStorage.removeItem('ticom_drive_token');
         document.getElementById('driveNotConnected').style.display='block';
         document.getElementById('driveConnected').style.display='none';
+        // Mostrar mensaje de sesión expirada
+        var notConn = document.getElementById('driveNotConnected');
+        if(notConn){
+          var msg = notConn.querySelector('.drive-exp-msg');
+          if(!msg){
+            msg = document.createElement('div');
+            msg.className = 'drive-exp-msg';
+            msg.style.cssText = 'background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px 14px;margin:12px 20px;font-size:12px;color:#856404;font-weight:600;text-align:center';
+            msg.textContent = '⏰ Tu sesión de Google Drive expiró (1 hora). Hacé clic en Conectar para renovarla.';
+            notConn.appendChild(msg);
+          }
+        }
         return;
       }
       driveShowConnected();
