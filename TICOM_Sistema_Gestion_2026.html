@@ -11,6 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SISTEMA DE INVENTARIO TICOM-ESLOMIT</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -637,6 +639,11 @@ table.dt tr:hover td{background:#EEF6FF}
   color:rgba(220,240,255,.9);
 }
 .admin-only{display:none;}
+.export-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.btn-export{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;}
+.btn-exp-pdf{background:#e53e3e;color:#fff;} .btn-exp-pdf:hover{background:#c53030;}
+.btn-exp-xls{background:#276749;color:#fff;} .btn-exp-xls:hover{background:#1e4d36;}
+.btn-exp-print{background:#2b6cb0;color:#fff;} .btn-exp-print:hover{background:#2c5282;}
 </style>
 </head>
 <body>
@@ -761,6 +768,11 @@ table.dt tr:hover td{background:#EEF6FF}
 <!-- ══ PERSONAL ══ -->
 <div id="tab-personal" class="panel">
   <div class="card">
+    <div class="export-bar">
+      <button class="btn-export btn-exp-pdf" onclick="exportPDF('personal')">📄 PDF</button>
+      <button class="btn-export btn-exp-xls" onclick="exportXLS('personal')">📊 Excel</button>
+      <button class="btn-export btn-exp-print" onclick="printTab('personal')">🖨️ Imprimir</button>
+    </div>
     <div class="card-title"><span class="ct-icon">👥</span>Personal ESLOMIT <span id="perCount" class="badge b-blue" style="margin-left:auto;font-size:10px"></span></div>
     <div class="filter-bar">
       <input id="perFiltro" placeholder="🔍 Apellido, grado, DNI..." oninput="renderPersonal()" style="max-width:260px">
@@ -780,6 +792,11 @@ table.dt tr:hover td{background:#EEF6FF}
 <div id="tab-equipos" class="panel">
   <div class="card">
     <div class="card-title"><span class="ct-icon">📡</span>Inventario de Equipos</div>
+    <div class="export-bar">
+      <button class="btn-export btn-exp-pdf" onclick="exportPDF('equipos')">📄 PDF</button>
+      <button class="btn-export btn-exp-xls" onclick="exportXLS('equipos')">📊 Excel</button>
+      <button class="btn-export btn-exp-print" onclick="printTab('equipos')">🖨️ Imprimir</button>
+    </div>
     <div class="filter-bar">
       <select id="eqTipoFilt" onchange="renderEquipos()" style="max-width:190px">
         <option value="">— Todos los tipos —</option>
@@ -808,6 +825,11 @@ table.dt tr:hover td{background:#EEF6FF}
   <!-- LISTADO (todos ven) -->
   <div id="otListView">
     <div class="card">
+      <div class="export-bar">
+        <button class="btn-export btn-exp-pdf" onclick="exportPDF('ot')">📄 PDF</button>
+        <button class="btn-export btn-exp-xls" onclick="exportXLS('ot')">📊 Excel</button>
+        <button class="btn-export btn-exp-print" onclick="printTab('ot')">🖨️ Imprimir</button>
+      </div>
       <div class="card-title"><span class="ct-icon">📋</span>Órdenes de Trabajo
         <button class="btn btn-primary btn-sm admin-only" style="margin-left:auto" onclick="openOTForm(null)">+ Nueva OT</button>
       </div>
@@ -1392,6 +1414,11 @@ table.dt tr:hover td{background:#EEF6FF}
 <div id="tab-historial" class="panel">
   <div class="stat-grid" id="historialStats" style="margin-bottom:14px"></div>
   <div class="card">
+    <div class="export-bar">
+      <button class="btn-export btn-exp-pdf" onclick="exportPDF('historial')">📄 PDF</button>
+      <button class="btn-export btn-exp-xls" onclick="exportXLS('historial')">📊 Excel</button>
+      <button class="btn-export btn-exp-print" onclick="printTab('historial')">🖨️ Imprimir</button>
+    </div>
     <div class="card-title">
       <span>📋</span> Registro de Accesos al Sistema
       <button class="btn btn-sm btn-danger admin-only" style="margin-left:auto" onclick="clearLogs()">🗑 Limpiar</button>
@@ -2542,6 +2569,164 @@ if('serviceWorker' in navigator){
       .catch(function(e){ console.log('SW error:', e); });
   });
 }
+
+// ══ EXPORTACIÓN: PDF, Excel, Impresión ══
+
+function exportPDF(tipo){
+  var {jsPDF} = window.jspdf;
+  var doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  var fecha = new Date().toLocaleDateString('es-AR');
+  var title = '', cols = [], rows = [];
+
+  if(tipo==='equipos'){
+    title = 'INVENTARIO DE EQUIPOS — TICOM ESLOMIT';
+    cols = [['CAT.','TIPO','MARCA','MODELO','N° SERIE','ESTADO','UBICACIÓN']];
+    var cats = ['radio','antena','fuente','imp','mon','pc','poc','portatil','ot_eq'];
+    cats.forEach(function(c){
+      (DB[c]||[]).forEach(function(e){
+        rows.push([c.toUpperCase(), e.tipo||'', e.marca||'', e.modelo||'', e.serie||e.prov||'', e.estado||'', e.ubi||'']);
+      });
+    });
+  } else if(tipo==='personal'){
+    title = 'PERSONAL — TICOM ESLOMIT';
+    cols = [['ORD','GRADO','ESP.','APELLIDO','NOMBRE','MI','CE','UNIDAD']];
+    (DB.per||[]).forEach(function(p){
+      rows.push([p.ord||'', p.grd||'', p.esp||'', p.ape||'', p.nom||'', p.mi||'', p.ce||'', p.uni||'']);
+    });
+  } else if(tipo==='ot'){
+    title = 'ÓRDENES DE TRABAJO — TICOM ESLOMIT';
+    cols = [['N° OT','TITULO','TIPO','PRIORIDAD','ESTADO','FECHA','RESPONSABLE']];
+    (DB.ot||[]).forEach(function(o){
+      rows.push([o.nro||'', o.titulo||'', o.tipo||'', o.prioridad||'', o.estado||'', o.fecha||'', o.resp||'']);
+    });
+  } else if(tipo==='historial'){
+    title = 'HISTORIAL DE ACCESOS — TICOM ESLOMIT';
+    cols = [['FECHA','HORA','USUARIO','DNI','ACCIÓN','IP']];
+    (DB.logs||[]).slice().reverse().forEach(function(l){
+      rows.push([l.fecha||'', l.hora||'', l.nombre||'', l.dni||'', l.accion||'', l.ip||'']);
+    });
+  }
+
+  // Header
+  doc.setFillColor(11,53,102);
+  doc.rect(0,0,297,20,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(13);
+  doc.setFont('helvetica','bold');
+  doc.text('GENDARMERÍA NACIONAL ARGENTINA', 148,8,{align:'center'});
+  doc.setFontSize(10);
+  doc.text(title, 148,15,{align:'center'});
+
+  doc.setTextColor(100,100,100);
+  doc.setFontSize(8);
+  doc.text('Generado: '+fecha+' | Escuadrón 18 "Lomitas" | TICOM-ESLOMIT', 148,24,{align:'center'});
+
+  doc.autoTable({
+    head: cols,
+    body: rows,
+    startY: 27,
+    styles:{fontSize:8, cellPadding:2},
+    headStyles:{fillColor:[11,53,102], textColor:255, fontStyle:'bold'},
+    alternateRowStyles:{fillColor:[240,245,255]},
+    margin:{left:5,right:5}
+  });
+
+  doc.save('TICOM_'+tipo.toUpperCase()+'_'+fecha.replace(/\//g,'-')+'.pdf');
+}
+
+function exportXLS(tipo){
+  var wb = XLSX.utils.book_new();
+  var data = [], wsName = tipo.toUpperCase();
+  var fecha = new Date().toLocaleDateString('es-AR');
+
+  if(tipo==='equipos'){
+    data.push(['CAT.','TIPO','MARCA','MODELO','N° SERIE','ESTADO','UBICACIÓN','AÑO','OBS']);
+    var cats = ['radio','antena','fuente','imp','mon','pc','poc','portatil','ot_eq'];
+    cats.forEach(function(c){
+      (DB[c]||[]).forEach(function(e){
+        data.push([c.toUpperCase(), e.tipo||'', e.marca||'', e.modelo||'', e.serie||e.prov||'', e.estado||'', e.ubi||'', e.anio||'', e.obs||'']);
+      });
+    });
+  } else if(tipo==='personal'){
+    data.push(['ORD','GRADO','ESP.','APELLIDO','NOMBRE','MI','CE','E-MAIL','E-MAIL INST.','UNIDAD','FECHA PASE']);
+    (DB.per||[]).forEach(function(p){
+      data.push([p.ord||'', p.grd||'', p.esp||'', p.ape||'', p.nom||'', p.mi||'', p.ce||'', p.email||'', p.emailInst||'', p.uni||'', p.fp||'']);
+    });
+  } else if(tipo==='ot'){
+    data.push(['N° OT','TITULO','TIPO','PRIORIDAD','ESTADO','FECHA INICIO','FECHA LÍMITE','EQUIPO','RESPONSABLE','DESCRIPCIÓN']);
+    (DB.ot||[]).forEach(function(o){
+      data.push([o.nro||'', o.titulo||'', o.tipo||'', o.prioridad||'', o.estado||'', o.fecha||'', o.fechaLim||'', o.eqp||'', o.resp||'', o.desc||'']);
+    });
+  } else if(tipo==='historial'){
+    data.push(['FECHA','HORA','USUARIO','DNI','ACCIÓN','DETALLE']);
+    (DB.logs||[]).slice().reverse().forEach(function(l){
+      data.push([l.fecha||'', l.hora||'', l.nombre||'', l.dni||'', l.accion||'', l.detalle||'']);
+    });
+  }
+
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  // Ancho de columnas automático
+  var colWidths = data[0].map(function(_,i){
+    return {wch: Math.max.apply(null, data.map(function(r){ return (r[i]||'').toString().length; })) + 2};
+  });
+  ws['!cols'] = colWidths;
+  XLSX.utils.book_append_sheet(wb, ws, wsName);
+  XLSX.writeFile(wb, 'TICOM_'+tipo.toUpperCase()+'_'+fecha.replace(/\//g,'-')+'.xlsx');
+}
+
+function printTab(tipo){
+  var title = '', html = '';
+  var fecha = new Date().toLocaleDateString('es-AR');
+  var header = '<div style="font-family:Arial,sans-serif;padding:10px">' +
+    '<div style="background:#0B3566;color:#fff;padding:10px 16px;border-radius:6px;margin-bottom:12px">' +
+    '<div style="font-size:14px;font-weight:bold">GENDARMERÍA NACIONAL ARGENTINA</div>' +
+    '<div style="font-size:11px;opacity:.85">Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · Generado: '+fecha+'</div></div>';
+
+  var tableStyle = 'style="width:100%;border-collapse:collapse;font-size:11px"';
+  var thStyle = 'style="background:#0B3566;color:#fff;padding:6px 8px;text-align:left"';
+  var tdStyle = 'style="padding:5px 8px;border-bottom:1px solid #ddd"';
+  var trEven = 'style="background:#f0f5ff"';
+
+  if(tipo==='equipos'){
+    title = 'INVENTARIO DE EQUIPOS';
+    var rows = '';
+    var cats = ['radio','antena','fuente','imp','mon','pc','poc','portatil','ot_eq'];
+    var i=0;
+    cats.forEach(function(c){
+      (DB[c]||[]).forEach(function(e){
+        rows += '<tr '+(i%2===0?trEven:'')+'><td '+tdStyle+'>'+c.toUpperCase()+'</td><td '+tdStyle+'>'+( e.tipo||'')+'</td><td '+tdStyle+'>'+(e.marca||'')+'</td><td '+tdStyle+'>'+(e.modelo||'')+'</td><td '+tdStyle+'>'+(e.serie||e.prov||'')+'</td><td '+tdStyle+'>'+(e.estado||'')+'</td><td '+tdStyle+'>'+(e.ubi||'')+'</td></tr>';
+        i++;
+      });
+    });
+    html = header+'<h3 style="margin:8px 0">'+title+'</h3><table '+tableStyle+'><thead><tr><th '+thStyle+'>CAT.</th><th '+thStyle+'>TIPO</th><th '+thStyle+'>MARCA</th><th '+thStyle+'>MODELO</th><th '+thStyle+'>N° SERIE</th><th '+thStyle+'>ESTADO</th><th '+thStyle+'>UBICACIÓN</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else if(tipo==='personal'){
+    title = 'PERSONAL ESLOMIT';
+    var rows = '';
+    (DB.per||[]).forEach(function(p,i){
+      rows += '<tr '+(i%2===0?trEven:'')+'><td '+tdStyle+'>'+( p.ord||'')+'</td><td '+tdStyle+'>'+(p.grd||'')+'</td><td '+tdStyle+'>'+(p.esp||'')+'</td><td '+tdStyle+'>'+(p.ape||'')+'</td><td '+tdStyle+'>'+(p.nom||'')+'</td><td '+tdStyle+'>'+(p.mi||'')+'</td><td '+tdStyle+'>'+(p.ce||'')+'</td></tr>';
+    });
+    html = header+'<h3 style="margin:8px 0">'+title+'</h3><table '+tableStyle+'><thead><tr><th '+thStyle+'>ORD</th><th '+thStyle+'>GRADO</th><th '+thStyle+'>ESP.</th><th '+thStyle+'>APELLIDO</th><th '+thStyle+'>NOMBRE</th><th '+thStyle+'>MI</th><th '+thStyle+'>CE</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else if(tipo==='ot'){
+    title = 'ÓRDENES DE TRABAJO';
+    var rows = '';
+    (DB.ot||[]).forEach(function(o,i){
+      rows += '<tr '+(i%2===0?trEven:'')+'><td '+tdStyle+'>'+(o.nro||'')+'</td><td '+tdStyle+'>'+(o.titulo||'')+'</td><td '+tdStyle+'>'+(o.tipo||'')+'</td><td '+tdStyle+'>'+(o.prioridad||'')+'</td><td '+tdStyle+'>'+(o.estado||'')+'</td><td '+tdStyle+'>'+(o.fecha||'')+'</td><td '+tdStyle+'>'+(o.resp||'')+'</td></tr>';
+    });
+    html = header+'<h3 style="margin:8px 0">'+title+'</h3><table '+tableStyle+'><thead><tr><th '+thStyle+'>N° OT</th><th '+thStyle+'>TÍTULO</th><th '+thStyle+'>TIPO</th><th '+thStyle+'>PRIORIDAD</th><th '+thStyle+'>ESTADO</th><th '+thStyle+'>FECHA</th><th '+thStyle+'>RESPONSABLE</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else if(tipo==='historial'){
+    title = 'HISTORIAL DE ACCESOS';
+    var rows = '';
+    (DB.logs||[]).slice().reverse().forEach(function(l,i){
+      rows += '<tr '+(i%2===0?trEven:'')+'><td '+tdStyle+'>'+(l.fecha||'')+'</td><td '+tdStyle+'>'+(l.hora||'')+'</td><td '+tdStyle+'>'+(l.nombre||'')+'</td><td '+tdStyle+'>'+(l.dni||'')+'</td><td '+tdStyle+'>'+(l.accion||'')+'</td></tr>';
+    });
+    html = header+'<h3 style="margin:8px 0">'+title+'</h3><table '+tableStyle+'><thead><tr><th '+thStyle+'>FECHA</th><th '+thStyle+'>HORA</th><th '+thStyle+'>USUARIO</th><th '+thStyle+'>DNI</th><th '+thStyle+'>ACCIÓN</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
+
+  var w = window.open('','_blank','width=900,height=700');
+  w.document.write('<!DOCTYPE html><html><head><title>TICOM — '+title+'</title><style>@media print{body{margin:0}}</style></head><body>'+html+'<scr'+'ipt>window.onload=function(){window.print();}</scr'+'ipt></body></html>');
+  w.document.close();
+}
+
 </script>
 </body>
 </html>
