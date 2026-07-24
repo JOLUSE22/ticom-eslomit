@@ -1751,7 +1751,7 @@ function initApp(){
 }
 // ════ AUTO-LOGOUT POR INACTIVIDAD (1 minuto) ════
 var _inactTimer = null;
-var _INACT_MS = 60000; // 1 minuto
+var _INACT_MS = 600000; // 10 minutos
 function resetInactTimer(){
   clearTimeout(_inactTimer);
   if(!currentUser) return;
