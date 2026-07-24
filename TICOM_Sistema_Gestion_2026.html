@@ -57,12 +57,15 @@ function initFirebase(){
       var v = snap.val();
       if(!v || !v._ts) return;
       var currentTs = window._lastSaveTs || 0;
-      // Si los datos de Firebase son más nuevos que los locales, aplicar
       if(v._ts > currentTs){
         var clean = Object.assign({}, v);
         delete clean._ts;
+        // Asegurarse que _users tiene datos válidos
+        if(!clean._users || !Array.isArray(clean._users) || clean._users.length === 0){
+          updateFbBadge(true);
+          return;
+        }
         try{ localStorage.setItem('ticom_eslomit_db_v7', JSON.stringify(clean)); }catch(e){}
-        // Solo re-renderizar si ya está logueado y los datos son de otro dispositivo
         if(window.DB && window.currentUser && currentTs > 0){
           window.DB = clean;
           if(typeof renderDashboard==='function') renderDashboard();
@@ -74,8 +77,12 @@ function initFirebase(){
           if(typeof renderDocsGuardados==='function') renderDocsGuardados();
           showFbToast('🔄 Datos sincronizados');
         } else if(!window.currentUser){
-          // Sin login aún: guardar en localStorage para cuando inicie sesión
+          // Sin login: aplicar datos a DB para que el login funcione
           window.DB = clean;
+          // Si hay datos válidos de usuarios, actualizar el indicador
+          if(clean._users && clean._users.length > 0){
+            showFbToast('✅ Datos recibidos — podés iniciar sesión');
+          }
         }
       }
       updateFbBadge(true);
@@ -1726,26 +1733,17 @@ function doLogout(){
 function initApp(){
   resetInactTimer();
   // Push inicial a Firebase al iniciar sesión
-  setTimeout(function(){
+  var _pushIntentos = 0;
+  var _pushRetry = setInterval(function(){
+    _pushIntentos++;
     if(window._fbReady && window._fbPush){
       window._lastSaveTs = Date.now();
       window._fbPush(JSON.parse(JSON.stringify(DB)));
-      console.log('Firebase: push inicial enviado');
-    } else {
-      // Reintentar hasta 10 veces
-      var intentos = 0;
-      var retry = setInterval(function(){
-        intentos++;
-        if(window._fbReady && window._fbPush){
-          window._lastSaveTs = Date.now();
-          window._fbPush(JSON.parse(JSON.stringify(DB)));
-          console.log('Firebase: push enviado en intento '+intentos);
-          clearInterval(retry);
-        }
-        if(intentos >= 10) clearInterval(retry);
-      }, 1000);
+      console.log('Firebase: push enviado en intento '+_pushIntentos);
+      clearInterval(_pushRetry);
     }
-  }, 2000);
+    if(_pushIntentos >= 15) clearInterval(_pushRetry);
+  }, 800);
   document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.value)d.value=today;});
   startClock(); checkNet(); renderDashboard(); renderPersonal(); renderEquipos();
   renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial();
