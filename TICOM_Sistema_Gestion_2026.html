@@ -2920,9 +2920,46 @@ function setWUI(ico,temp,desc,city,hum,wind){var el;el=document.getElementById('
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('sw.js')
-      .then(function(reg){ console.log('SW registrado'); })
-      .catch(function(e){ console.log('SW error:', e); });
+    navigator.serviceWorker.register('/ticom-eslomit/sw.js')
+      .then(function(reg){
+        console.log('SW registrado OK');
+        reg.addEventListener('updatefound', function(){
+          var newSW = reg.installing;
+          newSW.addEventListener('statechange', function(){
+            if(newSW.state==='installed' && navigator.serviceWorker.controller){
+              showFbToast('🔄 Nueva versión disponible — recargá para actualizar');
+            }
+          });
+        });
+      })
+      .catch(function(e){ console.warn('SW error:', e); });
+  });
+
+  // Detectar cambios de conectividad
+  window.addEventListener('online', function(){
+    var banner = document.getElementById('offlineBanner');
+    if(banner) banner.style.display='none';
+    showFbToast('✅ Conexión restaurada — sincronizando...');
+    if(window._fbReady && window._fbPush && window.DB){
+      window._lastSaveTs = Date.now();
+      window._fbPush(JSON.parse(JSON.stringify(DB)));
+    }
+    if(document.getElementById('netBadge')){
+      document.getElementById('netBadge').className='net-badge net-on';
+      document.getElementById('ndot').className='sdot son';
+      document.getElementById('nstat').textContent='En línea';
+    }
+  });
+
+  window.addEventListener('offline', function(){
+    var banner = document.getElementById('offlineBanner');
+    if(banner) banner.style.display='block';
+    showFbToast('📴 Sin conexión — modo offline activo');
+    if(document.getElementById('netBadge')){
+      document.getElementById('netBadge').className='net-badge net-off';
+      document.getElementById('ndot').className='sdot soff';
+      document.getElementById('nstat').textContent='Sin conexión';
+    }
   });
 }
 
@@ -3667,6 +3704,10 @@ function drawEqChart(){
       <button class="btn" onclick="closeModal('modalPerfil')">Cancelar</button>
     </div>
   </div>
+</div>
+
+<div id="offlineBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#e53e3e;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:600">
+  📴 Modo offline — los cambios se guardan localmente y se sincronizarán cuando haya conexión
 </div>
 </body>
 </html>
