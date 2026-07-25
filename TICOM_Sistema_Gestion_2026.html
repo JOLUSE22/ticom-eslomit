@@ -598,6 +598,36 @@ table.dt tr:hover td{background:#EEF6FF}
 .nav-label{flex:1;}
 .sidebar-footer{margin-top:auto;padding:14px 0 12px;}
 .admin-only{display:none;}
+#loadingScreen{position:fixed;inset:0;z-index:99999;background:#0B3566;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
+.spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,.2);border-top-color:#63b3ed;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:14px;opacity:.8;margin-top:8px;}
+.loading-sub{font-size:11px;opacity:.5;margin-top:4px;}
+
+[data-theme="dark"]{
+  --bg:#1a1a2e;--bg2:#16213e;--surface:#0f3460;--border:#2d4a7a;--border2:#2d4a7a;
+  --text:#e0e0e0;--text2:#b0b8c8;--text3:#7a8a9a;--shadow:0 2px 8px rgba(0,0,0,.4);
+  --card-bg:#16213e;--topbar:#0f3460;
+}
+[data-theme="dark"] .card{background:#16213e;border-color:#2d4a7a;}
+[data-theme="dark"] .panel{background:#1a1a2e;}
+[data-theme="dark"] body{background:#1a1a2e;color:#e0e0e0;}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#16213e;color:#e0e0e0;border-color:#2d4a7a;}
+[data-theme="dark"] table{color:#e0e0e0;}
+[data-theme="dark"] th{background:#0f3460!important;color:#fff!important;}
+[data-theme="dark"] tr:nth-child(even){background:#1e2d4a;}
+[data-theme="dark"] .stat-card{background:#16213e;border-color:#2d4a7a;}
+[data-theme="dark"] .modal-confirm-box{background:#16213e;color:#e0e0e0;}
+[data-theme="dark"] .modal-confirm-title{color:#e0e0e0;}
+
+.modal-confirm{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;}
+.modal-confirm-box{background:#fff;border-radius:14px;padding:28px 32px;min-width:300px;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;}
+.modal-confirm-icon{font-size:36px;margin-bottom:8px;}
+.modal-confirm-title{font-size:16px;font-weight:700;color:#1a202c;margin-bottom:4px;}
+.modal-confirm-msg{font-size:12px;color:#718096;margin-bottom:18px;}
+.modal-confirm-btns{display:flex;gap:10px;justify-content:center;}
+.notif-badge{display:none;background:#e53e3e;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;align-items:center;justify-content:center;position:absolute;top:-4px;right:-4px;}
+
 
 /* ═══ MAIN CONTENT ═══ */
 .main-content{
@@ -639,6 +669,36 @@ table.dt tr:hover td{background:#EEF6FF}
   color:rgba(220,240,255,.9);
 }
 .admin-only{display:none;}
+#loadingScreen{position:fixed;inset:0;z-index:99999;background:#0B3566;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
+.spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,.2);border-top-color:#63b3ed;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:14px;opacity:.8;margin-top:8px;}
+.loading-sub{font-size:11px;opacity:.5;margin-top:4px;}
+
+[data-theme="dark"]{
+  --bg:#1a1a2e;--bg2:#16213e;--surface:#0f3460;--border:#2d4a7a;--border2:#2d4a7a;
+  --text:#e0e0e0;--text2:#b0b8c8;--text3:#7a8a9a;--shadow:0 2px 8px rgba(0,0,0,.4);
+  --card-bg:#16213e;--topbar:#0f3460;
+}
+[data-theme="dark"] .card{background:#16213e;border-color:#2d4a7a;}
+[data-theme="dark"] .panel{background:#1a1a2e;}
+[data-theme="dark"] body{background:#1a1a2e;color:#e0e0e0;}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#16213e;color:#e0e0e0;border-color:#2d4a7a;}
+[data-theme="dark"] table{color:#e0e0e0;}
+[data-theme="dark"] th{background:#0f3460!important;color:#fff!important;}
+[data-theme="dark"] tr:nth-child(even){background:#1e2d4a;}
+[data-theme="dark"] .stat-card{background:#16213e;border-color:#2d4a7a;}
+[data-theme="dark"] .modal-confirm-box{background:#16213e;color:#e0e0e0;}
+[data-theme="dark"] .modal-confirm-title{color:#e0e0e0;}
+
+.modal-confirm{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;}
+.modal-confirm-box{background:#fff;border-radius:14px;padding:28px 32px;min-width:300px;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;}
+.modal-confirm-icon{font-size:36px;margin-bottom:8px;}
+.modal-confirm-title{font-size:16px;font-weight:700;color:#1a202c;margin-bottom:4px;}
+.modal-confirm-msg{font-size:12px;color:#718096;margin-bottom:18px;}
+.modal-confirm-btns{display:flex;gap:10px;justify-content:center;}
+.notif-badge{display:none;background:#e53e3e;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;align-items:center;justify-content:center;position:absolute;top:-4px;right:-4px;}
+
 .export-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
 .btn-export{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;}
 .btn-exp-pdf{background:#e53e3e;color:#fff;} .btn-exp-pdf:hover{background:#c53030;}
@@ -649,6 +709,14 @@ table.dt tr:hover td{background:#EEF6FF}
 <body>
 
 <!-- ══════════════════ LOGIN ══════════════════ -->
+
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <div style="font-size:22px;font-weight:700;letter-spacing:1px">TICOM-ESLOMIT</div>
+  <div class="loading-txt">Sistema de Inventario</div>
+  <div class="loading-sub" id="loadingMsg">Iniciando...</div>
+</div>
+
 <div id="loginScreen">
   <div class="login-wrap">
     <div class="login-emblem">
@@ -686,7 +754,14 @@ table.dt tr:hover td{background:#EEF6FF}
     <span class="net-badge net-on" id="netBadge"><span class="sdot son" id="ndot"></span><span id="nstat">En línea</span></span>
     <span class="fb-badge fb-off" id="fbBadge" onclick="showTab('backup',document.querySelector('[onclick*=backup]'))" title="Estado sincronización Firebase">☁️ <span id="fbStat">Sin Firebase</span></span>
     <span class="clock" id="clockVal"></span>
-    <span class="user-chip"><span class="role-dot" id="roleDot"></span><span id="userLabel">—</span></span>
+    <div style="position:relative">
+      <input id="globalSearch" type="text" placeholder="🔍 Buscar..." 
+        style="padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font-size:11px;width:160px;outline:none"
+        oninput="globalSearchFn(this.value)" onblur="setTimeout(function(){var r=document.getElementById('globalSearchResults');if(r)r.style.display='none'},300)">
+      <div id="globalSearchResults" style="display:none;position:absolute;top:34px;right:0;width:300px;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;max-height:300px;overflow-y:auto"></div>
+    </div>
+    <button id="btnDarkMode" onclick="toggleDarkMode()" title="Modo oscuro" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer">🌙</button>
+    <span class="user-chip" onclick="openPerfil()" title="Mi perfil" style="cursor:pointer"><span class="role-dot" id="roleDot"></span><span id="userLabel">—</span></span>
     <button class="btn-logout" onclick="doLogout()">SALIR</button>
   </div>
 </div>
@@ -695,7 +770,7 @@ table.dt tr:hover td{background:#EEF6FF}
   <button class="tab active" id="nav-dashboard" onclick="showTab('dashboard',this)"><span class="tab-icon">📊</span><span class="tab-txt">Inicio</span></button>
   <button class="tab" id="nav-personal" onclick="showTab('personal',this)"><span class="tab-icon">👥</span><span class="tab-txt">Personal</span></button>
   <button class="tab" id="nav-equipos" onclick="showTab('equipos',this)"><span class="tab-icon">📡</span><span class="tab-txt">Equipos</span></button>
-  <button class="tab" id="nav-ot" onclick="showTab('ot',this)"><span class="tab-icon">📋</span><span class="tab-txt">Órdenes de Trabajo</span></button>
+  <button class="tab" id="nav-ot" onclick="showTab('ot',this)"><span class="tab-icon">📋</span><span class="tab-txt">Órdenes de Trabajo</span><span id="otNotifBadge" style="display:none;background:#e53e3e;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;align-items:center;justify-content:center;margin-left:4px">0</span></button>
   <button class="tab" id="nav-docs" onclick="showTab('docs',this)"><span class="tab-icon">📄</span><span class="tab-txt">Documentos</span></button>
   <button class="tab admin-only" id="nav-usuarios" onclick="showTab('usuarios',this)"><span class="tab-icon">👤</span><span class="tab-txt">Usuarios</span></button>
   <button class="tab admin-only" id="nav-backup" onclick="showTab('backup',this)"><span class="tab-icon">💾</span><span class="tab-txt">Backup</span></button>
@@ -706,6 +781,9 @@ table.dt tr:hover td{background:#EEF6FF}
 
 <!-- ══ DASHBOARD ══ -->
 <div id="tab-dashboard" class="panel active">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+    <button class="btn-export btn-exp-pdf" onclick="reporteMensual()">📊 Informe Mensual PDF</button>
+  </div>
   <div class="stat-grid" id="dashStats"></div>
   <!-- Acceso rápido admin -->
   <div id="dashAdminAccess" style="display:none;gap:10px;margin-bottom:14px;padding:12px 16px;background:linear-gradient(135deg,#eff6ff,#fff);border:1.5px solid #bfdbfe;border-radius:12px;align-items:center;flex-wrap:wrap">
@@ -721,7 +799,7 @@ table.dt tr:hover td{background:#EEF6FF}
       ⭐ Ver Administradores
     </button>
   </div>
-  <div class="grid2">
+  <div class="grid2" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
     <div class="card">
       <div class="card-title"><span class="ct-icon">📋</span>Órdenes pendientes / alta prioridad</div>
       <div id="dashOTPend"></div>
@@ -762,6 +840,11 @@ table.dt tr:hover td{background:#EEF6FF}
         <button class="btn btn-success btn-sm" onclick="searchCity()">Buscar</button>
       </div>
     </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title"><span class="ct-icon">📡</span>Resumen de Equipos por Categoría</div>
+    <div id="dashEqResumen"></div>
   </div>
 </div>
 
@@ -1833,7 +1916,8 @@ function showTab(id,el){
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.modal-overlay').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});});});
+document.addEventListener('DOMContentLoaded',function(){
+  initTheme();document.querySelectorAll('.modal-overlay').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});});});
 
 function drawOTChart(estados){
   var canvas=document.getElementById('otChart');if(!canvas)return;
@@ -1859,33 +1943,116 @@ function drawOTChart(estados){
 }
 
 function renderDashboard(){
-  var nPer=DB.per.length,nOT=DB.ot.length;
-  var nPend=DB.ot.filter(function(o){return o.est==='pendiente'||o.est==='En proceso';}).length;
-  var nEq=CATS.reduce(function(s,k){return s+(DB[k]||[]).length;},0);
-  document.getElementById('dashStats').innerHTML=
-    statCard('&#128101;',nPer,'Personal')+statCard('&#128225;',nEq,'Equipos')+
-    statCard('&#128203;',nOT,'OTs Total')+statCard('&#9203;',nPend,'OTs Pendientes',nPend>0?'var(--red2)':'var(--green2)')+
-    statCard('&#128100;',DB._users.length,'Usuarios','','nav-usuarios');
-  // Acceso rápido admin
-  var accAdmin=document.getElementById('dashAdminAccess');
-  if(accAdmin) accAdmin.style.display=currentUser&&currentUser.rol==='admin'?'flex':'none';
-  var estados={completada:0,pendiente:0,'En proceso':0,Cancelado:0};
-  DB.ot.forEach(function(o){if(estados[o.est]!==undefined)estados[o.est]++;else estados.pendiente++;});
-  setTimeout(function(){drawOTChart(estados);},100);
-  checkResetPendientes();
-  var colors={completada:'#2E7D32',pendiente:'#E65100','En proceso':'#1565C0',Cancelado:'#9E9E9E'};
-  var labels={completada:'Completadas',pendiente:'Pendientes','En proceso':'En proceso',Cancelado:'Canceladas'};
-  var legEl=document.getElementById('otChartLegend');
-  if(legEl)legEl.innerHTML=Object.entries(estados).map(function(kv){return '<div style="display:flex;align-items:center;gap:8px"><span style="width:13px;height:13px;border-radius:3px;background:'+colors[kv[0]]+';display:inline-block;flex-shrink:0"></span><span style="font-weight:600">'+labels[kv[0]]+'</span><span style="margin-left:auto;font-weight:800;color:'+colors[kv[0]]+'">'+kv[1]+'</span></div>';}).join('');
-  var demoradas=DB.ot.filter(function(o){return o.vnc&&o.vnc<today&&o.est!=='completada'&&o.est!=='Cancelado';});
-  var demEl=document.getElementById('otDemoradas');
-  if(demEl)demEl.innerHTML=demoradas.length===0?'<span style="color:var(--green2);font-weight:600">Sin OTs demoradas</span>':demoradas.map(function(o){return '<div style="padding:3px 0;border-bottom:1px solid var(--border)"><strong>OT '+o.nro+'</strong> '+o.rub+' <span style="float:right">'+o.vnc+'</span></div>';}).join('');
+  // ── Contar equipos por categoría ──
+  var CATS_EQ = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','est','cam','ot_eq'];
+  var nEq = CATS_EQ.reduce(function(s,k){return s+(DB[k]||[]).length;},0);
+  var nPer = (DB.per||[]).length;
+  var nOT  = (DB.ot||[]).length;
+  var nPend = (DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    return est==='pendiente'||est==='Pendiente'||est==='En proceso';
+  }).length;
+  var nUsers = (DB._users||[]).length;
 
-  var pend=DB.ot.filter(function(o){return o.est==='pendiente'||o.est==='En proceso';}).slice(0,5);
-  var el=document.getElementById('dashOTPend');
-  if(!pend.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:10px 0">Sin ordenes pendientes.</div>';return;}
-  el.innerHTML=pend.map(function(o){var vc=o.vnc&&o.vnc<today?'color:var(--red2);font-weight:700':'';return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span class="pri-'+(o.pri||'normal')+'">'+( o.pri||'NORMAL').toUpperCase()+'</span><strong>OT '+o.nro+'</strong><span style="color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+( o.dsc||'').substring(0,50)+'</span><span style="'+vc+'">'+o.vnc+'</span></div>';}).join('');
+  // ── Stat cards ──
+  document.getElementById('dashStats').innerHTML =
+    statCard('👥', nPer,   'Personal',    '', 'nav-personal') +
+    statCard('📡', nEq,    'Equipos',     '', 'nav-equipos') +
+    statCard('📋', nOT,    'OTs Total',   '', 'nav-ot') +
+    statCard('⏳', nPend,  'OTs Pendientes', nPend>0?'var(--red2)':'var(--green2)', 'nav-ot') +
+    statCard('👤', nUsers, 'Usuarios',    '', 'nav-usuarios');
+
+  // ── Acceso rápido admin ──
+  var accAdmin = document.getElementById('dashAdminAccess');
+  if(accAdmin) accAdmin.style.display = currentUser&&currentUser.rol==='admin'?'flex':'none';
+
+  // ── Resumen de equipos por categoría ──
+  var catLabels = {radio:'Radio',antena:'Antena',fuente:'Fuente',portatil:'Portátil',
+    poc:'POC',pc:'PC',imp:'Impresora',mon:'Monitor',ups:'UPS',cam:'Cámara',ot_eq:'Otros'};
+  var catIcons  = {radio:'📻',antena:'📡',fuente:'🔌',portatil:'📻',poc:'📱',
+    pc:'💻',imp:'🖨️',mon:'🖥️',ups:'🔋',cam:'📷',ot_eq:'🔧'};
+  var eqResumen = CATS_EQ.map(function(c){
+    var n = (DB[c]||[]).length;
+    if(!n) return '';
+    var nOp = (DB[c]||[]).filter(function(e){return (e.estado||'').toLowerCase()==='operativo';}).length;
+    var nBaja = n - nOp;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">'+
+      '<span style="font-size:16px">'+(catIcons[c]||'📦')+'</span>'+
+      '<span style="flex:1;font-weight:600">'+(catLabels[c]||c.toUpperCase())+'</span>'+
+      '<span style="background:#e8f5e9;color:#2E7D32;border-radius:20px;padding:2px 10px;font-weight:700">'+nOp+' op.</span>'+
+      (nBaja>0?'<span style="background:#fdecea;color:#c62828;border-radius:20px;padding:2px 10px;font-weight:700">'+nBaja+' baja</span>':'')+
+      '</div>';
+  }).join('');
+
+  // ── OT pendientes ──
+  var pend = (DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    return est==='pendiente'||est==='Pendiente'||est==='En proceso';
+  }).slice(0,6);
+  var el = document.getElementById('dashOTPend');
+  if(el){
+    if(!pend.length){
+      el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:10px 0">Sin órdenes pendientes.</div>';
+    } else {
+      el.innerHTML = pend.map(function(o){
+        var est = o.estado||o.est||'pendiente';
+        var pri = (o.prioridad||o.pri||'normal').toLowerCase();
+        var venc = o.fechaLim||o.vnc||'';
+        var vencido = venc && venc < today;
+        var colPri = pri==='alta'||pri==='urgente'?'#e53e3e':pri==='media'?'#dd6b20':'#2b6cb0';
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">'+
+          '<span style="background:'+colPri+';color:#fff;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap">'+(pri||'normal')+'</span>'+
+          '<strong style="white-space:nowrap">OT '+(o.nro||o._id||'')+'</strong>'+
+          '<span style="color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(o.titulo||o.rub||o.dsc||'Sin título').substring(0,45)+'</span>'+
+          (venc?'<span style="'+(vencido?'color:var(--red2);font-weight:700':'color:var(--text3)')+'">'+venc+'</span>':'')+
+          '</div>';
+      }).join('');
+    }
+  }
+
+  // ── Gráfico OT ──
+  var estados = {completada:0, pendiente:0, 'En proceso':0, Cancelado:0};
+  (DB.ot||[]).forEach(function(o){
+    var est = o.estado||o.est||'pendiente';
+    if(est==='Completada'||est==='completada') estados.completada++;
+    else if(est==='En proceso') estados['En proceso']++;
+    else if(est==='Cancelado'||est==='Cancelada') estados.Cancelado++;
+    else estados.pendiente++;
+  });
+  setTimeout(function(){ drawOTChart(estados); }, 100);
+
+  // ── Leyenda gráfico ──
+  var colors = {completada:'#2E7D32', pendiente:'#E65100', 'En proceso':'#1565C0', Cancelado:'#9E9E9E'};
+  var labels = {completada:'Completadas', pendiente:'Pendientes', 'En proceso':'En proceso', Cancelado:'Canceladas'};
+  var legEl = document.getElementById('otChartLegend');
+  if(legEl) legEl.innerHTML = Object.entries(estados).map(function(kv){
+    return '<div style="display:flex;align-items:center;gap:8px">'+
+      '<span style="width:13px;height:13px;border-radius:3px;background:'+colors[kv[0]]+';display:inline-block;flex-shrink:0"></span>'+
+      '<span style="font-weight:600">'+labels[kv[0]]+'</span>'+
+      '<span style="margin-left:auto;font-weight:800;color:'+colors[kv[0]]+'">'+kv[1]+'</span></div>';
+  }).join('');
+
+  // ── OTs demoradas ──
+  var demoradas = (DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    var venc = o.fechaLim||o.vnc||'';
+    return venc && venc < today && est!=='completada' && est!=='Completada' && est!=='Cancelado';
+  });
+  var demEl = document.getElementById('otDemoradas');
+  if(demEl) demEl.innerHTML = demoradas.length===0
+    ? '<span style="color:var(--green2);font-weight:600">✅ Sin OTs demoradas</span>'
+    : demoradas.map(function(o){
+        return '<div style="padding:3px 0;border-bottom:1px solid var(--border);font-size:12px">'+
+          '<strong>OT '+(o.nro||o._id||'')+'</strong> '+(o.titulo||o.rub||'')+'<span style="float:right;color:var(--red2)">'+(o.fechaLim||o.vnc||'')+'</span></div>';
+      }).join('');
+
+  // ── Resumen equipos en dashboard ──
+  var eqResEl = document.getElementById('dashEqResumen');
+  if(eqResEl) eqResEl.innerHTML = eqResumen || '<div style="color:var(--text3);font-size:12px">Sin equipos registrados.</div>';
+
+  checkResetPendientes();
 }
+
 function statCard(icon,val,lbl,color,tabId){
   var click=tabId?'onclick="showTab(\''+tabId.replace('nav-','')+'\',document.getElementById(\''+tabId+'\'))" style="cursor:pointer"':'';
   return '<div class="stat-card" '+click+'><div class="stat-icon">'+icon+'</div><div><div class="stat-val"'+(color?' style="color:'+color+'"':'')+'>'+val+'</div><div class="stat-lbl">'+lbl+'</div></div></div>';
@@ -1942,8 +2109,11 @@ function renderEquipos(){
     var estCls=e.estado==='Operativo'?'b-green':e.estado==='En reparacion'?'b-amber':'b-red';
     var isA=currentUser&&currentUser.rol==='admin';
     var obs=e.obs||'', obsH=obs.length>35?'<span title="'+obs.replace(/"/g,'')+'" style="cursor:help">'+obs.substring(0,35)+'... <small style="color:var(--navy2)" onclick="alert(\''+obs.replace(/'/g,'')+'\')">[+]</small></span>':obs;
-    var btnE=isA?'<button class="btn btn-sm btn-primary" onclick="editEq(\''+e._cat+'\','+e._id+')">&#9999;</button>':'';
-    var btnD=isA?'<button class="btn btn-sm btn-danger" onclick="delEq(\''+e._cat+'\','+e._id+')">&#128465;</button>':'';
+    var btnE=isA?'<button class="btn btn-sm btn-primary" onclick="editEq(\''+e._cat+'\','+e._id+')">✏️</button>':'';
+    var btnD=isA?'<button class="btn btn-sm btn-danger" onclick="delEq(\''+e._cat+'\','+e._id+')">🗑️</button>':'';
+    var btnH='<button class="btn btn-sm" style="background:#6b46c1;color:#fff" title="Historial" onclick="verHistorialEq(\''+e._cat+'\','+e._id+')">📋</button>';
+    var btnFicha='<button class="btn btn-sm" style="background:#744210;color:#fff" title="Ficha A4" onclick="fichaEquipo(\''+e._cat+'\','+e._id+')">🖨️</button>';
+    var btnF='<button class="btn btn-sm" style="background:#2b6cb0;color:#fff" title="'+(e.adjunto?'Ver adjunto':'Adjuntar foto/doc')+'" onclick="'+(e.adjunto?'verAdjuntoEq':'adjuntarFotoEq')+'(\''+e._cat+'\','+e._id+')">📎'+(e.adjunto?'✓':'')+'</button>';
     var rowId='eq-'+e._cat+'-'+e._id;
     var tr=document.createElement('tr');
     tr.style.cursor='pointer';
@@ -1956,7 +2126,7 @@ function renderEquipos(){
       '<td style="white-space:nowrap">'+
         '<button class="btn btn-sm" style="background:#f0f4ff;color:var(--navy2);border-color:#c7d7f5" onclick="toggleEqDetail(&quot;'+rowId+'&quot;,event)">'+
           '<span id="arr-'+rowId+'">&#9660;</span> Ver'+
-        '</button> '+btnE+' '+btnD+
+        '</button> '+btnH+' '+btnF+(isA?' '+btnE+' '+btnD:'')+
       '</td>';
     tbody.appendChild(tr);
     // Fila detalle
@@ -1990,8 +2160,64 @@ function renderEquipos(){
   tbody.appendChild(trD);  });
 }
 function initEqForm(){document.getElementById('eqEditId').value='';document.getElementById('eqModalTitle').textContent='Nuevo Equipo';['eqTipo','eqMarca','eqModelo','eqSerie','eqCuenta','eqProv','eqTransf','eqInforme','eqObs'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('eqUbi').value='ESLOMIT';document.getElementById('eqAnio').value=new Date().getFullYear();document.getElementById('eqEstado').value='Operativo';document.getElementById('eqParque').value='NO';clearEqAdj();}
-function editEq(cat,id){var arr=DB[cat]||[];var e=arr.find(function(x){return x._id===id;});if(!e)return;document.getElementById('eqEditId').value=cat+'|'+id;document.getElementById('eqModalTitle').textContent='Editar - '+(e.marca||'')+' '+(e.modelo||'');document.getElementById('eqCat').value=cat;document.getElementById('eqTipo').value=e.tipo||'';document.getElementById('eqMarca').value=e.marca||'';document.getElementById('eqModelo').value=e.modelo||'';document.getElementById('eqSerie').value=e.serie||'';document.getElementById('eqCuenta').value=e.cuenta||'';document.getElementById('eqAnio').value=e.anio||'';document.getElementById('eqProv').value=e.prov||'';document.getElementById('eqTransf').value=e.transf||'';document.getElementById('eqInforme').value=e.informe||'';document.getElementById('eqEstado').value=e.estado||'Operativo';document.getElementById('eqUbi').value=e.ubi||'ESLOMIT';document.getElementById('eqParque').value=e.parque||'NO';document.getElementById('eqObs').value=e.obs||'';openModal('modalEq');}
-function saveEq(){var cat=document.getElementById('eqCat').value;if(!DB[cat])DB[cat]=[];var editRaw=document.getElementById('eqEditId').value,editCat=null,editId=null;if(editRaw&&editRaw.indexOf('|')>-1){editCat=editRaw.split('|')[0];editId=parseInt(editRaw.split('|')[1]);}var newId=editId!==null?editId:(DB[cat].length?Math.max.apply(null,DB[cat].map(function(x){return x._id||0;}))+1:1);var eq={_id:newId,tipo:document.getElementById('eqTipo').value,marca:document.getElementById('eqMarca').value,modelo:document.getElementById('eqModelo').value,serie:document.getElementById('eqSerie').value,cuenta:document.getElementById('eqCuenta').value,anio:document.getElementById('eqAnio').value,prov:document.getElementById('eqProv').value,transf:document.getElementById('eqTransf').value,informe:document.getElementById('eqInforme').value,parque:document.getElementById('eqParque').value,ubi:document.getElementById('eqUbi').value,estado:document.getElementById('eqEstado').value,obs:document.getElementById('eqObs').value,adjunto:eqAdjData?eqAdjData.name:''};if(editId!==null&&editCat){if(editCat!==cat){if(DB[editCat])DB[editCat]=DB[editCat].filter(function(x){return x._id!==editId;});DB[cat].push(eq);}else{var idx=DB[cat].findIndex(function(x){return x._id===editId;});if(idx>=0)DB[cat][idx]=eq;else DB[cat].push(eq);}}else DB[cat].push(eq);document.getElementById('eqEditId').value='';clearEqAdj();saveDB();closeModal('modalEq');renderEquipos();renderDashboard();}
+function editEq(cat,id){var arr=DB[cat]||[];var e=arr.find(function(x){return x._id===id;});if(!e)return;document.getElementById('eqEditId').value=cat+'|'+id;document.getElementById('eqModalTitle').textContent='Editar - '+(e.marca||'')+' '+(e.modelo||'');document.getElementById('eqCat').value=cat;document.getElementById('eqTipo').value=e.tipo||'';document.getElementById('eqMarca').value=e.marca||'';document.getElementById('eqModelo').value=e.modelo||'';document.getElementById('eqSerie').value=e.serie||'';document.getElementById('eqCuenta').value=e.cuenta||'';document.getElementById('eqAnio').value=e.anio||'';document.getElementById('eqProv').value=e.prov||'';document.getElementById('eqTransf').value=e.transf||'';document.getElementById('eqInforme').value=e.informe||'';document.getElementById('eqEstado').value=e.estado||'Operativo';document.getElementById('eqUbi').value=e.ubi||'ESLOMIT';document.getElementById('eqParque').value=e.parque||'NO';document.getElementById('eqObs').value=e.obs||'';
+  fillPersonalSelect('eqAsignado', e.asignado||'');
+  if(document.getElementById('eqGarantia')) document.getElementById('eqGarantia').value=e.garantia||'';
+  openModal('modalEq');}
+
+function saveEq(){
+  var cat=document.getElementById('eqCat').value;
+  var marca=document.getElementById('eqMarca').value.trim();
+  var modelo=document.getElementById('eqModelo').value.trim();
+  if(!cat){ alert('Seleccioná la categoría.'); return; }
+  if(!marca){ alert('Ingresá la marca.'); return; }
+  if(!modelo){ alert('Ingresá el modelo.'); return; }
+  if(!DB[cat]) DB[cat]=[];
+  var editRaw=document.getElementById('eqEditId').value,editCat=null,editId=null;
+  if(editRaw&&editRaw.indexOf('|')>-1){editCat=editRaw.split('|')[0];editId=parseInt(editRaw.split('|')[1]);}
+  var newId=editId!==null?editId:(DB[cat].length?Math.max.apply(null,DB[cat].map(function(x){return x._id||0;}))+1:1);
+  var eq={
+    _id:newId,
+    tipo:document.getElementById('eqTipo').value,
+    marca:marca,
+    modelo:modelo,
+    serie:document.getElementById('eqSerie').value,
+    cuenta:document.getElementById('eqCuenta')?document.getElementById('eqCuenta').value:'',
+    anio:document.getElementById('eqAnio').value,
+    estado:document.getElementById('eqEstado').value,
+    ubi:document.getElementById('eqUbi').value,
+    parque:document.getElementById('eqParque')?document.getElementById('eqParque').value:'NO',
+    informe:document.getElementById('eqInforme')?document.getElementById('eqInforme').value:'',
+    obs:document.getElementById('eqObs').value,
+    asignado:document.getElementById('eqAsignado')?document.getElementById('eqAsignado').value:'',
+    garantia:document.getElementById('eqGarantia')?document.getElementById('eqGarantia').value:'',
+    _cat:cat
+  };
+  // Preservar adjunto si existe
+  if(editCat&&editId!==null){
+    var existing=(DB[editCat]||[]).find(function(x){return x._id===editId;});
+    if(existing&&existing.adjunto){ eq.adjunto=existing.adjunto; eq.adjuntoNombre=existing.adjuntoNombre; }
+  }
+  if(editCat&&editId!==null){
+    if(editCat!==cat){
+      DB[editCat]=(DB[editCat]||[]).filter(function(x){return x._id!==editId;});
+      DB[cat].push(eq);
+    } else {
+      var idx2=DB[cat].findIndex(function(x){return x._id===editId;});
+      if(idx2>=0) DB[cat][idx2]=eq; else DB[cat].push(eq);
+    }
+    logEquipoAction('Editó', eq);
+  } else {
+    DB[cat].push(eq);
+    logEquipoAction('Registró nuevo equipo', eq);
+  }
+  saveDB();
+  closeModal('modalEq');
+  renderEquipos();
+  renderDashboard();
+  showFbToast('✅ Equipo guardado correctamente');
+}
+
 function delEq(cat,id){if(!confirm('Eliminar equipo?'))return;if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});saveDB();renderEquipos();renderDashboard();}
 function loadEqAdj(input){var file=input.files[0];if(!file)return;eqAdjData={name:file.name};document.getElementById('eqAdjLabel').textContent=file.name;document.getElementById('eqAdjFname').textContent=file.name;document.getElementById('eqAdjPreview').style.display='block';var url=URL.createObjectURL(file);if(file.type==='application/pdf'){document.getElementById('eqAdjFrame').src=url;document.getElementById('eqAdjFrame').style.display='block';document.getElementById('eqAdjImg').style.display='none';}else if(file.type.startsWith('image/')){document.getElementById('eqAdjImg').src=url;document.getElementById('eqAdjImg').style.display='block';document.getElementById('eqAdjFrame').style.display='none';}}
 function showObs(el){alert(el.closest('td').querySelector('[data-full]')?el.closest('td').querySelector('[data-full]').textContent:el.title||'Ver campo OBS del equipo.');}
@@ -2007,34 +2233,153 @@ function toggleEqDetail(rowId,e){
 function clearEqAdj(){eqAdjData=null;var el=document.getElementById('eqAdjLabel');if(el)el.textContent='Adjuntar archivo...';var prev=document.getElementById('eqAdjPreview');if(prev)prev.style.display='none';var inp=document.getElementById('eqAdjInput');if(inp)inp.value='';}
 
 function renderOTList(){
-  var filtro=(document.getElementById('otFiltro').value||'').toLowerCase(),estF=document.getElementById('otFiltroEst').value,priF=document.getElementById('otFiltroPri').value;
+  var filtro=(document.getElementById('otFiltro').value||'').toLowerCase();
+  var estF=document.getElementById('otFiltroEst').value;
+  var priF=document.getElementById('otFiltroPri').value;
   var isAdmin=currentUser&&currentUser.rol==='admin';
-  var data=DB.ot.filter(function(o){
+  var data=(DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    var pri = o.prioridad||o.pri||'normal';
+    var asg = o.responsable||o.asg||'';
     var matchFiltro=!filtro||JSON.stringify(o).toLowerCase().includes(filtro);
-    var matchEst=!estF||o.est===estF;
-    var matchPri=!priF||o.pri===priF;
-    // Usuario normal: solo ve OTs asignadas a él
-    var matchUser=isAdmin||(o.asg&&o.asg.toLowerCase().includes((currentUser.nombre||'').toLowerCase()))||
-                  (o.asg&&o.asg.includes(currentUser.dni));
+    var matchEst=!estF||est===estF;
+    var matchPri=!priF||pri===priF;
+    var matchUser=isAdmin||(asg.toLowerCase().includes((currentUser.nombre||'').toLowerCase()))||
+                  (asg.includes(currentUser.dni));
     return matchFiltro&&matchEst&&matchPri&&matchUser;
   });
-  // Banner informativo para usuarios normales
   var bannerEl=document.getElementById('otUserBanner');
   if(bannerEl) bannerEl.style.display=isAdmin?'none':'block';
-  var tbody=document.getElementById('bodyOTList');tbody.innerHTML='';
-  data.forEach(function(o){
-    var estCls=(o.est||'').replace(' ','-').toLowerCase();
-    var isA=currentUser&&currentUser.rol==='admin';
-    var acc=isA?'<button class="btn btn-sm btn-primary" onclick="openOTForm('+o._id+')">&#9999;</button> <button class="btn btn-sm btn-pdf" onclick="exportOTPDFById('+o._id+')">PDF</button> <button class="btn btn-sm btn-danger" onclick="delOT('+o._id+')">&#128465;</button>':'<button class="btn btn-sm btn-success" onclick="openOTResp('+o._id+')">&#9999; Responder</button> <button class="btn btn-sm btn-pdf" onclick="exportOTPDFById('+o._id+')">PDF</button>';
-    var vcls=o.vnc&&o.vnc<today&&o.est!=='completada'?'color:var(--red2);font-weight:700':'';
+  var tbody=document.getElementById('bodyOTList');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  if(!data.length){
     var tr=document.createElement('tr');
-    tr.innerHTML='<td style="font-weight:700">'+(o.nro||'')+'</td><td>'+(o.fch||'')+'</td><td style="'+vcls+'">'+(o.vnc||'')+'</td><td><span class="pri-'+(o.pri||'normal').toLowerCase()+'">'+(o.pri||'normal').toUpperCase()+'</span></td><td style="font-size:11px">'+(o.rub||'')+'</td><td style="font-size:11px">'+(o.asg||'-')+'</td><td style="font-size:11px">'+(o.aut||'-')+'</td><td><span class="est-'+estCls+'">'+(o.est||'')+'</span>'+(o.resp?' &#128488;':'')+'</td><td style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(o.dsc||'').substring(0,60)+'</td><td style="white-space:nowrap">'+acc+'</td>';
+    tr.innerHTML='<td colspan="10" style="text-align:center;color:var(--text3);padding:24px">Sin órdenes de trabajo registradas.</td>';
+    tbody.appendChild(tr); return;
+  }
+  data.forEach(function(o){
+    var est = o.estado||o.est||'pendiente';
+    var pri = (o.prioridad||o.pri||'normal').toLowerCase();
+    var asg = o.responsable||o.asg||'-';
+    var aut = o.autor||o.aut||'-';
+    var fch = o.fechaInicio||o.fch||o.fecha||'';
+    var vnc = o.fechaLim||o.vnc||'';
+    var dsc = o.descripcion||o.titulo||o.dsc||o.rub||'';
+    var nro = o.nro||o._id||'';
+    var vencido = vnc && vnc < today && est!=='completada' && est!=='Completada';
+    var estCls = est.replace(' ','-').toLowerCase();
+    var vcls = vencido?'color:var(--red2);font-weight:700':'';
+    var colPri = pri==='alta'||pri==='urgente'?'#e53e3e':pri==='media'?'#dd6b20':'#2b6cb0';
+    var acc = isAdmin
+      ? '<button class="btn btn-sm btn-primary" onclick="openOTForm('+o._id+')">✏️</button> '+
+        '<button class="btn btn-sm btn-pdf" onclick="exportOTPDFById('+o._id+')">PDF</button> '+
+        '<button class="btn btn-sm btn-danger" onclick="delOT('+o._id+')">🗑️</button>'
+      : '<button class="btn btn-sm btn-success" onclick="openOTResp('+o._id+')">✏️ Responder</button> '+
+        '<button class="btn btn-sm btn-pdf" onclick="exportOTPDFById('+o._id+')">PDF</button>';
+    var tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td style="font-weight:700">'+nro+'</td>'+
+      '<td>'+fch+'</td>'+
+      '<td style="'+vcls+'">'+vnc+(vencido?' ⚠️':'')+'</td>'+
+      '<td><span style="background:'+colPri+';color:#fff;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;text-transform:uppercase">'+pri+'</span></td>'+
+      '<td style="font-size:11px">'+dsc.substring(0,50)+'</td>'+
+      '<td style="font-size:11px">'+asg+'</td>'+
+      '<td style="font-size:11px">'+aut+'</td>'+
+      '<td><span class="est-'+estCls+'">'+est+'</span>'+(o.resp?' 💬':'')+'</td>'+
+      '<td style="white-space:nowrap">'+acc+'</td>';
     tbody.appendChild(tr);
   });
 }
-function openOTForm(id){otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otRespView').style.display='none';document.getElementById('otFormView').style.display='block';var t2=new Date().toISOString().split('T')[0];if(id===null){document.getElementById('otFormTitle').textContent='Nueva OT';var maxId=DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return x._id;}))+1:1;document.getElementById('otN').value='OT-2026-'+String(maxId).padStart(3,'0');document.getElementById('otF').value=t2;document.getElementById('otVnc').value=t2;document.getElementById('otPri').value='normal';document.getElementById('otAsg').value='';document.getElementById('otAut').value=currentUser?currentUser.nombre:'';document.getElementById('otUni').value='ESLOMIT';document.getElementById('otEst').value='pendiente';['otDesc','otEqp','otObs','otResp','otFirmaR'].forEach(function(x){document.getElementById(x).value='';});document.getElementById('otConf').value='';}else{var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;document.getElementById('otFormTitle').textContent='Editar OT N '+o.nro;document.getElementById('otN').value=o.nro;document.getElementById('otF').value=o.fch||t2;document.getElementById('otVnc').value=o.vnc||t2;document.getElementById('otPri').value=o.pri||'normal';document.getElementById('otAsg').value=o.asg||'';document.getElementById('otAut').value=o.aut||'';document.getElementById('otUni').value=o.uni||'ESLOMIT';document.getElementById('otEst').value=o.est||'pendiente';document.getElementById('otDesc').value=o.dsc||'';document.getElementById('otEqp').value=o.eqp||'';document.getElementById('otObs').value=o.obs||'';document.getElementById('otResp').value=o.resp||'';document.getElementById('otConf').value=o.conf||'';document.getElementById('otFirmaR').value=o.firma||'';var sel=document.getElementById('otRub');for(var i=0;i<sel.options.length;i++)if(sel.options[i].text===o.rub){sel.selectedIndex=i;break;}}}
+
+function openOTForm(id){
+  otEditId=id;
+  document.getElementById('otListView').style.display='none';
+  document.getElementById('otRespView').style.display='none';
+  document.getElementById('otFormView').style.display='block';
+  var hoy=new Date().toISOString().split('T')[0];
+  if(id===null){
+    document.getElementById('otFormTitle').textContent='Nueva Orden de Trabajo';
+    var maxNro=(DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return parseInt((x.nro||'0').replace(/[^0-9]/g,''))||0;})):0)+1;
+    document.getElementById('otN').value='OT-'+String(maxNro).padStart(2,'0');
+    document.getElementById('otF').value=hoy;
+    document.getElementById('otVnc').value='';
+    document.getElementById('otPri').value='normal';
+    document.getElementById('otRub').value='Comunicaciones HF/UHF';
+    document.getElementById('otAsg').value='';
+    document.getElementById('otAut').value=currentUser?currentUser.nombre:'';
+    document.getElementById('otUni').value='ESLOMIT';
+    document.getElementById('otEst').value='pendiente';
+    document.getElementById('otDesc').value='';
+    document.getElementById('otEqp').value='';
+    document.getElementById('otObs').value='';
+    document.getElementById('otResp').value='';
+    document.getElementById('otConf').value='';
+    document.getElementById('otFirmaR').value='';
+  } else {
+    var o=DB.ot.find(function(x){return x._id===id;});
+    if(!o) return;
+    document.getElementById('otFormTitle').textContent='Editar OT '+(o.nro||'');
+    document.getElementById('otN').value=o.nro||'';
+    document.getElementById('otF').value=o.fch||o.fecha||'';
+    document.getElementById('otVnc').value=o.vnc||o.fechaLim||'';
+    document.getElementById('otPri').value=o.pri||o.prioridad||'normal';
+    document.getElementById('otRub').value=o.rub||o.titulo||'';
+    document.getElementById('otAsg').value=o.asg||o.responsable||'';
+    document.getElementById('otAut').value=o.aut||o.autor||'';
+    document.getElementById('otUni').value=o.uni||'ESLOMIT';
+    document.getElementById('otEst').value=o.est||o.estado||'pendiente';
+    document.getElementById('otDesc').value=o.dsc||o.descripcion||'';
+    document.getElementById('otEqp').value=o.eqp||'';
+    document.getElementById('otObs').value=o.obs||'';
+    document.getElementById('otResp').value=o.resp||'';
+    document.getElementById('otConf').value=o.conf||'';
+    document.getElementById('otFirmaR').value=o.firma||'';
+  }
+  document.getElementById('ot-dlog').textContent='';
+}
+
 function openOTResp(id){var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='block';document.getElementById('otRespTitle').textContent='OT N '+o.nro+' - '+o.rub;['nro','fch','vnc','rub','pri','est','asg','aut','dsc','eqp','obs'].forEach(function(k){var el=document.getElementById('ro_'+k);if(el)el.textContent=o[k]||'-';});document.getElementById('respTexto').value=o.resp||'';document.getElementById('respInforme').value=o.informe||'';document.getElementById('respConf').value=o.conf||'';document.getElementById('respFirma').value=o.firma||currentUser.nombre;document.getElementById('respEst').value='';[0,1,2,3].forEach(function(i){clearFoto(i);});clearRespPDF();}
-function saveOT(){var o={nro:document.getElementById('otN').value,fch:document.getElementById('otF').value,vnc:document.getElementById('otVnc').value,pri:document.getElementById('otPri').value,rub:document.getElementById('otRub').value,asg:document.getElementById('otAsg').value,aut:document.getElementById('otAut').value,uni:document.getElementById('otUni').value,est:document.getElementById('otEst').value,dsc:document.getElementById('otDesc').value,eqp:document.getElementById('otEqp').value,obs:document.getElementById('otObs').value,resp:document.getElementById('otResp').value,conf:document.getElementById('otConf').value,firma:document.getElementById('otFirmaR').value};if(otEditId!==null){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx>=0)DB.ot[idx]=Object.assign({},DB.ot[idx],o);}else{o._id=DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return x._id;}))+1:1;DB.ot.push(o);}saveDB();document.getElementById('ot-dlog').textContent='OT guardada: '+o.nro;cancelOTForm();renderOTList();renderDashboard();}
+function saveOT(){
+  var nro = document.getElementById('otN').value.trim();
+  var fch = document.getElementById('otF').value;
+  var pri = document.getElementById('otPri').value;
+  if(!nro){ alert('Ingresá el número de OT.'); return; }
+  if(!fch){ alert('Seleccioná la fecha.'); return; }
+  var o={
+    nro:nro, fch:fch, fecha:fch,
+    vnc:document.getElementById('otVnc').value,
+    fechaLim:document.getElementById('otVnc').value,
+    pri:pri, prioridad:pri,
+    rub:document.getElementById('otRub').value,
+    titulo:document.getElementById('otRub').value,
+    asg:document.getElementById('otAsg').value,
+    responsable:document.getElementById('otAsg').value,
+    aut:document.getElementById('otAut').value,
+    autor:document.getElementById('otAut').value,
+    uni:document.getElementById('otUni').value,
+    est:document.getElementById('otEst').value,
+    estado:document.getElementById('otEst').value,
+    dsc:document.getElementById('otDesc').value,
+    descripcion:document.getElementById('otDesc').value,
+    eqp:document.getElementById('otEqp').value,
+    obs:document.getElementById('otObs').value,
+    resp:document.getElementById('otResp').value,
+    conf:document.getElementById('otConf').value,
+    firma:document.getElementById('otFirmaR').value
+  };
+  if(otEditId!==null){
+    var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});
+    if(idx>=0) DB.ot[idx]=Object.assign({},DB.ot[idx],o);
+  } else {
+    o._id=DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return x._id;}))+1:1;
+    DB.ot.push(o);
+    addLog('Creó OT '+nro+': '+o.titulo);
+  }
+  saveDB();
+  document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
+  cancelOTForm(); renderOTList(); renderDashboard();
+}
 function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();}
 function cancelOTForm(){document.getElementById('otListView').style.display='block';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='none';otEditId=null;}
 function delOT(id){if(!confirm('Eliminar OT?'))return;DB.ot=DB.ot.filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();}
@@ -2727,6 +3072,470 @@ function printTab(tipo){
   w.document.close();
 }
 
+
+// ══ NOTIFICACIONES OT VENCIDAS ══
+function checkOTVencidas(){
+  if(!currentUser) return;
+  var hoy = new Date().toISOString().split('T')[0];
+  var vencidas = (DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    var venc = o.fechaLim||o.vnc||'';
+    return venc && venc < hoy && est!=='completada' && est!=='Completada' && est!=='Cancelado';
+  });
+  var proximas = (DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    var venc = o.fechaLim||o.vnc||'';
+    if(!venc || est==='completada' || est==='Completada' || est==='Cancelado') return false;
+    var diff = (new Date(venc) - new Date(hoy)) / 86400000;
+    return diff >= 0 && diff <= 3;
+  });
+  var badge = document.getElementById('otNotifBadge');
+  var total = vencidas.length + proximas.length;
+  if(badge){ badge.style.display = total>0?'inline-flex':'none'; badge.textContent = total; }
+  if(vencidas.length > 0) showFbToast('⚠️ '+vencidas.length+' OT'+(vencidas.length>1?'s':'')+' vencida'+(vencidas.length>1?'s':''));
+  else if(proximas.length > 0) showFbToast('📅 '+proximas.length+' OT vence en 3 días o menos');
+}
+setInterval(checkOTVencidas, 3600000);
+
+// ══ MODAL CONFIRMACIÓN ══
+function confirmDialog(title, msg, icon, onConfirm){
+  var existing = document.getElementById('_confirmModal');
+  if(existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = '_confirmModal';
+  modal.className = 'modal-confirm';
+  var box = document.createElement('div');
+  box.className = 'modal-confirm-box';
+  box.innerHTML = '<div class="modal-confirm-icon">'+(icon||'⚠️')+'</div>'+
+    '<div class="modal-confirm-title">'+title+'</div>'+
+    '<div class="modal-confirm-msg">'+msg+'</div>';
+  var btns = document.createElement('div');
+  btns.className = 'modal-confirm-btns';
+  var btnCancel = document.createElement('button');
+  btnCancel.className = 'btn btn-sm';
+  btnCancel.style.cssText = 'background:#e2e8f0;color:#4a5568';
+  btnCancel.textContent = 'Cancelar';
+  btnCancel.onclick = function(){ modal.remove(); };
+  var btnOk = document.createElement('button');
+  btnOk.className = 'btn btn-sm';
+  btnOk.style.cssText = 'background:#e53e3e;color:#fff';
+  btnOk.textContent = 'Eliminar';
+  btnOk.onclick = function(){ modal.remove(); onConfirm(); };
+  btns.appendChild(btnCancel);
+  btns.appendChild(btnOk);
+  box.appendChild(btns);
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+}
+
+function delPer(id){
+  var p=(DB.per||[]).find(function(x){return x._id===id;});
+  confirmDialog('Eliminar Personal','¿Eliminar a '+(p?p.ape+' '+p.nom:'este registro')+'?','👤',function(){
+    DB.per=(DB.per||[]).filter(function(x){return x._id!==id;});
+    saveDB();renderPersonal();renderDashboard();
+  });
+}
+function delEq(cat,id){
+  var e=(DB[cat]||[]).find(function(x){return x._id===id;});
+  confirmDialog('Eliminar Equipo','¿Eliminar '+(e?e.marca+' '+e.modelo:'este equipo')+'?','📡',function(){
+    if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});
+    saveDB();renderEquipos();renderDashboard();
+  });
+}
+function delOT(id){
+  var o=(DB.ot||[]).find(function(x){return x._id===id;});
+  confirmDialog('Eliminar OT','¿Eliminar OT '+(o?o.nro||id:'')+'?','📋',function(){
+    DB.ot=(DB.ot||[]).filter(function(x){return x._id!==id;});
+    saveDB();renderOTList();renderDashboard();
+  });
+}
+function delUser(i){
+  var u=DB._users[i];
+  if(u&&u.rol==='admin'&&(DB._users||[]).filter(function(x){return x.rol==='admin';}).length<=1){
+    alert('No podés eliminar el único administrador.'); return;
+  }
+  confirmDialog('Eliminar Usuario','¿Eliminar a '+(u?u.nombre:'este usuario')+'?','👤',function(){
+    DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();
+  });
+}
+
+
+// ══ BUSCADOR GLOBAL ══
+function globalSearchFn(q){
+  var res = document.getElementById('globalSearchResults');
+  if(!q || q.length < 2){ res.style.display='none'; return; }
+  q = q.toLowerCase();
+  var results = [];
+  (DB.per||[]).forEach(function(p){
+    if((p.ape+' '+p.nom+' '+p.mi).toLowerCase().includes(q))
+      results.push({icon:'👤', txt:p.grd+' '+p.ape+' '+p.nom, sub:'Personal · MI: '+p.mi, tab:'personal'});
+  });
+  var CQ = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  CQ.forEach(function(c){
+    (DB[c]||[]).forEach(function(e){
+      if((e.marca+' '+e.modelo+' '+(e.serie||e.prov||'')).toLowerCase().includes(q))
+        results.push({icon:'📡', txt:e.marca+' '+e.modelo, sub:c.toUpperCase()+' · S/N: '+(e.serie||e.prov||''), tab:'equipos'});
+    });
+  });
+  (DB.ot||[]).forEach(function(o){
+    if(JSON.stringify(o).toLowerCase().includes(q))
+      results.push({icon:'📋', txt:'OT '+(o.nro||o._id)+': '+(o.titulo||o.dsc||'').substring(0,40), sub:'Estado: '+(o.estado||o.est||''), tab:'ot'});
+  });
+  if(!results.length){
+    res.innerHTML='<div style="padding:14px;color:#718096;font-size:12px;text-align:center">Sin resultados</div>';
+    res.style.display='block'; return;
+  }
+  var frag = document.createDocumentFragment();
+  results.slice(0,8).forEach(function(r){
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:12px';
+    div.innerHTML = '<span style="font-size:18px">'+r.icon+'</span><div><div style="font-weight:600;color:#1a202c">'+r.txt+'</div><div style="color:#718096;font-size:11px">'+r.sub+'</div></div>';
+    div.onmouseover = function(){ this.style.background='#f0f5ff'; };
+    div.onmouseout  = function(){ this.style.background=''; };
+    div.onclick = (function(tab){ return function(){
+      showTab(tab, document.getElementById('nav-'+tab));
+      document.getElementById('globalSearch').value='';
+      res.style.display='none';
+    }; })(r.tab);
+    frag.appendChild(div);
+  });
+  res.innerHTML='';
+  res.appendChild(frag);
+  res.style.display='block';
+}
+
+
+// ══ MODO OSCURO ══
+function toggleDarkMode(){
+  var isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark?'light':'dark');
+  document.getElementById('btnDarkMode').textContent = isDark?'🌙':'☀️';
+  try{ localStorage.setItem('ticom_theme', isDark?'light':'dark'); }catch(e){}
+}
+function initTheme(){
+  try{
+    var t = localStorage.getItem('ticom_theme')||'light';
+    document.documentElement.setAttribute('data-theme', t);
+    var btn = document.getElementById('btnDarkMode');
+    if(btn) btn.textContent = t==='dark'?'☀️':'🌙';
+  }catch(e){}
+}
+
+
+// ══ HISTORIAL POR EQUIPO ══
+function verHistorialEq(cat, id){
+  var eq = (DB[cat]||[]).find(function(x){return x._id===id;});
+  if(!eq) return;
+  var nombre = (eq.marca||'')+' '+(eq.modelo||'');
+  var serie = eq.serie||eq.prov||'S/N';
+  var logsEq = (DB.logs||[]).filter(function(l){
+    return l.detalle && (l.detalle.includes(serie) || l.detalle.includes(nombre.trim()));
+  });
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:14px;padding:24px;width:90%;max-width:560px;max-height:80vh;overflow-y:auto';
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px';
+  header.innerHTML = '<div><div style="font-weight:700;font-size:15px">Historial: '+nombre+'</div><div style="font-size:11px;color:#718096">Serie: '+serie+'</div></div>';
+  var btnClose = document.createElement('button');
+  btnClose.textContent = '✕ Cerrar';
+  btnClose.style.cssText = 'background:#e2e8f0;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600';
+  btnClose.onclick = function(){ overlay.remove(); };
+  header.appendChild(btnClose);
+  box.appendChild(header);
+  if(!logsEq.length){
+    var empty = document.createElement('div');
+    empty.style.cssText = 'color:#718096;text-align:center;padding:20px;font-size:13px';
+    empty.textContent = 'Sin registros de actividad para este equipo.';
+    box.appendChild(empty);
+  } else {
+    logsEq.slice().reverse().forEach(function(l){
+      var row = document.createElement('div');
+      row.style.cssText = 'padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:12px';
+      row.innerHTML = '<div style="display:flex;gap:8px"><span style="color:#718096">'+l.fecha+' '+l.hora+'</span><span style="font-weight:600">'+l.nombre+'</span></div><div style="color:#4a5568;margin-top:2px">'+l.detalle+'</div>';
+      box.appendChild(row);
+    });
+  }
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+function logEquipoAction(accion, eq){
+  if(!currentUser||!eq) return;
+  addLog(accion+': '+(eq.marca||'')+' '+(eq.modelo||'')+' (S/N: '+(eq.serie||eq.prov||'S/N')+')');
+}
+function addLog(detalle){
+  if(!currentUser) return;
+  var now = new Date();
+  if(!DB.logs) DB.logs=[];
+  DB.logs.push({_id:Date.now(),fecha:now.toLocaleDateString('es-AR'),hora:now.toTimeString().substring(0,5),nombre:currentUser.nombre||'',dni:currentUser.dni||'',accion:'Acción',detalle:detalle||''});
+  if(DB.logs.length>500) DB.logs=DB.logs.slice(-500);
+}
+
+// ══ FOTO/ADJUNTO EN EQUIPOS ══
+function adjuntarFotoEq(cat, id){
+  var input = document.createElement('input');
+  input.type='file'; input.accept='image/*,.pdf';
+  input.onchange = function(){
+    var file = input.files[0]; if(!file) return;
+    if(file.size>2*1024*1024){ alert('Máximo 2MB.'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var eq=(DB[cat]||[]).find(function(x){return x._id===id;});
+      if(!eq) return;
+      eq.adjunto=e.target.result; eq.adjuntoNombre=file.name;
+      logEquipoAction('Adjuntó archivo', eq);
+      saveDB(); renderEquipos();
+      showFbToast('📎 Archivo adjuntado');
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+function verAdjuntoEq(cat, id){
+  var eq=(DB[cat]||[]).find(function(x){return x._id===id;});
+  if(!eq||!eq.adjunto) return;
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:14px;padding:20px;max-width:90%;max-height:90vh;overflow:auto;text-align:center';
+  var hdr=document.createElement('div');
+  hdr.style.cssText='display:flex;justify-content:space-between;margin-bottom:12px';
+  hdr.innerHTML='<span style="font-weight:700">📎 '+(eq.adjuntoNombre||'Adjunto')+'</span>';
+  var btnC=document.createElement('button');
+  btnC.textContent='✕'; btnC.style.cssText='background:#e2e8f0;border:none;border-radius:6px;padding:4px 10px;cursor:pointer';
+  btnC.onclick=function(){overlay.remove();};
+  hdr.appendChild(btnC); box.appendChild(hdr);
+  if(eq.adjunto.startsWith('data:image')){
+    var img=document.createElement('img');
+    img.src=eq.adjunto; img.style.cssText='max-width:100%;border-radius:8px';
+    box.appendChild(img);
+  } else {
+    var a=document.createElement('a');
+    a.href=eq.adjunto; a.download=eq.adjuntoNombre||'adjunto.pdf';
+    a.textContent='⬇️ Descargar PDF'; box.appendChild(a);
+  }
+  overlay.appendChild(box); document.body.appendChild(overlay);
+}
+
+// ══ PERFIL DE USUARIO ══
+function openPerfil(){
+  if(!currentUser) return;
+  document.getElementById('perfilInfo').innerHTML =
+    '<strong>'+currentUser.nombre+'</strong><br>'+
+    'DNI: '+currentUser.dni+' · Rol: '+currentUser.rol.toUpperCase();
+  document.getElementById('perfilPassActual').value='';
+  document.getElementById('perfilPassNueva').value='';
+  document.getElementById('perfilPassConfirm').value='';
+  document.getElementById('perfilMsg').textContent='';
+  document.getElementById('modalPerfil').style.display='flex';
+}
+function guardarPerfil(){
+  var actual=document.getElementById('perfilPassActual').value;
+  var nueva=document.getElementById('perfilPassNueva').value;
+  var confirm2=document.getElementById('perfilPassConfirm').value;
+  var msg=document.getElementById('perfilMsg');
+  var u=DB._users.find(function(x){return x.dni===currentUser.dni;});
+  if(!u){ msg.style.color='red'; msg.textContent='Error: usuario no encontrado.'; return; }
+  if(u.pass!==actual){ msg.style.color='red'; msg.textContent='❌ Contraseña actual incorrecta.'; return; }
+  if(nueva.length<6){ msg.style.color='red'; msg.textContent='❌ La nueva contraseña debe tener al menos 6 caracteres.'; return; }
+  if(nueva!==confirm2){ msg.style.color='red'; msg.textContent='❌ Las contraseñas no coinciden.'; return; }
+  u.pass=nueva;
+  currentUser.pass=nueva;
+  addLog('Cambió su contraseña');
+  saveDB();
+  msg.style.color='green'; msg.textContent='✅ Contraseña actualizada correctamente.';
+  setTimeout(function(){ closeModal('modalPerfil'); }, 1500);
+}
+
+
+function fillPersonalSelect(selId, valorActual){
+  var sel = document.getElementById(selId);
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— Sin asignar —</option>';
+  (DB.per||[]).forEach(function(p){
+    var opt = document.createElement('option');
+    opt.value = p.mi||'';
+    opt.textContent = p.grd+' '+p.ape+' '+p.nom;
+    if(valorActual && (valorActual===p.mi||valorActual===(p.grd+' '+p.ape+' '+p.nom))) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+
+function checkGarantias(){
+  if(!currentUser) return;
+  var hoy = new Date().toISOString().split('T')[0];
+  var CATS_EQ2 = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var porVencer = [];
+  CATS_EQ2.forEach(function(c){
+    (DB[c]||[]).forEach(function(e){
+      if(!e.garantia) return;
+      var diff = (new Date(e.garantia) - new Date(hoy)) / 86400000;
+      if(diff >= 0 && diff <= 30){
+        porVencer.push((e.marca||'')+' '+( e.modelo||'')+' (vence: '+e.garantia+')');
+      }
+    });
+  });
+  if(porVencer.length > 0){
+    showFbToast('🔧 '+porVencer.length+' equipo'+(porVencer.length>1?'s':'')+' con garantía por vencer');
+  }
+}
+
+
+// ══ PANTALLA DE CARGA ══
+function hideLoadingScreen(){
+  var ls = document.getElementById('loadingScreen');
+  if(ls){ ls.style.opacity='0'; ls.style.transition='opacity 0.4s'; setTimeout(function(){ ls.style.display='none'; }, 400); }
+}
+function setLoadingMsg(msg){
+  var el = document.getElementById('loadingMsg');
+  if(el) el.textContent = msg;
+}
+// Ocultar loading al terminar de cargar
+window.addEventListener('load', function(){
+  setLoadingMsg('Conectando con Firebase...');
+  setTimeout(function(){
+    setLoadingMsg('Listo');
+    hideLoadingScreen();
+  }, 1800);
+});
+
+
+// ══ FICHA INDIVIDUAL DE EQUIPO (impresión A4) ══
+function fichaEquipo(cat, id){
+  var eq = (DB[cat]||[]).find(function(x){return x._id===id;});
+  if(!eq) return;
+  var catLabels = {radio:'Radio',antena:'Antena',fuente:'Fuente',portatil:'Portátil',poc:'POC',pc:'PC / Informática',imp:'Impresora',mon:'Monitor',ups:'UPS',cam:'Cámara',ot_eq:'Otro'};
+  var asigPer = '';
+  if(eq.asignado){
+    var p = (DB.per||[]).find(function(x){return x.mi===eq.asignado;});
+    asigPer = p ? p.grd+' '+p.ape+' '+p.nom : eq.asignado;
+  }
+  var fecha = new Date().toLocaleDateString('es-AR');
+  var ficha = '<!DOCTYPE html><html><head><title>Ficha Equipo</title>'+
+    '<style>body{font-family:Arial,sans-serif;margin:20mm;font-size:11pt}'+
+    'h1{font-size:14pt;margin:0}.header{background:#0B3566;color:#fff;padding:12px 16px;border-radius:6px;margin-bottom:16px}'+
+    '.sub{font-size:9pt;opacity:.8}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}'+
+    '.field{padding:8px;border:1px solid #ddd;border-radius:4px}.label{font-size:8pt;color:#666;font-weight:bold;text-transform:uppercase}'+
+    '.val{font-size:11pt;margin-top:2px}'+
+    '.obs{margin-top:12px;padding:10px;border:1px solid #ddd;border-radius:4px}'+
+    '.footer{margin-top:24px;font-size:8pt;color:#999;border-top:1px solid #eee;padding-top:8px}'+
+    '@media print{body{margin:10mm}}</style></head><body>'+
+    '<div class="header"><h1>🛡️ GENDARMERÍA NACIONAL ARGENTINA</h1>'+
+    '<div class="sub">Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · Ficha de Equipo</div></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center">'+
+    '<div><strong style="font-size:14pt">'+(eq.marca||'')+' '+(eq.modelo||'')+'</strong>'+
+    '<div style="color:#666;font-size:10pt">'+(catLabels[cat]||cat.toUpperCase())+' · '+(eq.tipo||'')+'</div></div>'+
+    '<div style="text-align:right;font-size:9pt;color:#666">Ficha generada: '+fecha+'<br>N° Serie: '+(eq.serie||eq.prov||'S/N')+'</div></div>'+
+    '<div class="grid">'+
+    '<div class="field"><div class="label">Estado</div><div class="val">'+(eq.estado||'—')+'</div></div>'+
+    '<div class="field"><div class="label">Ubicación</div><div class="val">'+(eq.ubi||'—')+'</div></div>'+
+    '<div class="field"><div class="label">N° Cuenta</div><div class="val">'+(eq.cuenta||'—')+'</div></div>'+
+    '<div class="field"><div class="label">Año</div><div class="val">'+(eq.anio||'—')+'</div></div>'+
+    '<div class="field"><div class="label">Procedencia</div><div class="val">'+(eq.prov||'—')+'</div></div>'+
+    '<div class="field"><div class="label">N° Informe</div><div class="val">'+(eq.informe||'—')+'</div></div>'+
+    '<div class="field"><div class="label">Asignado a</div><div class="val">'+(asigPer||'Sin asignar')+'</div></div>'+
+    '<div class="field"><div class="label">Garantía hasta</div><div class="val">'+(eq.garantia||'—')+'</div></div>'+
+    '</div>'+
+    '<div class="obs"><div class="label">Observaciones</div><div style="margin-top:4px">'+(eq.obs||'Sin observaciones.')+'</div></div>'+
+    '<div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:40px">'+
+    '<div style="border-top:1px solid #333;padding-top:4px;text-align:center;font-size:9pt">Conformidad Responsable</div>'+
+    '<div style="border-top:1px solid #333;padding-top:4px;text-align:center;font-size:9pt">Visto Bueno Jefe TIC</div></div>'+
+    '<div class="footer">Documento generado automáticamente por TICOM-ESLOMIT · '+fecha+'</div>'+
+    '<scr'+'ipt>window.onload=function(){window.print()}<'+'/script></body></html>';
+  var w = window.open('','_blank');
+  w.document.write(ficha);
+  w.document.close();
+}
+
+// ══ REPORTE MENSUAL PDF ══
+function reporteMensual(){
+  var {jsPDF} = window.jspdf;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var fecha = new Date();
+  var mesNombre = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][fecha.getMonth()];
+  var titulo = 'INFORME MENSUAL — '+mesNombre.toUpperCase()+' '+fecha.getFullYear();
+
+  // Header
+  doc.setFillColor(11,53,102);
+  doc.rect(0,0,210,24,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(13); doc.setFont('helvetica','bold');
+  doc.text('GENDARMERÍA NACIONAL ARGENTINA',105,9,{align:'center'});
+  doc.setFontSize(10);
+  doc.text(titulo,105,17,{align:'center'});
+
+  doc.setTextColor(80,80,80); doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text('Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · Generado: '+fecha.toLocaleDateString('es-AR'),105,28,{align:'center'});
+
+  var y = 35;
+
+  // Resumen general
+  var CATS_EQ3 = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var totalEq = CATS_EQ3.reduce(function(s,c){return s+(DB[c]||[]).length;},0);
+  var eqOp = CATS_EQ3.reduce(function(s,c){return s+(DB[c]||[]).filter(function(e){return (e.estado||'').toLowerCase()==='operativo';}).length;},0);
+  var otTotal=(DB.ot||[]).length, otPend=(DB.ot||[]).filter(function(o){var e=o.estado||o.est||'';return e==='pendiente'||e==='Pendiente';}).length;
+  var otComp=(DB.ot||[]).filter(function(o){var e=o.estado||o.est||'';return e==='completada'||e==='Completada';}).length;
+
+  doc.setFillColor(240,245,255); doc.rect(10,y,190,28,'F');
+  doc.setTextColor(11,53,102); doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.text('RESUMEN GENERAL',14,y+8);
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(50,50,50);
+  doc.text('Personal: '+(DB.per||[]).length,14,y+16);
+  doc.text('Equipos: '+totalEq+' ('+eqOp+' operativos)',70,y+16);
+  doc.text('OTs: '+otTotal+' total / '+otPend+' pend. / '+otComp+' comp.',14,y+23);
+  y+=34;
+
+  // OTs del mes
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(11,53,102);
+  doc.text('ÓRDENES DE TRABAJO',14,y); y+=5;
+  var otRows=(DB.ot||[]).map(function(o){
+    return [o.nro||'',o.titulo||o.rub||o.dsc||'',o.prioridad||o.pri||'',o.estado||o.est||'',o.responsable||o.asg||''];
+  });
+  doc.autoTable({head:[['N° OT','Título','Prioridad','Estado','Responsable']],body:otRows,startY:y,
+    styles:{fontSize:8},headStyles:{fillColor:[11,53,102],textColor:255},margin:{left:10,right:10}});
+  y=doc.lastAutoTable.finalY+8;
+
+  // Equipos por categoría
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(11,53,102);
+  doc.text('EQUIPOS POR CATEGORÍA',14,y); y+=5;
+  var catRows=CATS_EQ3.map(function(c){
+    var n=(DB[c]||[]).length;
+    var nOp=(DB[c]||[]).filter(function(e){return (e.estado||'').toLowerCase()==='operativo';}).length;
+    return [c.toUpperCase(),String(n),String(nOp),String(n-nOp)];
+  }).filter(function(r){return parseInt(r[1])>0;});
+  doc.autoTable({head:[['Categoría','Total','Operativos','Baja']],body:catRows,startY:y,
+    styles:{fontSize:8},headStyles:{fillColor:[11,53,102],textColor:255},margin:{left:10,right:10}});
+
+  // Footer
+  var pages=doc.getNumberOfPages();
+  for(var i=1;i<=pages;i++){
+    doc.setPage(i);
+    doc.setFontSize(7); doc.setTextColor(150,150,150);
+    doc.text('TICOM-ESLOMIT · Pág. '+i+'/'+pages,105,292,{align:'center'});
+  }
+  doc.save('TICOM_INFORME_'+mesNombre+'_'+fecha.getFullYear()+'.pdf');
+}
+
 </script>
+
+<!-- Modal Perfil Usuario -->
+<div id="modalPerfil" class="modal-overlay" style="display:none">
+  <div class="modal-box modal-sm">
+    <div class="modal-title">👤 Mi Perfil</div>
+    <div id="perfilInfo" style="margin-bottom:16px;padding:12px;background:#f0f5ff;border-radius:8px;font-size:13px"></div>
+    <label>Contraseña actual</label>
+    <input type="password" id="perfilPassActual" placeholder="Ingresá tu contraseña actual">
+    <label>Nueva contraseña</label>
+    <input type="password" id="perfilPassNueva" placeholder="Mínimo 6 caracteres">
+    <label>Confirmar nueva contraseña</label>
+    <input type="password" id="perfilPassConfirm" placeholder="Repetí la nueva contraseña">
+    <div id="perfilMsg" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+    <div class="act-row" style="margin-top:14px">
+      <button class="btn btn-success" onclick="guardarPerfil()">💾 Cambiar contraseña</button>
+      <button class="btn" onclick="closeModal('modalPerfil')">Cancelar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
