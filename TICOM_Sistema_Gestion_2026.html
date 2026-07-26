@@ -598,6 +598,77 @@ table.dt tr:hover td{background:#EEF6FF}
 .nav-label{flex:1;}
 .sidebar-footer{margin-top:auto;padding:14px 0 12px;}
 .admin-only{display:none;}
+/* ══ PANEL NOTIFICACIONES ══ */
+#notifPanel{position:fixed;top:64px;right:16px;width:360px;max-height:80vh;overflow-y:auto;z-index:9990;display:none;flex-direction:column;gap:0;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.22);background:#fff;}
+.notif-header{background:#0B3566;color:#fff;padding:12px 16px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px;}
+.notif-item{padding:12px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s;}
+.notif-item:hover{background:#f0f5ff;}
+.notif-item:last-child{border-bottom:none;border-radius:0 0 14px 14px;}
+.notif-badge{display:inline-flex;background:#e53e3e;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-left:4px;vertical-align:middle;}
+.notif-pri-urgente{border-left:4px solid #e53e3e;}
+.notif-pri-alta{border-left:4px solid #dd6b20;}
+.notif-pri-media{border-left:4px solid #d69e2e;}
+.notif-pri-normal{border-left:4px solid #3182ce;}
+.notif-empty{padding:20px;text-align:center;color:#a0aec0;font-size:13px;}
+#notifBtn{position:relative;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:16px;cursor:pointer;}
+#notifCount{position:absolute;top:-4px;right:-4px;background:#e53e3e;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
+
+/* ══ MODAL NOTIFICACIÓN AL LOGIN ══ */
+#loginNotifModal{position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;}
+.login-notif-box{background:#fff;border-radius:16px;width:90%;max-width:480px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.login-notif-header{background:#0B3566;color:#fff;padding:16px 20px;font-weight:700;font-size:15px;}
+.login-notif-body{overflow-y:auto;flex:1;padding:12px;}
+.login-notif-footer{padding:12px 16px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;gap:8px;}
+.ot-notif-card{border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .15s;}
+.ot-notif-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.ot-notif-card.pri-urgente{border-left:5px solid #e53e3e;background:#fff5f5;}
+.ot-notif-card.pri-alta{border-left:5px solid #dd6b20;background:#fffaf0;}
+.ot-notif-card.pri-media{border-left:5px solid #d69e2e;background:#fffff0;}
+.ot-notif-card.pri-normal{border-left:5px solid #3182ce;background:#ebf8ff;}
+
+@media(max-width:768px){
+  .topbar{flex-wrap:wrap;gap:6px;padding:8px 10px;}
+  .topbar-right{flex-wrap:wrap;gap:4px;}
+  .topbar-right input{width:120px!important;}
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;}
+  .tab{min-width:80px;padding:8px 6px;}
+  .tab-txt{font-size:10px;}
+  .grid2{grid-template-columns:1fr!important;}
+  .stat-grid{grid-template-columns:1fr 1fr!important;}
+  .card{padding:12px 10px;}
+  .modal-box{width:95vw!important;max-width:95vw!important;padding:16px 12px;}
+  .row{flex-direction:column;}
+  .col{width:100%!important;}
+  .filter-bar{flex-wrap:wrap;gap:6px;}
+  .export-bar{flex-wrap:wrap;gap:4px;}
+  #globalSearch{width:100px!important;}
+}
+@media(max-width:480px){
+  .stat-grid{grid-template-columns:1fr!important;}
+  .topbar-brand .tb-sub{display:none;}
+  .tab-txt{display:none;}
+  .tab-icon{font-size:18px;}
+}
+@media print{
+  .topbar,.tab-bar,.export-bar,.filter-bar,
+  .btn,.btn-export,.btn-logout,#btnDarkMode,
+  #globalSearch,#offlineBanner{display:none!important;}
+  .card{box-shadow:none;border:1px solid #ddd;}
+  body{font-size:11pt;}table{font-size:9pt;}
+}
+.bar-chart{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:11px;}
+.bar-label{width:80px;text-align:right;color:var(--text2);font-weight:600;flex-shrink:0;font-size:10px;}
+.bar-track{flex:1;background:#e2e8f0;border-radius:99px;height:16px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .4s;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;}
+.bar-val{font-size:10px;font-weight:700;color:#fff;}
+.modal-confirm{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;}
+.modal-confirm-box{background:#fff;border-radius:14px;padding:28px 32px;min-width:300px;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;}
+.modal-confirm-icon{font-size:36px;margin-bottom:8px;}
+.modal-confirm-title{font-size:16px;font-weight:700;color:#1a202c;margin-bottom:4px;}
+.modal-confirm-msg{font-size:12px;color:#718096;margin-bottom:18px;}
+.modal-confirm-btns{display:flex;gap:10px;justify-content:center;}
+
 #loadingScreen{position:fixed;inset:0;z-index:99999;background:#0B3566;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
 .spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,.2);border-top-color:#63b3ed;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -669,6 +740,77 @@ table.dt tr:hover td{background:#EEF6FF}
   color:rgba(220,240,255,.9);
 }
 .admin-only{display:none;}
+/* ══ PANEL NOTIFICACIONES ══ */
+#notifPanel{position:fixed;top:64px;right:16px;width:360px;max-height:80vh;overflow-y:auto;z-index:9990;display:none;flex-direction:column;gap:0;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.22);background:#fff;}
+.notif-header{background:#0B3566;color:#fff;padding:12px 16px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px;}
+.notif-item{padding:12px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s;}
+.notif-item:hover{background:#f0f5ff;}
+.notif-item:last-child{border-bottom:none;border-radius:0 0 14px 14px;}
+.notif-badge{display:inline-flex;background:#e53e3e;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-left:4px;vertical-align:middle;}
+.notif-pri-urgente{border-left:4px solid #e53e3e;}
+.notif-pri-alta{border-left:4px solid #dd6b20;}
+.notif-pri-media{border-left:4px solid #d69e2e;}
+.notif-pri-normal{border-left:4px solid #3182ce;}
+.notif-empty{padding:20px;text-align:center;color:#a0aec0;font-size:13px;}
+#notifBtn{position:relative;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:16px;cursor:pointer;}
+#notifCount{position:absolute;top:-4px;right:-4px;background:#e53e3e;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
+
+/* ══ MODAL NOTIFICACIÓN AL LOGIN ══ */
+#loginNotifModal{position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;}
+.login-notif-box{background:#fff;border-radius:16px;width:90%;max-width:480px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.login-notif-header{background:#0B3566;color:#fff;padding:16px 20px;font-weight:700;font-size:15px;}
+.login-notif-body{overflow-y:auto;flex:1;padding:12px;}
+.login-notif-footer{padding:12px 16px;border-top:1px solid #e2e8f0;display:flex;justify-content:flex-end;gap:8px;}
+.ot-notif-card{border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .15s;}
+.ot-notif-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.ot-notif-card.pri-urgente{border-left:5px solid #e53e3e;background:#fff5f5;}
+.ot-notif-card.pri-alta{border-left:5px solid #dd6b20;background:#fffaf0;}
+.ot-notif-card.pri-media{border-left:5px solid #d69e2e;background:#fffff0;}
+.ot-notif-card.pri-normal{border-left:5px solid #3182ce;background:#ebf8ff;}
+
+@media(max-width:768px){
+  .topbar{flex-wrap:wrap;gap:6px;padding:8px 10px;}
+  .topbar-right{flex-wrap:wrap;gap:4px;}
+  .topbar-right input{width:120px!important;}
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;}
+  .tab{min-width:80px;padding:8px 6px;}
+  .tab-txt{font-size:10px;}
+  .grid2{grid-template-columns:1fr!important;}
+  .stat-grid{grid-template-columns:1fr 1fr!important;}
+  .card{padding:12px 10px;}
+  .modal-box{width:95vw!important;max-width:95vw!important;padding:16px 12px;}
+  .row{flex-direction:column;}
+  .col{width:100%!important;}
+  .filter-bar{flex-wrap:wrap;gap:6px;}
+  .export-bar{flex-wrap:wrap;gap:4px;}
+  #globalSearch{width:100px!important;}
+}
+@media(max-width:480px){
+  .stat-grid{grid-template-columns:1fr!important;}
+  .topbar-brand .tb-sub{display:none;}
+  .tab-txt{display:none;}
+  .tab-icon{font-size:18px;}
+}
+@media print{
+  .topbar,.tab-bar,.export-bar,.filter-bar,
+  .btn,.btn-export,.btn-logout,#btnDarkMode,
+  #globalSearch,#offlineBanner{display:none!important;}
+  .card{box-shadow:none;border:1px solid #ddd;}
+  body{font-size:11pt;}table{font-size:9pt;}
+}
+.bar-chart{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:11px;}
+.bar-label{width:80px;text-align:right;color:var(--text2);font-weight:600;flex-shrink:0;font-size:10px;}
+.bar-track{flex:1;background:#e2e8f0;border-radius:99px;height:16px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .4s;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;}
+.bar-val{font-size:10px;font-weight:700;color:#fff;}
+.modal-confirm{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;}
+.modal-confirm-box{background:#fff;border-radius:14px;padding:28px 32px;min-width:300px;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;}
+.modal-confirm-icon{font-size:36px;margin-bottom:8px;}
+.modal-confirm-title{font-size:16px;font-weight:700;color:#1a202c;margin-bottom:4px;}
+.modal-confirm-msg{font-size:12px;color:#718096;margin-bottom:18px;}
+.modal-confirm-btns{display:flex;gap:10px;justify-content:center;}
+
 #loadingScreen{position:fixed;inset:0;z-index:99999;background:#0B3566;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;}
 .spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,.2);border-top-color:#63b3ed;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -761,6 +903,9 @@ table.dt tr:hover td{background:#EEF6FF}
         oninput="globalSearchFn(this.value)" onblur="setTimeout(function(){var r=document.getElementById('globalSearchResults');if(r)r.style.display='none'},300)">
       <div id="globalSearchResults" style="display:none;position:absolute;top:34px;right:0;width:300px;background:#fff;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9999;max-height:300px;overflow-y:auto"></div>
     </div>
+    <button id="notifBtn" onclick="toggleNotifPanel()" title="Notificaciones">
+      🔔<span id="notifCount">0</span>
+    </button>
     <button id="btnDarkMode" onclick="toggleDarkMode()" title="Modo oscuro" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer">🌙</button>
     <span class="user-chip" onclick="openPerfil()" title="Mi perfil" style="cursor:pointer"><span class="role-dot" id="roleDot"></span><span id="userLabel">—</span></span>
     <button class="btn-logout" onclick="doLogout()">SALIR</button>
@@ -1167,6 +1312,9 @@ table.dt tr:hover td{background:#EEF6FF}
       <option value="transferencia">Nota de Transferencia</option>
       <option value="memo">Memorándum</option>
       <option value="acta">🔐 Acta / VPN</option>
+      <option value="entrega">📦 Acta de Entrega de Equipo</option>
+      <option value="baja">❌ Acta de Baja de Equipo</option>
+      <option value="mantenimiento">🔧 Registro de Mantenimiento</option>
     </select>
   </div>
   <div id="df-recibo"><div class="grid2">
@@ -1361,6 +1509,81 @@ table.dt tr:hover td{background:#EEF6FF}
       </div>
     </div>
   </div>
+
+<div id="df-entrega" style="display:none">
+  <div class="card">
+    <div class="card-title"><span class="ct-icon">📦</span>Acta de Entrega de Equipo</div>
+    <div class="row">
+      <div class="col"><label>N° Acta</label><input id="entNro" placeholder="AE-001/2026"></div>
+      <div class="col"><label>Fecha</label><input type="date" id="entFecha"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Equipo</label><select id="entEqpSel" onchange="fillEntregaEqp(this.value)"><option value="">— Seleccionar —</option></select></div>
+      <div class="col"><label>Personal receptor</label><select id="entPerSel"><option value="">— Seleccionar —</option></select></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Marca / Modelo</label><input id="entMarca"></div>
+      <div class="col"><label>N° Serie</label><input id="entSerie"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Estado</label><select id="entEstado"><option>Operativo</option><option>En reparación</option><option>Para inspección</option></select></div>
+      <div class="col"><label>Ubicación destino</label><input id="entUbi"></div>
+    </div>
+    <label>Observaciones</label>
+    <textarea id="entObs" style="min-height:60px"></textarea>
+    <div class="act-row"><button class="btn btn-success" onclick="generarActaEntrega()">📄 Generar Acta PDF</button></div>
+  </div>
+</div>
+
+<div id="df-baja" style="display:none">
+  <div class="card">
+    <div class="card-title"><span class="ct-icon">❌</span>Acta de Baja de Equipo</div>
+    <div class="row">
+      <div class="col"><label>N° Acta</label><input id="bajaNro" placeholder="AB-001/2026"></div>
+      <div class="col"><label>Fecha</label><input type="date" id="bajaFecha"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Equipo</label><select id="bajaEqpSel" onchange="fillBajaEqp(this.value)"><option value="">— Seleccionar —</option></select></div>
+      <div class="col"><label>Motivo</label><select id="bajaMotivo"><option>Fin de vida útil</option><option>Daño irreparable</option><option>Obsolescencia</option><option>Robo / Extravío</option><option>Transferencia definitiva</option><option>Otro</option></select></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Marca / Modelo</label><input id="bajaMarca"></div>
+      <div class="col"><label>N° Serie</label><input id="bajaSerie"></div>
+    </div>
+    <label>Descripción detallada</label>
+    <textarea id="bajaDesc" style="min-height:80px"></textarea>
+    <div class="act-row">
+      <button class="btn btn-success" onclick="generarActaBaja()">📄 Generar Acta PDF</button>
+      <button class="btn btn-danger" onclick="darDeBajaEquipo()">❌ Marcar baja en inventario</button>
+    </div>
+  </div>
+</div>
+
+<div id="df-mantenimiento" style="display:none">
+  <div class="card">
+    <div class="card-title"><span class="ct-icon">🔧</span>Registro de Mantenimiento</div>
+    <div class="row">
+      <div class="col"><label>N° Registro</label><input id="mantNro" placeholder="MNT-001/2026"></div>
+      <div class="col"><label>Fecha</label><input type="date" id="mantFecha"></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Equipo</label><select id="mantEqpSel"><option value="">— Seleccionar —</option></select></div>
+      <div class="col"><label>Tipo</label><select id="mantTipo"><option>Preventivo</option><option>Correctivo</option><option>Predictivo</option><option>Emergencia</option></select></div>
+    </div>
+    <div class="row">
+      <div class="col"><label>Técnico responsable</label><select id="mantTecSel" onchange="document.getElementById('mantTec').value=this.options[this.selectedIndex].text"><option value="">— Seleccionar —</option></select><input id="mantTec" placeholder="O escribí manualmente" style="margin-top:4px"></div>
+      <div class="col"><label>Estado posterior</label><select id="mantEstPost"><option>Operativo</option><option>En reparación</option><option>Dado de baja</option></select></div>
+    </div>
+    <label>Trabajos realizados</label>
+    <textarea id="mantDesc" style="min-height:80px"></textarea>
+    <label>Observaciones</label>
+    <textarea id="mantObs" style="min-height:50px"></textarea>
+    <div class="act-row">
+      <button class="btn btn-success" onclick="generarRegMant()">📄 Generar PDF</button>
+      <button class="btn btn-primary" onclick="guardarMant()">💾 Guardar en historial</button>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -1571,6 +1794,15 @@ table.dt tr:hover td{background:#EEF6FF}
     <input id="pSis" placeholder="Ej: SAG, INSICOINFO, SIENA">
     <label>Observaciones</label><textarea id="pObs"></textarea>
     <input type="hidden" id="pEditId" value="">
+    <div class="row"><div class="col">
+      <label>Foto de perfil</label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <img id="perFotoPreview" src="" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--border);display:none">
+        <button type="button" class="btn btn-sm" style="background:#e2e8f0;color:#4a5568" onclick="subirFotoPer()">📷 Subir foto</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="quitarFotoPer()" id="btnQuitarFoto" style="display:none">✕</button>
+      </div>
+      <input type="hidden" id="perFotoData">
+    </div></div>
     <div class="act-row">
       <button class="btn btn-success" onclick="savePer()">💾 Guardar</button>
       <button class="btn" onclick="closeModal('modalPer')">Cancelar</button>
@@ -1892,6 +2124,12 @@ function initApp(){
   startClock(); checkNet(); renderDashboard(); renderPersonal(); renderEquipos();
   renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial();
   setTimeout(function(){tickPerms();autoWeather();},500);
+  setTimeout(function(){
+    checkOTVencidas();
+    checkGarantias();
+    buildNotificaciones();
+    mostrarLoginNotif();
+  }, 1500);
 }
 // ════ AUTO-LOGOUT POR INACTIVIDAD (1 minuto) ════
 var _inactTimer = null;
@@ -2391,7 +2629,14 @@ function saveOT(){
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
   cancelOTForm(); renderOTList(); renderDashboard();
 }
-function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();}
+function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();
+  // Notificar al admin
+  notificarRespuestaOT(DB.ot[idx]);
+  addLog('Respondió OT '+(DB.ot[idx].nro||otEditId));
+  saveDB();
+  buildNotificaciones();
+}
+
 function cancelOTForm(){document.getElementById('otListView').style.display='block';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='none';otEditId=null;}
 function delOT(id){if(!confirm('Eliminar OT?'))return;DB.ot=DB.ot.filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();}
 function exportOTPDFById(id){var o=DB.ot.find(function(x){return x._id===id;});if(o)makePDF(buildOTData(o));}
@@ -2897,7 +3142,7 @@ function renderHistorial(){
       '<div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-val">'+unicos+'</div><div class="stat-lbl">Usuarios únicos</div></div></div>';
   }
 }
-function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});}
+function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta','entrega','baja','mantenimiento'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});if(v==='entrega'||v==='baja'||v==='mantenimiento') initDocForms();}
 function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}
   else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}doc.adjunto=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
 function renderDocsGuardados(){var el=document.getElementById('docsGuardadosBody');if(!el)return;var docs=(DB.docs||[]).slice().reverse();if(!docs.length){el.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr>';return;}el.innerHTML=docs.map(function(d){return '<tr><td style="font-weight:600">'+(d.nro||'')+'</td><td><span class="badge b-blue">'+(d.tipo||'')+'</span></td><td>'+(d.titulo||'')+'</td><td style="font-size:11px">'+(d.fecha||'')+'</td><td style="font-size:11px">'+(d.autor||'')+'</td></tr>';}).join('');}
@@ -3685,6 +3930,517 @@ function drawEqChart(){
   }).join('');
 }
 
+
+// ══ CONFIRMACIÓN MODAL ══
+function confirmDialog(title,msg,icon,onConfirm){
+  var ex=document.getElementById('_confirmModal');if(ex)ex.remove();
+  var modal=document.createElement('div');modal.id='_confirmModal';modal.className='modal-confirm';
+  var box=document.createElement('div');box.className='modal-confirm-box';
+  box.innerHTML='<div class="modal-confirm-icon">'+(icon||'⚠️')+'</div><div class="modal-confirm-title">'+title+'</div><div class="modal-confirm-msg">'+msg+'</div>';
+  var btns=document.createElement('div');btns.className='modal-confirm-btns';
+  var bC=document.createElement('button');bC.className='btn btn-sm';bC.style.cssText='background:#e2e8f0;color:#4a5568';bC.textContent='Cancelar';bC.onclick=function(){modal.remove();};
+  var bO=document.createElement('button');bO.className='btn btn-sm';bO.style.cssText='background:#e53e3e;color:#fff';bO.textContent='Eliminar';bO.onclick=function(){modal.remove();onConfirm();};
+  btns.appendChild(bC);btns.appendChild(bO);box.appendChild(btns);modal.appendChild(box);document.body.appendChild(modal);
+}
+function delPer(id){var p=(DB.per||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Personal','¿Eliminar a '+(p?p.ape+' '+p.nom:'este registro')+'?','👤',function(){DB.per=(DB.per||[]).filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();});}
+function delEq(cat,id){var e=(DB[cat]||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Equipo','¿Eliminar '+(e?e.marca+' '+e.modelo:'este equipo')+'?','📡',function(){if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});saveDB();renderEquipos();renderDashboard();});}
+function delOT(id){var o=(DB.ot||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar OT','¿Eliminar OT '+(o?o.nro||id:'')+'?','📋',function(){DB.ot=(DB.ot||[]).filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();});}
+function delUser(i){var u=DB._users[i];if(u&&u.rol==='admin'&&(DB._users||[]).filter(function(x){return x.rol==='admin';}).length<=1){alert('No podés eliminar el único admin.');return;}confirmDialog('Eliminar Usuario','¿Eliminar a '+(u?u.nombre:'')+'?','👤',function(){DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();});}
+
+// ══ NOTIFICACIONES OT ══
+function checkOTVencidas(){
+  if(!currentUser)return;
+  var hoy=new Date().toISOString().split('T')[0];
+  var venc=(DB.ot||[]).filter(function(o){var est=o.estado||o.est||'';var v=o.fechaLim||o.vnc||'';return v&&v<hoy&&est!=='completada'&&est!=='Completada'&&est!=='Cancelado';});
+  var prox=(DB.ot||[]).filter(function(o){var est=o.estado||o.est||'';var v=o.fechaLim||o.vnc||'';if(!v||est==='completada'||est==='Completada'||est==='Cancelado')return false;return(new Date(v)-new Date(hoy))/86400000<=3&&(new Date(v)-new Date(hoy))/86400000>=0;});
+  var badge=document.getElementById('otNotifBadge');var total=venc.length+prox.length;
+  if(badge){badge.style.display=total>0?'inline-flex':'none';badge.textContent=total;}
+  if(venc.length>0)showFbToast('⚠️ '+venc.length+' OT vencida'+(venc.length>1?'s':''));
+  else if(prox.length>0)showFbToast('📅 '+prox.length+' OT vence en 3 días o menos');
+}
+setInterval(checkOTVencidas,3600000);
+
+// ══ GARANTÍAS ══
+function checkGarantias(){
+  if(!currentUser)return;
+  var hoy=new Date().toISOString().split('T')[0];
+  var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var pv=[];CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){if(!e.garantia)return;var diff=(new Date(e.garantia)-new Date(hoy))/86400000;if(diff>=0&&diff<=30)pv.push(e.marca+' '+e.modelo);});});
+  if(pv.length>0)showFbToast('🔧 '+pv.length+' equipo'+(pv.length>1?'s':'')+' con garantía por vencer');
+}
+
+// ══ BUSCADOR GLOBAL ══
+function globalSearchFn(q){
+  var res=document.getElementById('globalSearchResults');
+  if(!q||q.length<2){res.style.display='none';return;}
+  q=q.toLowerCase();var results=[];
+  (DB.per||[]).forEach(function(p){if((p.ape+' '+p.nom+' '+p.mi).toLowerCase().includes(q))results.push({icon:'👤',txt:p.grd+' '+p.ape+' '+p.nom,sub:'Personal · MI: '+p.mi,tab:'personal'});});
+  var CQ=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  CQ.forEach(function(c){(DB[c]||[]).forEach(function(e){if((e.marca+' '+e.modelo+' '+(e.serie||e.prov||'')).toLowerCase().includes(q))results.push({icon:'📡',txt:e.marca+' '+e.modelo,sub:c.toUpperCase()+' · S/N: '+(e.serie||e.prov||''),tab:'equipos'});});});
+  (DB.ot||[]).forEach(function(o){if(JSON.stringify(o).toLowerCase().includes(q))results.push({icon:'📋',txt:'OT '+(o.nro||o._id)+': '+(o.titulo||o.dsc||'').substring(0,40),sub:'Estado: '+(o.estado||o.est||''),tab:'ot'});});
+  if(!results.length){res.innerHTML='<div style="padding:14px;color:#718096;font-size:12px;text-align:center">Sin resultados</div>';res.style.display='block';return;}
+  var frag=document.createDocumentFragment();
+  results.slice(0,8).forEach(function(r){
+    var div=document.createElement('div');div.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:12px';
+    div.innerHTML='<span style="font-size:18px">'+r.icon+'</span><div><div style="font-weight:600;color:#1a202c">'+r.txt+'</div><div style="color:#718096;font-size:11px">'+r.sub+'</div></div>';
+    div.onmouseover=function(){this.style.background='#f0f5ff';};div.onmouseout=function(){this.style.background='';};
+    div.onclick=(function(tab){return function(){showTab(tab,document.getElementById('nav-'+tab));document.getElementById('globalSearch').value='';res.style.display='none';};})(r.tab);
+    frag.appendChild(div);
+  });
+  res.innerHTML='';res.appendChild(frag);res.style.display='block';
+}
+
+// ══ MODO OSCURO ══
+function toggleDarkMode(){var d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');document.getElementById('btnDarkMode').textContent=d?'🌙':'☀️';try{localStorage.setItem('ticom_theme',d?'light':'dark');}catch(e){}}
+function initTheme(){try{var t=localStorage.getItem('ticom_theme')||'light';document.documentElement.setAttribute('data-theme',t);var b=document.getElementById('btnDarkMode');if(b)b.textContent=t==='dark'?'☀️':'🌙';}catch(e){}}
+
+// ══ PERFIL USUARIO ══
+function openPerfil(){
+  if(!currentUser)return;
+  document.getElementById('perfilInfo').innerHTML='<strong>'+currentUser.nombre+'</strong><br>DNI: '+currentUser.dni+' · Rol: '+currentUser.rol.toUpperCase();
+  document.getElementById('perfilPassActual').value='';document.getElementById('perfilPassNueva').value='';document.getElementById('perfilPassConfirm').value='';document.getElementById('perfilMsg').textContent='';
+  document.getElementById('modalPerfil').style.display='flex';
+}
+function guardarPerfil(){
+  var actual=document.getElementById('perfilPassActual').value,nueva=document.getElementById('perfilPassNueva').value,conf=document.getElementById('perfilPassConfirm').value;
+  var msg=document.getElementById('perfilMsg');var u=DB._users.find(function(x){return x.dni===currentUser.dni;});
+  if(!u){msg.style.color='red';msg.textContent='Error.';return;}
+  if(u.pass!==actual){msg.style.color='red';msg.textContent='❌ Contraseña actual incorrecta.';return;}
+  if(nueva.length<6){msg.style.color='red';msg.textContent='❌ Mínimo 6 caracteres.';return;}
+  if(nueva!==conf){msg.style.color='red';msg.textContent='❌ No coinciden.';return;}
+  u.pass=nueva;currentUser.pass=nueva;saveDB();msg.style.color='green';msg.textContent='✅ Contraseña actualizada.';setTimeout(function(){closeModal('modalPerfil');},1500);
+}
+
+// ══ FOTO DE PERFIL PERSONAL ══
+function subirFotoPer(){
+  var input=document.createElement('input');input.type='file';input.accept='image/*';
+  input.onchange=function(){var file=input.files[0];if(!file)return;if(file.size>500*1024){alert('Máximo 500KB.');return;}
+    var reader=new FileReader();reader.onload=function(e){document.getElementById('perFotoData').value=e.target.result;var prev=document.getElementById('perFotoPreview');prev.src=e.target.result;prev.style.display='block';document.getElementById('btnQuitarFoto').style.display='inline-block';};reader.readAsDataURL(file);};input.click();
+}
+function quitarFotoPer(){document.getElementById('perFotoData').value='';var prev=document.getElementById('perFotoPreview');prev.src='';prev.style.display='none';document.getElementById('btnQuitarFoto').style.display='none';}
+
+// ══ SELECTOR EQUIPO EN OT ══
+function fillOTEqpSelect(){
+  var sel=document.getElementById('otEqpSel');if(!sel)return;
+  sel.innerHTML='<option value="">— Seleccionar del inventario —</option>';
+  var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){var opt=document.createElement('option');opt.value=c+'|'+e._id;opt.textContent=c.toUpperCase()+': '+e.marca+' '+e.modelo+' (S/N: '+(e.serie||e.prov||'—')+')';sel.appendChild(opt);});});
+}
+function otEqpSelChange(val){if(!val)return;var parts=val.split('|'),cat=parts[0],id=parseInt(parts[1]);var e=(DB[cat]||[]).find(function(x){return x._id===id;});if(!e)return;document.getElementById('otEqp').value=cat.toUpperCase()+': '+e.marca+' '+e.modelo+' — S/N: '+(e.serie||e.prov||'S/N');}
+function fillPersonalSelect(selId,val){var sel=document.getElementById(selId);if(!sel)return;sel.innerHTML='<option value="">— Sin asignar —</option>';(DB.per||[]).forEach(function(p){var opt=document.createElement('option');opt.value=p.mi||'';opt.textContent=p.grd+' '+p.ape+' '+p.nom;if(val&&val===p.mi)opt.selected=true;sel.appendChild(opt);});}
+
+// ══ QR POR EQUIPO ══
+function mostrarQREq(cat,id){
+  var eq=(DB[cat]||[]).find(function(x){return x._id===id;});if(!eq)return;
+  var nombre=(eq.marca||'')+' '+(eq.modelo||''),serie=eq.serie||eq.prov||'S/N';
+  var info='TICOM-ESLOMIT\nCat: '+cat.toUpperCase()+'\nEquipo: '+nombre+'\nSerie: '+serie+'\nEstado: '+(eq.estado||'')+'\nUbic: '+(eq.ubi||'');
+  var overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center';
+  var box=document.createElement('div');box.style.cssText='background:#fff;border-radius:16px;padding:28px 32px;text-align:center;min-width:280px';
+  var t=document.createElement('div');t.style.cssText='font-weight:700;font-size:14px;margin-bottom:4px';t.textContent=nombre;
+  var s=document.createElement('div');s.style.cssText='color:#718096;font-size:11px;margin-bottom:16px';s.textContent=cat.toUpperCase()+' · Serie: '+serie;
+  var qrDiv=document.createElement('div');qrDiv.style.cssText='margin:0 auto 16px;width:180px;height:180px';
+  var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:8px;justify-content:center';
+  var bC=document.createElement('button');bC.className='btn btn-sm';bC.style.cssText='background:#e2e8f0;color:#4a5568';bC.textContent='✕ Cerrar';bC.onclick=function(){overlay.remove();};
+  btnRow.appendChild(bC);box.appendChild(t);box.appendChild(s);box.appendChild(qrDiv);box.appendChild(btnRow);overlay.appendChild(box);document.body.appendChild(overlay);
+  setTimeout(function(){if(typeof QRCode!=='undefined')new QRCode(qrDiv,{text:info,width:180,height:180,colorDark:'#0B3566',colorLight:'#ffffff'});},100);
+}
+
+// ══ HISTORIAL POR EQUIPO ══
+function verHistorialEq(cat,id){
+  var eq=(DB[cat]||[]).find(function(x){return x._id===id;});if(!eq)return;
+  var nombre=(eq.marca||'')+' '+(eq.modelo||''),serie=eq.serie||eq.prov||'S/N';
+  var logsEq=(DB.logs||[]).filter(function(l){return l.detalle&&(l.detalle.includes(serie)||l.detalle.includes(nombre.trim()));});
+  var overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center';
+  var box=document.createElement('div');box.style.cssText='background:#fff;border-radius:14px;padding:24px;width:90%;max-width:560px;max-height:80vh;overflow-y:auto';
+  var hdr=document.createElement('div');hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:16px';
+  hdr.innerHTML='<div><div style="font-weight:700;font-size:15px">Historial: '+nombre+'</div><div style="font-size:11px;color:#718096">Serie: '+serie+'</div></div>';
+  var bC=document.createElement('button');bC.textContent='✕ Cerrar';bC.style.cssText='background:#e2e8f0;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600';bC.onclick=function(){overlay.remove();};
+  hdr.appendChild(bC);box.appendChild(hdr);
+  if(!logsEq.length){var em=document.createElement('div');em.style.cssText='color:#718096;text-align:center;padding:20px;font-size:13px';em.textContent='Sin registros para este equipo.';box.appendChild(em);}
+  else{logsEq.slice().reverse().forEach(function(l){var row=document.createElement('div');row.style.cssText='padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:12px';row.innerHTML='<div style="display:flex;gap:8px"><span style="color:#718096">'+l.fecha+' '+l.hora+'</span><span style="font-weight:600">'+l.nombre+'</span></div><div style="color:#4a5568;margin-top:2px">'+l.detalle+'</div>';box.appendChild(row);});}
+  overlay.appendChild(box);document.body.appendChild(overlay);
+}
+function addLog(detalle){if(!currentUser)return;var now=new Date();if(!DB.logs)DB.logs=[];DB.logs.push({_id:Date.now(),fecha:now.toLocaleDateString('es-AR'),hora:now.toTimeString().substring(0,5),nombre:currentUser.nombre||'',dni:currentUser.dni||'',accion:'Acción',detalle:detalle||''});if(DB.logs.length>500)DB.logs=DB.logs.slice(-500);}
+function logEquipoAction(accion,eq){if(!currentUser||!eq)return;addLog(accion+': '+(eq.marca||'')+' '+(eq.modelo||'')+' (S/N: '+(eq.serie||eq.prov||'S/N')+')');}
+
+// ══ FOTO/ADJUNTO EQUIPO ══
+function adjuntarFotoEq(cat,id){var input=document.createElement('input');input.type='file';input.accept='image/*,.pdf';input.onchange=function(){var file=input.files[0];if(!file)return;if(file.size>2*1024*1024){alert('Máximo 2MB.');return;}var reader=new FileReader();reader.onload=function(e){var eq=(DB[cat]||[]).find(function(x){return x._id===id;});if(!eq)return;eq.adjunto=e.target.result;eq.adjuntoNombre=file.name;logEquipoAction('Adjuntó archivo',eq);saveDB();renderEquipos();showFbToast('📎 Archivo adjuntado');};reader.readAsDataURL(file);};input.click();}
+function verAdjuntoEq(cat,id){var eq=(DB[cat]||[]).find(function(x){return x._id===id;});if(!eq||!eq.adjunto)return;var overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center';var box=document.createElement('div');box.style.cssText='background:#fff;border-radius:14px;padding:20px;max-width:90%;max-height:90vh;overflow:auto;text-align:center';var hdr=document.createElement('div');hdr.style.cssText='display:flex;justify-content:space-between;margin-bottom:12px';hdr.innerHTML='<span style="font-weight:700">📎 '+(eq.adjuntoNombre||'Adjunto')+'</span>';var bC=document.createElement('button');bC.textContent='✕';bC.style.cssText='background:#e2e8f0;border:none;border-radius:6px;padding:4px 10px;cursor:pointer';bC.onclick=function(){overlay.remove();};hdr.appendChild(bC);box.appendChild(hdr);if(eq.adjunto.startsWith('data:image')){var img=document.createElement('img');img.src=eq.adjunto;img.style.cssText='max-width:100%;border-radius:8px';box.appendChild(img);}else{var a=document.createElement('a');a.href=eq.adjunto;a.download=eq.adjuntoNombre||'adjunto.pdf';a.textContent='⬇️ Descargar PDF';box.appendChild(a);}overlay.appendChild(box);document.body.appendChild(overlay);}
+
+// ══ FICHA A4 EQUIPO ══
+function fichaEquipo(cat,id){
+  var eq=(DB[cat]||[]).find(function(x){return x._id===id;});if(!eq)return;
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var fecha=new Date().toLocaleDateString('es-AR');var nombre=(eq.marca||'')+' '+(eq.modelo||'');
+  var catL={radio:'Radio',antena:'Antena',fuente:'Fuente',portatil:'Portátil',poc:'POC',pc:'PC',imp:'Impresora',mon:'Monitor',ups:'UPS',ot_eq:'Otro'};
+  doc.setFillColor(11,53,102);doc.rect(0,0,210,28,'F');doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('GENDARMERÍA NACIONAL ARGENTINA',105,10,{align:'center'});doc.setFontSize(10);doc.text('Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · Ficha de Equipo',105,18,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Generado: '+fecha,105,25,{align:'center'});
+  var y=36;doc.setTextColor(11,53,102);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(nombre,105,y,{align:'center'});y+=7;doc.setFontSize(10);doc.setTextColor(80,80,80);doc.setFont('helvetica','normal');doc.text((catL[cat]||cat.toUpperCase())+' · '+(eq.tipo||''),105,y,{align:'center'});y+=8;
+  doc.setDrawColor(11,53,102);doc.setLineWidth(0.5);doc.line(14,y,196,y);y+=8;
+  var campos=[['Estado',eq.estado||'—'],['Ubicación',eq.ubi||'—'],['N° Cuenta',eq.cuenta||'—'],['Año',eq.anio||'—'],['N° Serie',eq.serie||eq.prov||'S/N'],['N° Informe',eq.informe||'—'],['Garantía hasta',eq.garantia||'—'],['Parque',eq.parque||'—']];
+  doc.setFontSize(9);campos.forEach(function(c,i){var col=i%2===0?14:110;if(i%2===0&&i>0)y+=10;doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text(c[0]+':',col,y);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(c[1],col+36,y);});y+=16;
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(11,53,102);doc.text('Observaciones:',14,y);y+=6;doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(eq.obs||'Sin observaciones.',14,y,{maxWidth:182});y+=20;
+  doc.setDrawColor(80);doc.setLineWidth(0.3);doc.line(14,y,90,y);doc.line(120,y,196,y);doc.setFontSize(8);doc.setTextColor(80);doc.text('Conformidad Responsable',52,y+5,{align:'center'});doc.text('Visto Bueno Jefe TIC',158,y+5,{align:'center'});
+  doc.setFontSize(7);doc.setTextColor(150);doc.text('TICOM-ESLOMIT · '+fecha,105,289,{align:'center'});
+  doc.save('TICOM_FICHA_EQ_'+nombre.replace(/ /g,'_')+'_'+fecha.replace(/\//g,'-')+'.pdf');
+}
+
+// ══ FICHA A4 PERSONAL ══
+function fichaPer(id){
+  var p=(DB.per||[]).find(function(x){return x._id===id;});if(!p)return;
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});var fecha=new Date().toLocaleDateString('es-AR');
+  doc.setFillColor(11,53,102);doc.rect(0,0,210,28,'F');doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('GENDARMERÍA NACIONAL ARGENTINA',105,10,{align:'center'});doc.setFontSize(10);doc.text('Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · Ficha de Personal',105,18,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Generado: '+fecha,105,25,{align:'center'});
+  var y=36;doc.setTextColor(11,53,102);doc.setFontSize(13);doc.setFont('helvetica','bold');doc.text((p.grd||'')+' '+(p.ape||'')+' '+(p.nom||''),105,y,{align:'center'});y+=7;doc.setFontSize(10);doc.setTextColor(80,80,80);doc.setFont('helvetica','normal');doc.text('Especialidad: '+(p.esp||'—')+' · Unidad: '+(p.uni||'—'),105,y,{align:'center'});y+=8;
+  doc.setDrawColor(11,53,102);doc.setLineWidth(0.5);doc.line(14,y,196,y);y+=8;
+  var campos=[['MI (DNI)',p.mi||'—'],['CE (Legajo)',p.ce||'—'],['Estado Civil',p.eciv||'—'],['Email Personal',p.email||'—'],['Email Institucional',p.emailInst||'—'],['Motivo/Pase',p.mtoPase||'—'],['Fecha Pase',p.fp||'—'],['Meses en destino',p.meses?String(p.meses):'—']];
+  doc.setFontSize(9);campos.forEach(function(c,i){var col=i%2===0?14:110;if(i%2===0&&i>0)y+=10;doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text(c[0]+':',col,y);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(c[1],col+42,y);});y+=16;
+  doc.setDrawColor(80);doc.setLineWidth(0.3);doc.line(14,y,90,y);doc.line(120,y,196,y);doc.setFontSize(8);doc.setTextColor(80);doc.text('Firma',52,y+5,{align:'center'});doc.text('Visto Bueno',158,y+5,{align:'center'});
+  doc.setFontSize(7);doc.setTextColor(150);doc.text('TICOM-ESLOMIT · '+fecha,105,289,{align:'center'});
+  doc.save('TICOM_PERSONAL_'+(p.ape||'').replace(/ /g,'_')+'_'+fecha.replace(/\//g,'-')+'.pdf');
+}
+
+// ══ INFORME MENSUAL ══
+function reporteMensual(){
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var fecha=new Date();var mes=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][fecha.getMonth()];
+  doc.setFillColor(11,53,102);doc.rect(0,0,210,28,'F');doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');doc.text('GENDARMERÍA NACIONAL ARGENTINA',105,10,{align:'center'});doc.setFontSize(10);doc.text('INFORME MENSUAL — '+mes.toUpperCase()+' '+fecha.getFullYear(),105,18,{align:'center'});doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · '+fecha.toLocaleDateString('es-AR'),105,25,{align:'center'});
+  var y=34;var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var totalEq=CATS.reduce(function(s,c){return s+(DB[c]||[]).length;},0);var eqOp=CATS.reduce(function(s,c){return s+(DB[c]||[]).filter(function(e){return(e.estado||'').toLowerCase()==='operativo';}).length;},0);
+  var otT=(DB.ot||[]).length,otP=(DB.ot||[]).filter(function(o){var e=o.estado||o.est||'';return e==='pendiente'||e==='Pendiente';}).length,otC=(DB.ot||[]).filter(function(o){var e=o.estado||o.est||'';return e==='completada'||e==='Completada';}).length;
+  doc.setFillColor(240,245,255);doc.rect(10,y,190,26,'F');doc.setTextColor(11,53,102);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text('RESUMEN GENERAL',14,y+8);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text('Personal: '+(DB.per||[]).length,14,y+16);doc.text('Equipos: '+totalEq+' ('+eqOp+' operativos)',70,y+16);doc.text('OTs: '+otT+' / '+otP+' pend. / '+otC+' comp.',14,y+22);y+=32;
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('ÓRDENES DE TRABAJO',14,y);y+=4;
+  var otRows=(DB.ot||[]).map(function(o){return[o.nro||'',o.titulo||o.rub||o.dsc||'',o.prioridad||o.pri||'',o.estado||o.est||'',o.responsable||o.asg||''];});
+  doc.autoTable({head:[['N° OT','Título','Prioridad','Estado','Responsable']],body:otRows,startY:y,styles:{fontSize:8},headStyles:{fillColor:[11,53,102],textColor:255},margin:{left:10,right:10}});y=doc.lastAutoTable.finalY+8;
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('EQUIPOS POR CATEGORÍA',14,y);y+=4;
+  var catRows=CATS.map(function(c){var n=(DB[c]||[]).length;var nOp=(DB[c]||[]).filter(function(e){return(e.estado||'').toLowerCase()==='operativo';}).length;return[c.toUpperCase(),String(n),String(nOp),String(n-nOp)];}).filter(function(r){return parseInt(r[1])>0;});
+  doc.autoTable({head:[['Categoría','Total','Operativos','Baja']],body:catRows,startY:y,styles:{fontSize:8},headStyles:{fillColor:[11,53,102],textColor:255},margin:{left:10,right:10}});
+  var pages=doc.getNumberOfPages();for(var i=1;i<=pages;i++){doc.setPage(i);doc.setFontSize(7);doc.setTextColor(150);doc.text('TICOM-ESLOMIT · Pág. '+i+'/'+pages,105,292,{align:'center'});}
+  doc.save('TICOM_INFORME_'+mes+'_'+fecha.getFullYear()+'.pdf');
+}
+
+// ══ GRÁFICO BARRAS ══
+function drawBarChart(){
+  var el=document.getElementById('barChart');if(!el)return;
+  var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var catL={radio:'Radio',antena:'Antena',fuente:'Fuente',portatil:'Portátil',poc:'POC',pc:'PC',imp:'Impresora',mon:'Monitor',ups:'UPS',ot_eq:'Otros'};
+  var data=CATS.map(function(c){return{cat:c,label:catL[c]||c,n:(DB[c]||[]).length};}).filter(function(d){return d.n>0;});
+  if(!data.length){el.innerHTML='<div style="color:var(--text3);font-size:12px">Sin equipos</div>';return;}
+  var max=Math.max.apply(null,data.map(function(d){return d.n;}));
+  var colors=['#0B3566','#1565C0','#1976D2','#1E88E5','#2196F3','#42A5F5','#64B5F6','#90CAF9','#BBDEFB','#E3F2FD'];
+  el.innerHTML='<div class="bar-chart">'+data.map(function(d,i){var pct=Math.round(d.n/max*100);return'<div class="bar-row"><span class="bar-label">'+d.label+'</span><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+colors[i%colors.length]+'"><span class="bar-val">'+d.n+'</span></div></div></div>';}).join('')+'</div>';
+}
+
+// ══ DOCUMENTOS: ACTA ENTREGA / BAJA / MANTENIMIENTO ══
+function initDocForms(){
+  var hoy=new Date().toISOString().split('T')[0];
+  ['entFecha','bajaFecha','mantFecha'].forEach(function(id){var el=document.getElementById(id);if(el)el.value=hoy;});
+  var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  ['entEqpSel','bajaEqpSel','mantEqpSel'].forEach(function(selId){
+    var sel=document.getElementById(selId);if(!sel)return;
+    sel.innerHTML='<option value="">— Seleccionar equipo —</option>';
+    CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){var opt=document.createElement('option');opt.value=c+'|'+e._id;opt.textContent=c.toUpperCase()+': '+e.marca+' '+e.modelo+' (S/N: '+(e.serie||e.prov||'—')+')';sel.appendChild(opt);});});
+  });
+  fillPersonalSelect('entPerSel','');fillPersonalSelect('mantTecSel','');
+}
+function getEqFromSel(val){if(!val||!val.includes('|'))return null;var p=val.split('|'),cat=p[0],id=parseInt(p[1]);return(DB[cat]||[]).find(function(x){return x._id===id;});}
+function fillEntregaEqp(val){var e=getEqFromSel(val);if(!e)return;document.getElementById('entMarca').value=(e.marca||'')+' '+(e.modelo||'');document.getElementById('entSerie').value=e.serie||e.prov||'';}
+function fillBajaEqp(val){var e=getEqFromSel(val);if(!e)return;document.getElementById('bajaMarca').value=(e.marca||'')+' '+(e.modelo||'');document.getElementById('bajaSerie').value=e.serie||e.prov||'';}
+function getPdfHeader(doc,titulo){doc.setFillColor(11,53,102);doc.rect(0,0,210,28,'F');doc.setTextColor(255,255,255);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text('GENDARMERÍA NACIONAL ARGENTINA',105,10,{align:'center'});doc.setFontSize(10);doc.text('Escuadrón 18 "Lomitas" · TICOM-ESLOMIT',105,18,{align:'center'});doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text(titulo,105,25,{align:'center'});}
+function firmasBlock(doc,y){doc.setDrawColor(80);doc.setLineWidth(0.3);doc.line(14,y,90,y);doc.line(120,y,196,y);doc.setFontSize(8);doc.setTextColor(80);doc.text('Firma Entregante',52,y+5,{align:'center'});doc.text('Firma Receptor',158,y+5,{align:'center'});doc.line(14,y+18,90,y+18);doc.line(120,y+18,196,y+18);doc.text('Aclaración',52,y+23,{align:'center'});doc.text('Aclaración',158,y+23,{align:'center'});doc.setFontSize(7);doc.setTextColor(150);doc.text('Visto Bueno Jefe TIC: ___________________________ Fecha: ___________',105,y+35,{align:'center'});}
+function generarActaEntrega(){
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var nro=document.getElementById('entNro').value||'AE-001/2026';var fecha=document.getElementById('entFecha').value||new Date().toLocaleDateString('es-AR');
+  var e=getEqFromSel(document.getElementById('entEqpSel').value);var perMI=document.getElementById('entPerSel').value;var p=(DB.per||[]).find(function(x){return x.mi===perMI;});
+  getPdfHeader(doc,'ACTA DE ENTREGA DE EQUIPO N° '+nro);var y=36;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text('En Las Lomitas, Formosa, a '+fecha+', se procede a entregar el siguiente equipo:',14,y,{maxWidth:182});y+=12;
+  doc.setFillColor(240,245,255);doc.rect(14,y,182,36,'F');doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.setFontSize(10);doc.text('DATOS DEL EQUIPO',105,y+7,{align:'center'});y+=10;
+  doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.setFontSize(9);
+  doc.text('Marca/Modelo: '+(e?(e.marca+' '+e.modelo):(document.getElementById('entMarca').value||'—')),14,y);y+=7;
+  doc.text('N° Serie: '+(e?(e.serie||e.prov||'S/N'):(document.getElementById('entSerie').value||'—'))+'   Estado: '+(document.getElementById('entEstado').value||'—'),14,y);y+=7;
+  doc.text('Ubicación destino: '+(document.getElementById('entUbi').value||'—'),14,y);y+=16;
+  if(p){doc.setFillColor(245,255,245);doc.rect(14,y,182,18,'F');doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('RECEPTOR: '+p.grd+' '+p.ape+' '+p.nom,14,y+7);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text('MI: '+p.mi+' · CE: '+p.ce,14,y+13);y+=22;}
+  var obs=document.getElementById('entObs').value||'Sin observaciones.';doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('OBSERVACIONES:',14,y);y+=6;doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(obs,14,y,{maxWidth:182});y+=20;
+  firmasBlock(doc,y+8);doc.setFontSize(7);doc.setTextColor(150);doc.text('Doc N°: '+nro+' · TICOM-ESLOMIT',105,291,{align:'center'});
+  doc.save('TICOM_ACTA_ENTREGA_'+nro.replace(/[^a-zA-Z0-9]/g,'_')+'.pdf');addLog('Generó Acta Entrega '+nro);saveDB();
+}
+function generarActaBaja(){
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var nro=document.getElementById('bajaNro').value||'AB-001/2026';var fecha=document.getElementById('bajaFecha').value||new Date().toLocaleDateString('es-AR');
+  var e=getEqFromSel(document.getElementById('bajaEqpSel').value);var motivo=document.getElementById('bajaMotivo').value;var desc=document.getElementById('bajaDesc').value||'Sin descripción.';
+  getPdfHeader(doc,'ACTA DE BAJA DE EQUIPO N° '+nro);var y=36;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text('En Las Lomitas, Formosa, a '+fecha+', se da de baja el siguiente equipo:',14,y,{maxWidth:182});y+=12;
+  doc.setFillColor(255,240,240);doc.rect(14,y,182,28,'F');doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.setFontSize(10);doc.text('DATOS DEL EQUIPO',105,y+7,{align:'center'});y+=10;
+  doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.setFontSize(9);
+  doc.text('Marca/Modelo: '+(e?(e.marca+' '+e.modelo):(document.getElementById('bajaMarca').value||'—')),14,y);y+=7;
+  doc.text('N° Serie: '+(e?(e.serie||e.prov||'S/N'):(document.getElementById('bajaSerie').value||'—')),14,y);y+=14;
+  doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('MOTIVO: '+motivo.toUpperCase(),14,y);y+=8;
+  doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(desc,14,y,{maxWidth:182});y+=24;
+  firmasBlock(doc,y+4);doc.setFontSize(7);doc.setTextColor(150);doc.text('Doc N°: '+nro+' · TICOM-ESLOMIT',105,291,{align:'center'});
+  doc.save('TICOM_ACTA_BAJA_'+nro.replace(/[^a-zA-Z0-9]/g,'_')+'.pdf');addLog('Generó Acta Baja '+nro);saveDB();
+}
+function darDeBajaEquipo(){
+  var e=getEqFromSel(document.getElementById('bajaEqpSel').value);if(!e){alert('Seleccioná un equipo.');return;}
+  confirmDialog('Dar de baja','¿Marcar '+e.marca+' '+e.modelo+' como "Dado de baja"?','❌',function(){e.estado='Dado de baja';addLog('Dio de baja: '+e.marca+' '+e.modelo);saveDB();renderEquipos();renderDashboard();showFbToast('✅ Equipo dado de baja');});
+}
+function generarRegMant(){
+  var {jsPDF}=window.jspdf;var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var nro=document.getElementById('mantNro').value||'MNT-001/2026';var fecha=document.getElementById('mantFecha').value||new Date().toLocaleDateString('es-AR');
+  var e=getEqFromSel(document.getElementById('mantEqpSel').value);var tipo=document.getElementById('mantTipo').value;var tec=document.getElementById('mantTec').value||'—';
+  var desc=document.getElementById('mantDesc').value||'Sin descripción.';var obs=document.getElementById('mantObs').value||'—';var estPost=document.getElementById('mantEstPost').value;
+  getPdfHeader(doc,'REGISTRO DE MANTENIMIENTO N° '+nro);var y=36;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text('Mantenimiento '+tipo.toLowerCase()+' realizado el '+fecha+'.',14,y,{maxWidth:182});y+=12;
+  doc.setFillColor(240,245,255);doc.rect(14,y,182,28,'F');doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.setFontSize(10);doc.text('DATOS DEL EQUIPO',105,y+7,{align:'center'});y+=10;
+  doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.setFontSize(9);
+  doc.text('Equipo: '+(e?(e.marca+' '+e.modelo):'—')+'   Serie: '+(e?(e.serie||e.prov||'S/N'):'—'),14,y);y+=7;
+  doc.text('Tipo: '+tipo+'   Técnico: '+tec+'   Estado post: '+estPost,14,y);y+=14;
+  doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('TRABAJOS REALIZADOS:',14,y);y+=6;doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(desc,14,y,{maxWidth:182});y+=20;
+  doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('OBSERVACIONES:',14,y);y+=6;doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(obs,14,y,{maxWidth:182});y+=20;
+  firmasBlock(doc,y+4);doc.setFontSize(7);doc.setTextColor(150);doc.text('Doc N°: '+nro+' · TICOM-ESLOMIT',105,291,{align:'center'});
+  doc.save('TICOM_MNT_'+nro.replace(/[^a-zA-Z0-9]/g,'_')+'.pdf');addLog('Generó Registro Mantenimiento '+nro);
+}
+function guardarMant(){
+  var e=getEqFromSel(document.getElementById('mantEqpSel').value);if(!e){alert('Seleccioná un equipo.');return;}
+  e.estado=document.getElementById('mantEstPost').value;if(!DB.mantenimientos)DB.mantenimientos=[];
+  DB.mantenimientos.push({_id:Date.now(),cat:e._cat,eqId:e._id,equipo:e.marca+' '+e.modelo,tipo:document.getElementById('mantTipo').value,tec:document.getElementById('mantTec').value,desc:document.getElementById('mantDesc').value,fecha:new Date().toLocaleDateString('es-AR'),nro:document.getElementById('mantNro').value});
+  addLog('Mantenimiento en '+e.marca+' '+e.modelo);saveDB();renderEquipos();renderDashboard();showFbToast('✅ Mantenimiento guardado');
+}
+
+
+// ══════════════════════════════════════════
+// SISTEMA DE NOTIFICACIONES TICOM-ESLOMIT
+// ══════════════════════════════════════════
+
+// ── Helpers ──
+function getOTPri(o){ return (o.prioridad||o.pri||'normal').toLowerCase(); }
+function getOTEst(o){ return (o.estado||o.est||'pendiente').toLowerCase(); }
+function getOTAsg(o){ return (o.responsable||o.asg||''); }
+function getOTVnc(o){ return (o.fechaLim||o.vnc||''); }
+function getOTTitulo(o){ return (o.titulo||o.rub||o.dsc||'Sin título'); }
+function priSort(pri){
+  var m={urgente:0,alta:1,media:2,normal:3};
+  return m[pri]!==undefined?m[pri]:4;
+}
+function diasRestantes(vnc){
+  if(!vnc) return null;
+  return Math.floor((new Date(vnc)-new Date(today))/86400000);
+}
+function esMiOT(o){
+  if(!currentUser) return false;
+  var asg = getOTAsg(o).toLowerCase();
+  return asg.includes(currentUser.nombre.toLowerCase()) || asg.includes(currentUser.dni);
+}
+
+// ── Notificaciones del sistema ──
+var _notificaciones = [];
+
+function buildNotificaciones(){
+  _notificaciones = [];
+  var hoy = today;
+  if(!currentUser) return;
+  var isAdmin = currentUser.rol==='admin';
+
+  (DB.ot||[]).forEach(function(o){
+    var est = getOTEst(o);
+    var pri = getOTPri(o);
+    var vnc = getOTVnc(o);
+    var dias = diasRestantes(vnc);
+    var titulo = getOTTitulo(o);
+    var nro = o.nro||o._id||'';
+    var esAdmin = isAdmin;
+    var esMia = esMiOT(o);
+
+    // Para admin: OTs respondidas sin revisar
+    if(esAdmin && o.resp && !o.respVisto){
+      _notificaciones.push({
+        tipo:'respuesta', pri:pri, ot:o,
+        icon:'💬', color:'#6b46c1',
+        titulo:'OT '+nro+' respondida',
+        msg:getOTAsg(o)+' respondió la OT: '+titulo.substring(0,40),
+        tiempo: o.respFecha||''
+      });
+    }
+
+    // Para operador: OTs asignadas pendientes
+    if(!esAdmin && esMia && (est==='pendiente'||est==='en proceso')){
+      var urgente = dias!==null && dias<=3;
+      var vencida = dias!==null && dias<0;
+      _notificaciones.push({
+        tipo:'tarea', pri:pri, ot:o,
+        icon: vencida?'🚨':urgente?'⚠️':'📋',
+        color: vencida?'#e53e3e':urgente?'#dd6b20':'#3182ce',
+        titulo:'OT '+nro+' — '+pri.toUpperCase(),
+        msg: titulo.substring(0,50)+(vnc?' · Vence: '+vnc+(vencida?' ⚠️ VENCIDA':urgente?' ⚠️ URGENTE':''):''),
+        tiempo: vnc
+      });
+    }
+
+    // Para todos: OTs vencidas
+    if(esAdmin && est!=='completada' && est!=='cancelado' && vnc && vnc<hoy){
+      _notificaciones.push({
+        tipo:'vencida', pri:pri, ot:o,
+        icon:'🔴', color:'#e53e3e',
+        titulo:'OT '+nro+' VENCIDA',
+        msg:titulo.substring(0,50)+' · Venció: '+vnc,
+        tiempo: vnc
+      });
+    }
+  });
+
+  // Ordenar: primero por tipo (respuesta > vencida > tarea), luego por prioridad
+  var tipoOrd = {respuesta:0, vencida:1, tarea:2};
+  _notificaciones.sort(function(a,b){
+    var td = (tipoOrd[a.tipo]||3)-(tipoOrd[b.tipo]||3);
+    if(td!==0) return td;
+    return priSort(a.pri)-priSort(b.pri);
+  });
+
+  updateNotifBadge();
+}
+
+function updateNotifBadge(){
+  var count = document.getElementById('notifCount');
+  var btn = document.getElementById('notifBtn');
+  var n = _notificaciones.length;
+  if(count){ count.textContent=n; count.style.display=n>0?'inline-flex':'none'; }
+  if(btn){ btn.style.background=n>0?'rgba(229,62,62,.4)':'rgba(255,255,255,.15)'; }
+}
+
+function renderNotifPanel(){
+  var list = document.getElementById('notifList');
+  if(!list) return;
+  if(!_notificaciones.length){
+    list.innerHTML = '<div class="notif-empty">✅ Sin notificaciones pendientes</div>';
+    return;
+  }
+  list.innerHTML = _notificaciones.map(function(n,i){
+    return '<div class="notif-item notif-pri-'+n.pri+'" onclick="irAOTDesdeNotif('+n.ot._id+','+i+')">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'+
+      '<span style="font-size:18px">'+n.icon+'</span>'+
+      '<span style="font-weight:700;font-size:12px;color:'+n.color+'">'+n.titulo+'</span>'+
+      (n.tiempo?'<span style="margin-left:auto;font-size:10px;color:#a0aec0">'+n.tiempo+'</span>':'')+
+      '</div>'+
+      '<div style="font-size:11px;color:#4a5568;margin-left:26px">'+n.msg+'</div>'+
+      '</div>';
+  }).join('');
+}
+
+function toggleNotifPanel(){
+  var panel = document.getElementById('notifPanel');
+  if(!panel) return;
+  var visible = panel.style.display==='flex';
+  if(!visible){ buildNotificaciones(); renderNotifPanel(); panel.style.display='flex'; }
+  else panel.style.display='none';
+}
+
+function irAOTDesdeNotif(otId, notifIdx){
+  document.getElementById('notifPanel').style.display='none';
+  showTab('ot', document.getElementById('nav-ot'));
+  // Marcar respuesta como vista si es admin
+  if(currentUser && currentUser.rol==='admin'){
+    var o = (DB.ot||[]).find(function(x){return x._id===otId;});
+    if(o && o.resp && !o.respVisto){ o.respVisto=true; saveDB(); }
+  }
+  setTimeout(function(){ openOTResp(otId); }, 200);
+}
+
+// ── Modal de bienvenida al login ──
+function mostrarLoginNotif(){
+  if(!currentUser) return;
+  var isAdmin = currentUser.rol==='admin';
+  var hoy = today;
+  var mis_ots = [];
+
+  (DB.ot||[]).forEach(function(o){
+    var est = getOTEst(o);
+    if(est==='completada'||est==='cancelado') return;
+    var esMia = isAdmin || esMiOT(o);
+    if(!esMia) return;
+    var dias = diasRestantes(getOTVnc(o));
+    mis_ots.push({o:o, dias:dias, pri:getOTPri(o)});
+  });
+
+  if(!mis_ots.length) return; // Sin OTs, no molestar
+
+  // Ordenar por prioridad y urgencia
+  mis_ots.sort(function(a,b){
+    var ua = a.dias!==null&&a.dias<=3?-1:0;
+    var ub = b.dias!==null&&b.dias<=3?-1:0;
+    if(ua!==ub) return ua-ub;
+    return priSort(a.pri)-priSort(b.pri);
+  });
+
+  var body = document.getElementById('loginNotifBody');
+  if(!body) return;
+
+  var respPend = isAdmin ? (DB.ot||[]).filter(function(o){return o.resp&&!o.respVisto;}) : [];
+
+  body.innerHTML = '';
+
+  // Aviso de respuestas pendientes (solo admin)
+  if(respPend.length){
+    var aviso = document.createElement('div');
+    aviso.style.cssText='background:#f0fff4;border:1px solid #9ae6b4;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#276749';
+    aviso.innerHTML='<strong>💬 '+respPend.length+' OT'+(respPend.length>1?'s tienen':'tiene')+' respuesta nueva sin revisar</strong>';
+    body.appendChild(aviso);
+  }
+
+  mis_ots.slice(0,6).forEach(function(item){
+    var o=item.o, pri=item.pri, dias=item.dias;
+    var vnc=getOTVnc(o), titulo=getOTTitulo(o), nro=o.nro||o._id;
+    var vencida=dias!==null&&dias<0, urgente=dias!==null&&dias<=3&&dias>=0;
+    var priClass='pri-'+pri;
+    var card=document.createElement('div');
+    card.className='ot-notif-card '+priClass;
+    card.onclick=function(){ cerrarLoginNotif(); setTimeout(function(){ showTab('ot',document.getElementById('nav-ot')); setTimeout(function(){openOTResp(o._id);},200); },100); };
+
+    var diasTxt='';
+    if(dias===null) diasTxt='';
+    else if(vencida) diasTxt='<span style="color:#e53e3e;font-weight:700">⚠️ VENCIDA hace '+Math.abs(dias)+' día'+(Math.abs(dias)>1?'s':'')+'</span>';
+    else if(dias===0) diasTxt='<span style="color:#dd6b20;font-weight:700">⚠️ Vence HOY</span>';
+    else if(urgente) diasTxt='<span style="color:#dd6b20;font-weight:700">⚠️ Vence en '+dias+' día'+(dias>1?'s':'')+'</span>';
+    else diasTxt='<span style="color:#718096">Vence: '+vnc+'</span>';
+
+    card.innerHTML=
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'+
+      '<span style="background:'+(pri==='urgente'?'#e53e3e':pri==='alta'?'#dd6b20':pri==='media'?'#d69e2e':'#3182ce')+
+      ';color:#fff;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;text-transform:uppercase">'+pri+'</span>'+
+      '<strong style="font-size:12px">OT '+nro+'</strong>'+
+      '</div>'+
+      '<div style="font-size:13px;font-weight:600;margin-bottom:4px">'+titulo+'</div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">'+
+      '<span style="color:#718096">Asignado: '+(getOTAsg(o)||'Sin asignar')+'</span>'+
+      diasTxt+'</div>';
+    body.appendChild(card);
+  });
+
+  if(mis_ots.length>6){
+    var mas=document.createElement('div');
+    mas.style.cssText='text-align:center;padding:8px;font-size:12px;color:#718096';
+    mas.textContent='... y '+(mis_ots.length-6)+' más';
+    body.appendChild(mas);
+  }
+
+  document.getElementById('loginNotifModal').style.display='flex';
+}
+
+function cerrarLoginNotif(){
+  document.getElementById('loginNotifModal').style.display='none';
+}
+function irAOTs(){
+  cerrarLoginNotif();
+  showTab('ot', document.getElementById('nav-ot'));
+}
+
+// ── Notificación cuando operador responde OT ──
+function notificarRespuestaOT(o){
+  // Marcar como respondida con fecha
+  o.resp_fecha = new Date().toLocaleDateString('es-AR');
+  o.respVisto = false; // admin aún no la vio
+  // Actualizar badge de notificaciones
+  buildNotificaciones();
+  // Toast visible
+  showFbToast('📨 Respuesta enviada — el administrador será notificado');
+}
+
 </script>
 
 <!-- Modal Perfil Usuario -->
@@ -3708,6 +4464,47 @@ function drawEqChart(){
 
 <div id="offlineBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#e53e3e;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:600">
   📴 Modo offline — los cambios se guardan localmente y se sincronizarán cuando haya conexión
+</div>
+
+<div id="modalPerfil" class="modal-overlay" style="display:none">
+  <div class="modal-box modal-sm">
+    <div class="modal-title">👤 Mi Perfil</div>
+    <div id="perfilInfo" style="margin-bottom:16px;padding:12px;background:#f0f5ff;border-radius:8px;font-size:13px"></div>
+    <label>Contraseña actual</label><input type="password" id="perfilPassActual">
+    <label>Nueva contraseña</label><input type="password" id="perfilPassNueva">
+    <label>Confirmar nueva contraseña</label><input type="password" id="perfilPassConfirm">
+    <div id="perfilMsg" style="font-size:12px;margin-top:8px;min-height:18px"></div>
+    <div class="act-row" style="margin-top:14px">
+      <button class="btn btn-success" onclick="guardarPerfil()">💾 Cambiar contraseña</button>
+      <button class="btn" onclick="closeModal('modalPerfil')">Cancelar</button>
+    </div>
+  </div>
+</div>
+<div id="offlineBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#e53e3e;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:600">
+  📴 Modo offline — los cambios se sincronizan cuando vuelva la conexión
+</div>
+
+<!-- Panel notificaciones -->
+<div id="notifPanel">
+  <div class="notif-header">
+    <span>🔔 Notificaciones</span>
+    <button onclick="document.getElementById('notifPanel').style.display='none'" style="background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0">✕</button>
+  </div>
+  <div id="notifList"></div>
+</div>
+
+<!-- Modal notificación al login -->
+<div id="loginNotifModal">
+  <div class="login-notif-box">
+    <div class="login-notif-header">
+      📋 Tus órdenes de trabajo pendientes
+    </div>
+    <div class="login-notif-body" id="loginNotifBody"></div>
+    <div class="login-notif-footer">
+      <button class="btn" onclick="cerrarLoginNotif()">Revisar más tarde</button>
+      <button class="btn btn-primary" onclick="irAOTs()">Ver todas las OTs</button>
+    </div>
+  </div>
 </div>
 </body>
 </html>
