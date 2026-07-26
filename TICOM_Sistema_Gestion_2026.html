@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="TICOM">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SISTEMA DE INVENTARIO TICOM-ESLOMIT</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -2165,7 +2166,8 @@ function showTab(id,el){
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.addEventListener('DOMContentLoaded',function(){
-  initTheme();document.querySelectorAll('.modal-overlay').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});});});
+  initTheme();
+  initEmailJS();document.querySelectorAll('.modal-overlay').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});});});
 
 function drawOTChart(estados){
   var canvas=document.getElementById('otChart');if(!canvas)return;
@@ -2623,6 +2625,7 @@ function saveOT(){
   } else {
     o._id=DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return x._id;}))+1:1;
     DB.ot.push(o);
+    setTimeout(function(){ emailNuevaOT(o); }, 500);
     addLog('Creó OT '+nro+': '+o.titulo);
   }
   saveDB();
@@ -2632,6 +2635,7 @@ function saveOT(){
 function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();
   // Notificar al admin
   notificarRespuestaOT(DB.ot[idx]);
+  setTimeout(function(){ emailRespuestaOT(DB.ot[idx]); }, 500);
   addLog('Respondió OT '+(DB.ot[idx].nro||otEditId));
   saveDB();
   buildNotificaciones();
@@ -4439,6 +4443,108 @@ function notificarRespuestaOT(o){
   buildNotificaciones();
   // Toast visible
   showFbToast('📨 Respuesta enviada — el administrador será notificado');
+}
+
+
+// ══════════════════════════════════════════
+// EMAILJS — NOTIFICACIONES POR CORREO
+// ══════════════════════════════════════════
+var EJS_SERVICE  = 'service_avg51tl';
+var EJS_TEMPLATE = 'template_p8a4s05';
+var EJS_PUBKEY   = 'rYzR9HaderpDTT5fn';
+var _ejsReady    = false;
+
+function initEmailJS(){
+  try{
+    emailjs.init({publicKey: EJS_PUBKEY});
+    _ejsReady = true;
+    console.log('EmailJS inicializado OK');
+  } catch(e){ console.warn('EmailJS init error:', e); }
+}
+
+// Enviar email genérico
+function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otData){
+  if(!_ejsReady){ console.warn('EmailJS no inicializado'); return; }
+  if(!destinatarioEmail){ console.warn('Sin email destino'); return; }
+  var params = {
+    destinatario: destinatarioNombre || destinatarioEmail,
+    asunto:       asunto,
+    mensaje:      mensaje,
+    ot_nro:       otData ? (otData.nro||otData._id||'—') : '—',
+    prioridad:    otData ? (otData.prioridad||otData.pri||'normal').toUpperCase() : '—',
+    estado:       otData ? (otData.estado||otData.est||'—') : '—',
+    fecha_lim:    otData ? (otData.fechaLim||otData.vnc||'Sin fecha') : '—',
+  };
+  emailjs.send(EJS_SERVICE, EJS_TEMPLATE, params)
+    .then(function(){ console.log('Email enviado a '+destinatarioEmail); showFbToast('📧 Email enviado a '+destinatarioNombre); })
+    .catch(function(e){ console.warn('Email error:', e); });
+}
+
+// Buscar email de un usuario por DNI o nombre
+function getEmailUsuario(dniONombre){
+  // Buscar en Personal
+  var p = (DB.per||[]).find(function(x){
+    return x.mi===dniONombre || (x.ape+' '+x.nom).toLowerCase().includes(dniONombre.toLowerCase());
+  });
+  if(p) return { email: p.emailInst||p.email||'', nombre: p.grd+' '+p.ape+' '+p.nom };
+  // Buscar en _users
+  var u = (DB._users||[]).find(function(x){ return x.dni===dniONombre; });
+  if(u) return { email: '', nombre: u.nombre };
+  return null;
+}
+
+// Notificar al responsable cuando se crea/asigna una OT
+function emailNuevaOT(o){
+  if(!_ejsReady || !o) return;
+  var asg = o.responsable||o.asg||'';
+  if(!asg) return;
+  var dest = getEmailUsuario(asg);
+  if(!dest || !dest.email) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var pri = (o.prioridad||o.pri||'normal').toUpperCase();
+  enviarEmail(
+    dest.email, dest.nombre,
+    'Nueva OT asignada: '+o.nro+' ['+pri+']',
+    'Se le ha asignado una nueva Orden de Trabajo en el sistema TICOM-ESLOMIT.\n\nTítulo: '+titulo+'\nDescripción: '+(o.descripcion||o.dsc||'—')+'\nFecha inicio: '+(o.fecha||o.fch||'—'),
+    o
+  );
+}
+
+// Notificar al admin cuando operador responde una OT
+function emailRespuestaOT(o){
+  if(!_ejsReady || !o) return;
+  // Buscar admins con email
+  var admins = (DB._users||[]).filter(function(u){ return u.rol==='admin'; });
+  var perAdmin = (DB.per||[]).find(function(p){
+    return admins.some(function(a){ return a.dni===p.mi; });
+  });
+  var emailAdmin = perAdmin ? (perAdmin.emailInst||perAdmin.email) : '';
+  var nombreAdmin = perAdmin ? (perAdmin.grd+' '+perAdmin.ape+' '+perAdmin.nom) : 'Administrador';
+  if(!emailAdmin) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var resp = o.resp||'—';
+  enviarEmail(
+    emailAdmin, nombreAdmin,
+    'OT '+o.nro+' respondida por '+( o.responsable||o.asg||'operador'),
+    (o.responsable||o.asg||'El operador')+' ha respondido la OT.\n\nTítulo: '+titulo+'\nRespuesta: '+resp.substring(0,200),
+    o
+  );
+}
+
+// Notificar OTs vencidas (se llama desde checkOTVencidas)
+function emailOTVencida(o){
+  if(!_ejsReady || !o) return;
+  var asg = o.responsable||o.asg||'';
+  if(!asg) return;
+  var dest = getEmailUsuario(asg);
+  if(!dest || !dest.email) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  enviarEmail(
+    dest.email, dest.nombre,
+    '⚠️ OT VENCIDA: '+o.nro,
+    'La siguiente Orden de Trabajo ha superado su fecha límite y aún está pendiente de resolución.\n\nTítulo: '+titulo,
+    o
+  );
 }
 
 </script>
