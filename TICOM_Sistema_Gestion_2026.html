@@ -3165,6 +3165,108 @@ function fetchWO(lat,lon,city,fb){var k='4b6b8b4f8c69e6d6b9e9a1c2d3e4f5a6';var u
 function simWeather(n){var m={'Las Lomitas':{t:28,d:'Variable, zona chaquena',h:68,w:14},'Buenos Aires':{t:21,d:'Parcialmente nublado',h:72,w:15}};var d=m[n]||{t:26,d:'Variable',h:65,w:12};setWUI('&#9729;',d.t,d.d+' (sin conexion)',n,d.h,d.w);}
 function setWUI(ico,temp,desc,city,hum,wind){var el;el=document.getElementById('wico');if(el)el.innerHTML=ico;el=document.getElementById('wtemp');if(el)el.textContent=temp+'C';el=document.getElementById('wdesc');if(el)el.textContent=desc;el=document.getElementById('wcity');if(el)el.textContent=city;el=document.getElementById('whum');if(el)el.textContent=hum+'%';el=document.getElementById('wwind');if(el)el.textContent=wind+' km/h';el=document.getElementById('wtime');if(el)el.textContent='Actualizado: '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});}
 
+
+// ══════════════════════════════════════════
+// EMAILJS — NOTIFICACIONES POR CORREO
+// ══════════════════════════════════════════
+var EJS_SERVICE  = 'service_avg51tl';
+var EJS_TEMPLATE = 'template_p8a4s05';
+var EJS_PUBKEY   = 'rYzR9HaderpDTT5fn';
+var _ejsReady    = false;
+
+function initEmailJS(){
+  try{
+    emailjs.init({publicKey: EJS_PUBKEY});
+    _ejsReady = true;
+    console.log('EmailJS inicializado OK');
+  } catch(e){ console.warn('EmailJS init error:', e); }
+}
+
+// Enviar email genérico
+function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otData){
+  if(!_ejsReady){ console.warn('EmailJS no inicializado'); return; }
+  if(!destinatarioEmail){ console.warn('Sin email destino'); return; }
+  var params = {
+    destinatario: destinatarioNombre || destinatarioEmail,
+    asunto:       asunto,
+    mensaje:      mensaje,
+    ot_nro:       otData ? (otData.nro||otData._id||'—') : '—',
+    prioridad:    otData ? (otData.prioridad||otData.pri||'normal').toUpperCase() : '—',
+    estado:       otData ? (otData.estado||otData.est||'—') : '—',
+    fecha_lim:    otData ? (otData.fechaLim||otData.vnc||'Sin fecha') : '—',
+  };
+  emailjs.send(EJS_SERVICE, EJS_TEMPLATE, params)
+    .then(function(){ console.log('Email enviado a '+destinatarioEmail); showFbToast('📧 Email enviado a '+destinatarioNombre); })
+    .catch(function(e){ console.warn('Email error:', e); });
+}
+
+// Buscar email de un usuario por DNI o nombre
+function getEmailUsuario(dniONombre){
+  // Buscar en Personal
+  var p = (DB.per||[]).find(function(x){
+    return x.mi===dniONombre || (x.ape+' '+x.nom).toLowerCase().includes(dniONombre.toLowerCase());
+  });
+  if(p) return { email: p.emailInst||p.email||'', nombre: p.grd+' '+p.ape+' '+p.nom };
+  // Buscar en _users
+  var u = (DB._users||[]).find(function(x){ return x.dni===dniONombre; });
+  if(u) return { email: '', nombre: u.nombre };
+  return null;
+}
+
+// Notificar al responsable cuando se crea/asigna una OT
+function emailNuevaOT(o){
+  if(!_ejsReady || !o) return;
+  var asg = o.responsable||o.asg||'';
+  if(!asg) return;
+  var dest = getEmailUsuario(asg);
+  if(!dest || !dest.email) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var pri = (o.prioridad||o.pri||'normal').toUpperCase();
+  enviarEmail(
+    dest.email, dest.nombre,
+    'Nueva OT asignada: '+o.nro+' ['+pri+']',
+    'Se le ha asignado una nueva Orden de Trabajo en el sistema TICOM-ESLOMIT.\n\nTítulo: '+titulo+'\nDescripción: '+(o.descripcion||o.dsc||'—')+'\nFecha inicio: '+(o.fecha||o.fch||'—'),
+    o
+  );
+}
+
+// Notificar al admin cuando operador responde una OT
+function emailRespuestaOT(o){
+  if(!_ejsReady || !o) return;
+  // Buscar admins con email
+  var admins = (DB._users||[]).filter(function(u){ return u.rol==='admin'; });
+  var perAdmin = (DB.per||[]).find(function(p){
+    return admins.some(function(a){ return a.dni===p.mi; });
+  });
+  var emailAdmin = perAdmin ? (perAdmin.emailInst||perAdmin.email) : '';
+  var nombreAdmin = perAdmin ? (perAdmin.grd+' '+perAdmin.ape+' '+perAdmin.nom) : 'Administrador';
+  if(!emailAdmin) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var resp = o.resp||'—';
+  enviarEmail(
+    emailAdmin, nombreAdmin,
+    'OT '+o.nro+' respondida por '+( o.responsable||o.asg||'operador'),
+    (o.responsable||o.asg||'El operador')+' ha respondido la OT.\n\nTítulo: '+titulo+'\nRespuesta: '+resp.substring(0,200),
+    o
+  );
+}
+
+// Notificar OTs vencidas (se llama desde checkOTVencidas)
+function emailOTVencida(o){
+  if(!_ejsReady || !o) return;
+  var asg = o.responsable||o.asg||'';
+  if(!asg) return;
+  var dest = getEmailUsuario(asg);
+  if(!dest || !dest.email) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  enviarEmail(
+    dest.email, dest.nombre,
+    '⚠️ OT VENCIDA: '+o.nro,
+    'La siguiente Orden de Trabajo ha superado su fecha límite y aún está pendiente de resolución.\n\nTítulo: '+titulo,
+    o
+  );
+}
+
 </script>
 <script>
 if('serviceWorker' in navigator){
@@ -4445,107 +4547,6 @@ function notificarRespuestaOT(o){
   showFbToast('📨 Respuesta enviada — el administrador será notificado');
 }
 
-
-// ══════════════════════════════════════════
-// EMAILJS — NOTIFICACIONES POR CORREO
-// ══════════════════════════════════════════
-var EJS_SERVICE  = 'service_avg51tl';
-var EJS_TEMPLATE = 'template_p8a4s05';
-var EJS_PUBKEY   = 'rYzR9HaderpDTT5fn';
-var _ejsReady    = false;
-
-function initEmailJS(){
-  try{
-    emailjs.init({publicKey: EJS_PUBKEY});
-    _ejsReady = true;
-    console.log('EmailJS inicializado OK');
-  } catch(e){ console.warn('EmailJS init error:', e); }
-}
-
-// Enviar email genérico
-function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otData){
-  if(!_ejsReady){ console.warn('EmailJS no inicializado'); return; }
-  if(!destinatarioEmail){ console.warn('Sin email destino'); return; }
-  var params = {
-    destinatario: destinatarioNombre || destinatarioEmail,
-    asunto:       asunto,
-    mensaje:      mensaje,
-    ot_nro:       otData ? (otData.nro||otData._id||'—') : '—',
-    prioridad:    otData ? (otData.prioridad||otData.pri||'normal').toUpperCase() : '—',
-    estado:       otData ? (otData.estado||otData.est||'—') : '—',
-    fecha_lim:    otData ? (otData.fechaLim||otData.vnc||'Sin fecha') : '—',
-  };
-  emailjs.send(EJS_SERVICE, EJS_TEMPLATE, params)
-    .then(function(){ console.log('Email enviado a '+destinatarioEmail); showFbToast('📧 Email enviado a '+destinatarioNombre); })
-    .catch(function(e){ console.warn('Email error:', e); });
-}
-
-// Buscar email de un usuario por DNI o nombre
-function getEmailUsuario(dniONombre){
-  // Buscar en Personal
-  var p = (DB.per||[]).find(function(x){
-    return x.mi===dniONombre || (x.ape+' '+x.nom).toLowerCase().includes(dniONombre.toLowerCase());
-  });
-  if(p) return { email: p.emailInst||p.email||'', nombre: p.grd+' '+p.ape+' '+p.nom };
-  // Buscar en _users
-  var u = (DB._users||[]).find(function(x){ return x.dni===dniONombre; });
-  if(u) return { email: '', nombre: u.nombre };
-  return null;
-}
-
-// Notificar al responsable cuando se crea/asigna una OT
-function emailNuevaOT(o){
-  if(!_ejsReady || !o) return;
-  var asg = o.responsable||o.asg||'';
-  if(!asg) return;
-  var dest = getEmailUsuario(asg);
-  if(!dest || !dest.email) return;
-  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
-  var pri = (o.prioridad||o.pri||'normal').toUpperCase();
-  enviarEmail(
-    dest.email, dest.nombre,
-    'Nueva OT asignada: '+o.nro+' ['+pri+']',
-    'Se le ha asignado una nueva Orden de Trabajo en el sistema TICOM-ESLOMIT.\n\nTítulo: '+titulo+'\nDescripción: '+(o.descripcion||o.dsc||'—')+'\nFecha inicio: '+(o.fecha||o.fch||'—'),
-    o
-  );
-}
-
-// Notificar al admin cuando operador responde una OT
-function emailRespuestaOT(o){
-  if(!_ejsReady || !o) return;
-  // Buscar admins con email
-  var admins = (DB._users||[]).filter(function(u){ return u.rol==='admin'; });
-  var perAdmin = (DB.per||[]).find(function(p){
-    return admins.some(function(a){ return a.dni===p.mi; });
-  });
-  var emailAdmin = perAdmin ? (perAdmin.emailInst||perAdmin.email) : '';
-  var nombreAdmin = perAdmin ? (perAdmin.grd+' '+perAdmin.ape+' '+perAdmin.nom) : 'Administrador';
-  if(!emailAdmin) return;
-  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
-  var resp = o.resp||'—';
-  enviarEmail(
-    emailAdmin, nombreAdmin,
-    'OT '+o.nro+' respondida por '+( o.responsable||o.asg||'operador'),
-    (o.responsable||o.asg||'El operador')+' ha respondido la OT.\n\nTítulo: '+titulo+'\nRespuesta: '+resp.substring(0,200),
-    o
-  );
-}
-
-// Notificar OTs vencidas (se llama desde checkOTVencidas)
-function emailOTVencida(o){
-  if(!_ejsReady || !o) return;
-  var asg = o.responsable||o.asg||'';
-  if(!asg) return;
-  var dest = getEmailUsuario(asg);
-  if(!dest || !dest.email) return;
-  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
-  enviarEmail(
-    dest.email, dest.nombre,
-    '⚠️ OT VENCIDA: '+o.nro,
-    'La siguiente Orden de Trabajo ha superado su fecha límite y aún está pendiente de resolución.\n\nTítulo: '+titulo,
-    o
-  );
-}
 
 </script>
 
