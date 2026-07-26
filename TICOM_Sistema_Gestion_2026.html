@@ -923,6 +923,7 @@ table.dt tr:hover td{background:#EEF6FF}
   <button class="tab admin-only" id="nav-backup" onclick="showTab('backup',this)"><span class="tab-icon">💾</span><span class="tab-txt">Backup</span></button>
   <button class="tab" id="nav-archivos" onclick="showTab('archivos',this)"><span class="tab-icon">☁️</span><span class="tab-txt">Archivos Drive</span></button>
   <button class="tab" id="nav-historial" onclick="showTab('historial',this)"><span class="tab-icon">📁</span><span class="tab-txt">Historial</span></button>
+<button class="tab admin-only" id="nav-estadisticas" onclick="showTab('estadisticas',this)"><span class="tab-icon">📈</span><span class="tab-txt">Estadísticas</span></button>
 </div>
 <div>
 
@@ -1795,6 +1796,14 @@ table.dt tr:hover td{background:#EEF6FF}
     <input id="pSis" placeholder="Ej: SAG, INSICOINFO, SIENA">
     <label>Observaciones</label><textarea id="pObs"></textarea>
     <input type="hidden" id="pEditId" value="">
+    <div class="row">
+      <div class="col"><label>Telegram Chat ID</label>
+        <input id="pTgChatId" placeholder="Ej: 8228186612 (ver instrucciones)">
+      </div>
+      <div class="col"><label style="font-size:10px;color:var(--text3)">
+        Para obtener tu Chat ID: buscá @ticom_eslomit_bot en Telegram → escribí /start → pedíselo al admin
+      </label></div>
+    </div>
     <div class="row"><div class="col">
       <label>Foto de perfil</label>
       <div style="display:flex;align-items:center;gap:12px">
@@ -1916,7 +1925,7 @@ table.dt tr:hover td{background:#EEF6FF}
 <script>
 const DB_INITIAL = {
   _users:[{"dni":"32695288","nombre":"Sarg. (TSTC) Segovia José Luis","pass":"Rubio.87","rol":"admin"},{"dni":"40659348","nombre":"Subalf. (COM) Palomo Yulan Celeste","pass":"Admin1234","rol":"admin"},{"dni":"24797112","nombre":"Subof. Ppal. (ATE) Sparling Marcos","pass":"Admin1234","rol":"normal"},{"dni":"24477311","nombre":"Sarg. Ay. (ATE) Estigarribia Angel","pass":"Estig62.","rol":"normal"},{"dni":"34598883","nombre":"Sarg. (TSSV) Cardozo Derlix Miguel","pass":"Admin1234","rol":"normal"},{"dni":"33941713","nombre":"Sarg. (MECOM) Ortiz Tania Lorena","pass":"Ortiz77.","rol":"normal"},{"dni":"36200021","nombre":"Sarg. (MECOM) Arguello Ramon Oscar","pass":"Arguello83.","rol":"normal"},{"dni":"33224518","nombre":"Cabo 1ro. (TUSPYC) Luna Edgardo Manuel","pass":"Luna2026.","rol":"normal"},{"dni":"41771297","nombre":"Cabo (TUSPYC) Garcia Axel Nahuel","pass":"Garcia109.","rol":"normal"},{"dni":"38748575","nombre":"Cabo (TUSPYC) Fernandez Micaela Jovita","pass":"Fernandez111.","rol":"normal"},{"dni":"39703343","nombre":"Cabo (OSC) Diaz Gonzalez Ariel","pass":"Admin1234","rol":"normal"}],
-  per:[{"_id":1,"ape":"PALOMO YULAN","ce":"110732","cur":"CALCULO DE ANTENA","eciv":"Soltero/a","email":"celemilii41@gmail.com","emailInst":"CMDMPALOMOYULAN@gna.gob.ar","esp":"COM","fp":"2025-01-13","grd":"SUBALFEREZ","meses":15,"mi":"40659348","mtoPase":"DRH 9144/24","nom":"CELESTE MARGOT DEL MILAGRO","obs":"","ord":"01","sis":["INSICOINFO"],"sisO":"","uni":"ESLOMIT"},{"_id":2,"ape":"SPARLING","ce":"63363","cur":"","eciv":"Soltero/a","email":"msparling@gna.gob.ar","emailInst":"msparling@gna.gob.ar","esp":"ATE","fp":"","grd":"SUBOFICIAL PRINCIPAL","meses":"","mi":"24797112","mtoPase":"","nom":"MARCOS","obs":"","ord":"02","sisO":"","uni":"ESLOMIT"},{"_id":3,"ape":"ESTIGARRIBIA","ce":"62143","cur":"","eciv":"Soltero/a","email":"","emailInst":"AJESTIGARRIBIA@GNA.GOB.AR","esp":"ATE","fp":"2026-02-09","grd":"SARGENTO AYUDANTE","meses":2,"mi":"24477311","mtoPase":"","nom":"ANGEL","obs":"","ord":"03","sisO":"","uni":"ESLOMIT"},{"_id":4,"ape":"SEGOVIA","ce":"77334","eciv":"Soltero/a","email":"","emailInst":"jlsegovia@gna.gob.ar","esp":"TSTC","fp":"2022-02-14","grd":"SARGENTO","mi":"32695288","mtoPase":"","nom":"JOSE LUIS","obs":"","ord":"04","sis":["SAG","INSICOINFO","SIENA"],"uni":"ESLOMIT"},{"_id":5,"ape":"CARDOZO","ce":"83907","cur":"","eciv":"Soltero/a","email":"","emailInst":"","esp":"TSSV","fp":"","grd":"SARGENTO","meses":"","mi":"34598883","mtoPase":"","nom":"DERLIX MIGUEL","obs":"","ord":"05","sisO":"","uni":"ESLOMIT"},{"_id":6,"ape":"ORTIZ","ce":"77692","cur":"","eciv":"Proceso de divorcio","email":"","emailInst":"tlortiz@gna.gob.ar","esp":"MECOM","fp":"2026-02-09","grd":"SARGENTO","meses":2,"mi":"33941713","mtoPase":"DHR 11306/25","nom":"TANIA LORENA","obs":"","ord":"06","sisO":"","uni":"ESLOMIT"},{"_id":7,"ape":"ARGUELLO","ce":"83757","cur":"","eciv":"Soltero/a","email":"","emailInst":"roarguello@gna.gob.ar","esp":"MECOM","fp":"2026-02-09","grd":"SARGENTO","meses":2,"mi":"36200021","mtoPase":"DRH 11306/25","nom":"RAMON OSCAR","obs":"","ord":"07","sisO":"","uni":"ESLOMIT"},{"_id":8,"ape":"LUNA","ce":"","cur":"","eciv":"Soltero/a","email":"","emailInst":"emaluna@gna.gob.ar","esp":"TUSPYC-GC","fp":"2026-03-09","grd":"CABO PRIMERO","meses":1,"mi":"33224518","mtoPase":"DRH 1665/26","nom":"EDGARDO MANNUEL ANIBAL","obs":"","ord":"08","sisO":"","uni":"ESLOMIT"},{"_id":9,"ape":"GARCIA","ce":"109866","cur":"","eciv":"Soltero/a","email":"","emailInst":"AXNGARCIA@gna.gob.ar","esp":"TUSPYC-GC","fp":"2025-12-15","grd":"CABO","meses":4,"mi":"41771297","mtoPase":"DRH 11541/25","nom":"AXEL NAHUEL","obs":"","ord":"09","sisO":"","uni":"ESLOMIT"},{"_id":10,"ape":"FERNANDEZ","ce":"111075","cur":"","eciv":"Casado/a","email":"","emailInst":"MIJFERNANDEZ@gna.gob.ar","esp":"TUSPYC-GC","fp":"2025-12-15","grd":"CABO","meses":4,"mi":"38748575","mtoPase":"DRH 11541/25","nom":"MICAELA JOVITA","obs":"","ord":"010","sisO":"","uni":"ESLOMIT"},{"_id":11,"ape":"DIAZ","ce":"102981","cur":"","eciv":"Casado/a","email":"","emailInst":"gadiaz@gna.gob.ar","esp":"OSC","fp":"2025-12-15","grd":"CABO","meses":4,"mi":"39703343","mtoPase":"DRH 11542/25","nom":"GONZALEZ ARIEL","obs":"","ord":"011","sisO":"","uni":"ESLOMIT"}],
+  per:[{"_id":1,"ape":"PALOMO YULAN","ce":"110732","cur":"CALCULO DE ANTENA","eciv":"Soltero/a","email":"celemilii41@gmail.com","emailInst":"CMDMPALOMOYULAN@gna.gob.ar","esp":"COM","fp":"2025-01-13","grd":"SUBALFEREZ","meses":15,"mi":"40659348","mtoPase":"DRH 9144/24","nom":"CELESTE MARGOT DEL MILAGRO","obs":"","ord":"01","sis":["INSICOINFO"],"sisO":"","uni":"ESLOMIT"},{"_id":2,"ape":"SPARLING","ce":"63363","cur":"","eciv":"Soltero/a","email":"msparling@gna.gob.ar","emailInst":"msparling@gna.gob.ar","esp":"ATE","fp":"","grd":"SUBOFICIAL PRINCIPAL","meses":"","mi":"24797112","mtoPase":"","nom":"MARCOS","obs":"","ord":"02","sisO":"","uni":"ESLOMIT"},{"_id":3,"ape":"ESTIGARRIBIA","ce":"62143","cur":"","eciv":"Soltero/a","email":"","emailInst":"AJESTIGARRIBIA@GNA.GOB.AR","esp":"ATE","fp":"2026-02-09","grd":"SARGENTO AYUDANTE","meses":2,"mi":"24477311","mtoPase":"","nom":"ANGEL","obs":"","ord":"03","sisO":"","uni":"ESLOMIT"},{"_id":4,"ape":"SEGOVIA","ce":"77334","eciv":"Soltero/a","email":"","emailInst":"jlsegovia@gna.gob.ar","esp":"TSTC","fp":"2022-02-14","grd":"SARGENTO","mi":"32695288","tgChatId":"8228186612","mtoPase":"","nom":"JOSE LUIS","obs":"","ord":"04","sis":["SAG","INSICOINFO","SIENA"],"uni":"ESLOMIT"},{"_id":5,"ape":"CARDOZO","ce":"83907","cur":"","eciv":"Soltero/a","email":"","emailInst":"","esp":"TSSV","fp":"","grd":"SARGENTO","meses":"","mi":"34598883","mtoPase":"","nom":"DERLIX MIGUEL","obs":"","ord":"05","sisO":"","uni":"ESLOMIT"},{"_id":6,"ape":"ORTIZ","ce":"77692","cur":"","eciv":"Proceso de divorcio","email":"","emailInst":"tlortiz@gna.gob.ar","esp":"MECOM","fp":"2026-02-09","grd":"SARGENTO","meses":2,"mi":"33941713","mtoPase":"DHR 11306/25","nom":"TANIA LORENA","obs":"","ord":"06","sisO":"","uni":"ESLOMIT"},{"_id":7,"ape":"ARGUELLO","ce":"83757","cur":"","eciv":"Soltero/a","email":"","emailInst":"roarguello@gna.gob.ar","esp":"MECOM","fp":"2026-02-09","grd":"SARGENTO","meses":2,"mi":"36200021","mtoPase":"DRH 11306/25","nom":"RAMON OSCAR","obs":"","ord":"07","sisO":"","uni":"ESLOMIT"},{"_id":8,"ape":"LUNA","ce":"","cur":"","eciv":"Soltero/a","email":"","emailInst":"emaluna@gna.gob.ar","esp":"TUSPYC-GC","fp":"2026-03-09","grd":"CABO PRIMERO","meses":1,"mi":"33224518","mtoPase":"DRH 1665/26","nom":"EDGARDO MANNUEL ANIBAL","obs":"","ord":"08","sisO":"","uni":"ESLOMIT"},{"_id":9,"ape":"GARCIA","ce":"109866","cur":"","eciv":"Soltero/a","email":"","emailInst":"AXNGARCIA@gna.gob.ar","esp":"TUSPYC-GC","fp":"2025-12-15","grd":"CABO","meses":4,"mi":"41771297","mtoPase":"DRH 11541/25","nom":"AXEL NAHUEL","obs":"","ord":"09","sisO":"","uni":"ESLOMIT"},{"_id":10,"ape":"FERNANDEZ","ce":"111075","cur":"","eciv":"Casado/a","email":"","emailInst":"MIJFERNANDEZ@gna.gob.ar","esp":"TUSPYC-GC","fp":"2025-12-15","grd":"CABO","meses":4,"mi":"38748575","mtoPase":"DRH 11541/25","nom":"MICAELA JOVITA","obs":"","ord":"010","sisO":"","uni":"ESLOMIT"},{"_id":11,"ape":"DIAZ","ce":"102981","cur":"","eciv":"Casado/a","email":"","emailInst":"gadiaz@gna.gob.ar","esp":"OSC","fp":"2025-12-15","grd":"CABO","meses":4,"mi":"39703343","mtoPase":"DRH 11542/25","nom":"GONZALEZ ARIEL","obs":"","ord":"011","sisO":"","uni":"ESLOMIT"}],
   ot:[],
   docs:[{"_id":1,"adjunto":"Copia de CABO DIAZ ME-2026-21872809-APN-ESLOMIT_GNA .pdf","asunto":"DESIGNACION ENCARGADO DE LA DOCUMENTACION VIA GDE DEL GRUPO TECNOLOGIA DE LA INFORMACION Y COMUNICACIONES","autor":"Subalf. (COM) Palomo Yulan Celeste","fecha":"23/7/2026","nro":"ME-2026-21872809-APN-ESLOMIT#GNA","tipo":"memo","titulo":"Memo ME-2026-21872809-APN-ESLOMIT#GNA","ts":"2026-07-23T12:10:06.935Z"},{"_id":2,"adjunto":"Copia de CABO DIAZ ME-2026-21872809-APN-ESLOMIT_GNA .pdf","asunto":"DESIGNACION ENCARGADO DE LA DOCUMENTACION VIA GDE DEL GRUPO TECNOLOGIA DE LA INFORMACION Y COMUNICACIONES","autor":"Subalf. (COM) Palomo Yulan Celeste","fecha":"23/7/2026","nro":"ME-2026-21872809-APN-ESLOMIT#GNA","tipo":"memo","titulo":"Memo ME-2026-21872809-APN-ESLOMIT#GNA","ts":"2026-07-23T12:25:23.681Z"}],
   logs:[{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"32695288","fecha":"24/7/2026","hora":"01:08:54 p. m.","idioma":"es-419","ip":"2803:9810:b518:d410:6984:b7f2:7268:cd0f","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"Argentina","resolucion":"1536x864","rol":"admin","ts":"2026-07-24T16:08:54.307Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"24/7/2026","hora":"01:08:19 p. m.","idioma":"es-419","ip":"179.238.47.143","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-24T16:08:19.904Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"24/7/2026","hora":"11:18:47 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-24T14:18:47.375Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"24/7/2026","hora":"09:43:07 a. m.","idioma":"es-419","ip":"179.238.47.143","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-24T12:43:07.615Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"24/7/2026","hora":"09:02:01 a. m.","idioma":"es-419","ip":"179.238.47.143","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-24T12:02:01.244Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"01:11:01 p. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T16:11:01.870Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"01:07:24 p. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T16:07:24.906Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"01:03:21 p. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T16:03:21.575Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"12:53:11 p. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T15:53:11.250Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"12:43:39 p. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T15:43:39.303Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"12:21:04 p. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T15:21:04.786Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"11:58:38 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T14:58:38.014Z"},{"browser":"Firefox","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"11:53:26 a. m.","idioma":"es-ES","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T14:53:26.536Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"23/7/2026","hora":"11:43:40 a. m.","idioma":"es-US","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-23T14:43:40.373Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"23/7/2026","hora":"11:43:13 a. m.","idioma":"es-US","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-23T14:43:13.583Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:52:01 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:52:01.745Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:48:03 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:48:03.796Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:37:10 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:37:10.669Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:35:55 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:35:55.526Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:32:23 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:32:23.911Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:25:37 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:25:37.802Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"10:01:58 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T13:01:58.471Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"09:41:45 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:41:45.129Z"},{"browser":"Firefox","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:41:16 a. m.","idioma":"es-ES","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:41:16.537Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:39:26 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:39:26.055Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:37:30 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:37:30.039Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:36:10 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:36:10.327Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"09:35:03 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:35:03.626Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"23/7/2026","hora":"09:30:42 a. m.","idioma":"es-US","ip":"2803:9810:b518:d410:c292:92b7:667f:b285","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"360x820","rol":"admin","ts":"2026-07-23T12:30:42.043Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"09:28:08 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:28:08.646Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:25:10 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:25:10.895Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:24:52 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:24:52.463Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"09:20:02 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:20:02.918Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"09:17:16 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:17:16.837Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"09:14:15 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:14:15.083Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"09:01:18 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T12:01:18.682Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:38:36 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:38:36.157Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:30:45 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:30:45.334Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:17:32 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:17:32.411Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:12:23 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:12:23.258Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:09:45 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:09:45.968Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:03:42 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:03:42.282Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"08:01:29 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T11:01:29.841Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"07:55:16 a. m.","idioma":"es-419","ip":"...","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"...","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T10:55:16.842Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"23/7/2026","hora":"07:40:29 a. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-23T10:40:29.328Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"23/7/2026","hora":"07:10:48 a. m.","idioma":"es-US","ip":"148.222.223.244","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-23T10:10:48.473Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"07:08:45 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-23T10:08:45.966Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"23/7/2026","hora":"07:05:17 a. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-23T10:05:17.707Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"22/7/2026","hora":"09:24:23 p. m.","idioma":"es-US","ip":"148.222.223.139","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-23T00:24:23.656Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"22/7/2026","hora":"09:17:48 p. m.","idioma":"es-US","ip":"148.222.223.139","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-23T00:17:48.286Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"09:10:29 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-23T00:10:29.609Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"24797112","fecha":"22/7/2026","hora":"09:01:31 p. m.","idioma":"es-419","ip":"...","nombre":"Subof. Ppal. (ATE) Sparling Marcos","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"normal","ts":"2026-07-23T00:01:31.384Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"09:01:01 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-23T00:01:01.574Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"08:47:52 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T23:47:52.159Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"08:46:09 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T23:46:09.071Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"08:39:55 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T23:39:55.162Z"},{"browser":"Chrome","ciudad":"Formosa, Formosa","disp":"Móvil","dni":"32695288","fecha":"22/7/2026","hora":"07:59:34 p. m.","idioma":"es-US","ip":"2800:2507:130:d866:18c4:94dc:70cc:f286","isp":"Telecom Argentina S.A.","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-22T22:59:34.642Z"},{"browser":"Chrome","ciudad":"Formosa, Formosa","disp":"Móvil","dni":"32695288","fecha":"22/7/2026","hora":"06:14:33 p. m.","idioma":"es-US","ip":"45.175.143.170","isp":"BOCA ROJA S.A.","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-22T21:14:33.388Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"05:28:47 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T20:28:47.978Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"05:26:05 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T20:26:05.225Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"39703343","fecha":"22/7/2026","hora":"05:23:27 p. m.","idioma":"es-419","ip":"...","nombre":"Cabo (OSC) Diaz Gonzalez Ariel","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"normal","ts":"2026-07-22T20:23:27.678Z"},{"browser":"Edge","ciudad":"...","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"05:22:23 p. m.","idioma":"es-419","ip":"...","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"...","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T20:22:23.994Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"05:18:13 p. m.","idioma":"es-419","ip":"148.222.223.240","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"Argentina","resolucion":"1280x720","rol":"admin","ts":"2026-07-22T20:18:13.933Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"39703343","fecha":"22/7/2026","hora":"12:22:25 p. m.","idioma":"es-AR","ip":"2803:9810:b518:d410:f18e:dfb3:e718:1cd0","isp":"Space Exploration Technologies Corporation","nombre":"Cabo (OSC) Diaz Gonzalez Ariel","os":"Android 10","pais":"Argentina","resolucion":"485x1084","rol":"normal","ts":"2026-07-22T15:22:25.788Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"12:20:41 p. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-22T15:20:41.702Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"39703343","fecha":"22/7/2026","hora":"12:17:49 p. m.","idioma":"es-AR","ip":"2803:9810:b518:d410:f18e:dfb3:e718:1cd0","isp":"Space Exploration Technologies Corporation","nombre":"Cabo (OSC) Diaz Gonzalez Ariel","os":"Android 10","pais":"Argentina","resolucion":"485x1084","rol":"normal","ts":"2026-07-22T15:17:49.121Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"39703343","fecha":"22/7/2026","hora":"12:07:22 p. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Cabo (OSC) Diaz Gonzalez Ariel","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"normal","ts":"2026-07-22T15:07:22.695Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"39703343","fecha":"22/7/2026","hora":"12:06:46 p. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Cabo (OSC) Diaz Gonzalez Ariel","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"normal","ts":"2026-07-22T15:06:46.815Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"32695288","fecha":"22/7/2026","hora":"12:05:07 p. m.","idioma":"es-419","ip":"179.238.47.175","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Windows 10/11","pais":"Argentina","resolucion":"1920x1080","rol":"admin","ts":"2026-07-22T15:05:07.750Z"},{"browser":"Chrome","ciudad":"Formosa, Formosa","disp":"Móvil","dni":"32695288","fecha":"22/7/2026","hora":"10:26:52 a. m.","idioma":"es-US","ip":"2800:2507:130:d866:18c4:94dc:70cc:f286","isp":"Telecom Argentina S.A.","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-22T13:26:52.646Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"40659348","fecha":"21/7/2026","hora":"05:48:37 p. m.","idioma":"es-US","ip":"98.97.134.44","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-21T20:48:37.491Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"34598883","fecha":"21/7/2026","hora":"05:48:30 p. m.","idioma":"es-AR","ip":"2803:9810:b518:d410:4ddc:4b5f:7572:2a9","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSSV) Cardozo Derlix Miguel","os":"Android 10","pais":"Argentina","resolucion":"509x1130","rol":"normal","ts":"2026-07-21T20:48:30.539Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"21/7/2026","hora":"05:44:52 p. m.","idioma":"es-US","ip":"98.97.134.44","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-21T20:44:52.240Z"},{"browser":"Edge","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"PC","dni":"40659348","fecha":"21/7/2026","hora":"05:41:56 p. m.","idioma":"es-419","ip":"98.97.134.44","isp":"Space Exploration Technologies Corporation","nombre":"Subalf. (COM) Palomo Yulan Celeste","os":"Windows 10/11","pais":"Argentina","resolucion":"1280x720","rol":"admin","ts":"2026-07-21T20:41:56.245Z"},{"browser":"Chrome","ciudad":"Buenos Aires, Buenos Aires F.D.","disp":"Móvil","dni":"32695288","fecha":"21/7/2026","hora":"05:40:25 p. m.","idioma":"es-US","ip":"98.97.134.44","isp":"Space Exploration Technologies Corporation","nombre":"Sarg. (TSTC) Segovia José Luis","os":"Android 10","pais":"Argentina","resolucion":"384x832","rol":"admin","ts":"2026-07-21T20:40:25.795Z"}],
@@ -2625,7 +2634,7 @@ function saveOT(){
   } else {
     o._id=DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return x._id;}))+1:1;
     DB.ot.push(o);
-    setTimeout(function(){ emailNuevaOT(o); }, 500);
+    setTimeout(function(){ emailNuevaOT(o); tgNuevaOT(o); }, 500);
     addLog('Creó OT '+nro+': '+o.titulo);
   }
   saveDB();
@@ -2635,7 +2644,7 @@ function saveOT(){
 function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();
   // Notificar al admin
   notificarRespuestaOT(DB.ot[idx]);
-  setTimeout(function(){ emailRespuestaOT(DB.ot[idx]); }, 500);
+  setTimeout(function(){ emailRespuestaOT(DB.ot[idx]); tgRespuestaOT(DB.ot[idx]); }, 500);
   addLog('Respondió OT '+(DB.ot[idx].nro||otEditId));
   saveDB();
   buildNotificaciones();
@@ -4552,6 +4561,400 @@ function notificarRespuestaOT(o){
 }
 
 
+
+// ══════════════════════════════════════════
+// TELEGRAM BOT — NOTIFICACIONES
+// ══════════════════════════════════════════
+var TG_TOKEN = '8609017703:AAF3p2gg0rsYHfCUtCdQKx1HIWqys_f_kFw';
+var TG_API   = 'https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage';
+
+// Enviar mensaje a un chat_id de Telegram
+function tgSend(chatId, texto){
+  if(!chatId) return;
+  fetch(TG_API, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: texto,
+      parse_mode: 'HTML'
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if(d.ok) console.log('TG: mensaje enviado a '+chatId);
+    else console.warn('TG error:', d.description);
+  })
+  .catch(function(e){ console.warn('TG fetch error:', e); });
+}
+
+// Buscar chat_id de un usuario por DNI/nombre
+function getTGChatId(dniONombre){
+  // Buscar en Personal por MI o nombre
+  var p = (DB.per||[]).find(function(x){
+    return x.mi===dniONombre ||
+      (x.ape+' '+x.nom).toLowerCase().includes(dniONombre.toLowerCase());
+  });
+  return p ? (p.tgChatId||'') : '';
+}
+
+// Obtener chat_ids de todos los admins
+function getTGAdmins(){
+  var chatIds = [];
+  (DB._users||[]).filter(function(u){ return u.rol==='admin'; }).forEach(function(u){
+    var p = (DB.per||[]).find(function(x){ return x.mi===u.dni; });
+    if(p && p.tgChatId) chatIds.push(p.tgChatId);
+  });
+  return chatIds;
+}
+
+// Notificar OT nueva al responsable
+function tgNuevaOT(o){
+  var asg = o.responsable||o.asg||'';
+  if(!asg) return;
+  var chatId = getTGChatId(asg);
+  if(!chatId) return;
+  var pri = (o.prioridad||o.pri||'normal').toUpperCase();
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var vnc = o.fechaLim||o.vnc||'Sin fecha límite';
+  var emoji = pri==='URGENTE'?'🚨':pri==='ALTA'?'⚠️':pri==='MEDIA'?'📋':'📌';
+  var msg =
+    emoji+' <b>NUEVA OT ASIGNADA</b>\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '📋 <b>OT N°:</b> '+( o.nro||o._id)+'\n'+
+    '📝 <b>Título:</b> '+titulo+'\n'+
+    '🎯 <b>Prioridad:</b> '+pri+'\n'+
+    '📅 <b>Fecha límite:</b> '+vnc+'\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '🔗 <a href="https://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html">Abrir TICOM-ESLOMIT</a>';
+  tgSend(chatId, msg);
+}
+
+// Notificar al admin cuando operador responde
+function tgRespuestaOT(o){
+  var chatIds = getTGAdmins();
+  if(!chatIds.length) return;
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var resp = (o.resp||'—').substring(0,150);
+  var asg = o.responsable||o.asg||'Operador';
+  var msg =
+    '💬 <b>OT RESPONDIDA</b>\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '📋 <b>OT N°:</b> '+(o.nro||o._id)+'\n'+
+    '📝 <b>Título:</b> '+titulo+'\n'+
+    '👤 <b>Respondió:</b> '+asg+'\n'+
+    '💭 <b>Respuesta:</b> '+resp+'\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '🔗 <a href="https://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html">Abrir TICOM-ESLOMIT</a>';
+  chatIds.forEach(function(id){ tgSend(id, msg); });
+}
+
+// Notificar OT vencida
+function tgOTVencida(o){
+  var asg = o.responsable||o.asg||'';
+  var chatId = asg ? getTGChatId(asg) : '';
+  var admins = getTGAdmins();
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var msg =
+    '🔴 <b>OT VENCIDA</b>\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '📋 <b>OT N°:</b> '+(o.nro||o._id)+'\n'+
+    '📝 <b>Título:</b> '+titulo+'\n'+
+    '📅 <b>Venció:</b> '+(o.fechaLim||o.vnc||'—')+'\n'+
+    '👤 <b>Responsable:</b> '+asg+'\n'+
+    '━━━━━━━━━━━━━━━━━━\n'+
+    '🔗 <a href="https://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html">Abrir TICOM-ESLOMIT</a>';
+  if(chatId) tgSend(chatId, msg);
+  admins.forEach(function(id){ if(id!==chatId) tgSend(id, msg); });
+}
+
+
+// ══ NUMERACIÓN AUTOMÁTICA DE DOCUMENTOS ══
+function getNextDocNro(tipo){
+  var prefijos = {entrega:'AE', baja:'AB', mantenimiento:'MNT', acta:'ACTA', memo:'MEM'};
+  var pre = prefijos[tipo] || 'DOC';
+  var año = new Date().getFullYear();
+  if(!DB.contadores) DB.contadores={};
+  DB.contadores[tipo] = (DB.contadores[tipo]||0) + 1;
+  var nro = String(DB.contadores[tipo]).padStart(3,'0');
+  saveDB();
+  return pre+'-'+nro+'/'+año;
+}
+
+function initDocNros(){
+  var hoy = new Date().toISOString().split('T')[0];
+  var tipos = [
+    {campo:'entNro', tipo:'entrega'},
+    {campo:'bajaNro', tipo:'baja'},
+    {campo:'mantNro', tipo:'mantenimiento'}
+  ];
+  tipos.forEach(function(t){
+    var el = document.getElementById(t.campo);
+    if(el && !el.value) el.value = getNextDocNro(t.tipo);
+  });
+}
+
+// ══ EQUIPOS ASIGNADOS A PERSONAL ══
+function getEquiposAsignados(mi){
+  var CATS = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var equipos = [];
+  CATS.forEach(function(c){
+    (DB[c]||[]).forEach(function(e){
+      if(e.asignado === mi) equipos.push(e);
+    });
+  });
+  return equipos;
+}
+
+function verEquiposPersonal(mi, nombre){
+  var equipos = getEquiposAsignados(mi);
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:14px;padding:24px;width:90%;max-width:560px;max-height:80vh;overflow-y:auto';
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:16px';
+  hdr.innerHTML = '<div><div style="font-weight:700;font-size:15px">Equipos asignados</div><div style="font-size:11px;color:#718096">'+nombre+'</div></div>';
+  var bC = document.createElement('button');
+  bC.textContent='✕ Cerrar'; bC.style.cssText='background:#e2e8f0;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:600';
+  bC.onclick=function(){overlay.remove();};
+  hdr.appendChild(bC); box.appendChild(hdr);
+  if(!equipos.length){
+    var em=document.createElement('div');
+    em.style.cssText='color:#718096;text-align:center;padding:20px;font-size:13px';
+    em.textContent='Sin equipos asignados.';
+    box.appendChild(em);
+  } else {
+    equipos.forEach(function(e){
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:12px';
+      var estColor=e.estado==='Operativo'?'#2E7D32':e.estado==='Dado de baja'?'#C62828':'#E65100';
+      row.innerHTML='<span style="font-weight:700;color:#0B3566">'+( e._cat||'').toUpperCase()+'</span>'+
+        '<div style="flex:1"><div style="font-weight:600">'+e.marca+' '+e.modelo+'</div>'+
+        '<div style="color:#718096">S/N: '+(e.serie||e.prov||'—')+'</div></div>'+
+        '<span style="background:'+estColor+';color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">'+e.estado+'</span>';
+      box.appendChild(row);
+    });
+  }
+  overlay.appendChild(box); document.body.appendChild(overlay);
+}
+
+// ══ EXPORTAR TODO A EXCEL ══
+function exportTodoExcel(){
+  var wb = XLSX.utils.book_new();
+  var fecha = new Date().toLocaleDateString('es-AR').replace(/\//g,'-');
+
+  // Personal
+  var perData = [['ORD','GRADO','ESP','APELLIDO','NOMBRE','MI','CE','EMAIL','EMAIL INST','UNIDAD','FECHA PASE']];
+  (DB.per||[]).forEach(function(p){ perData.push([p.ord||'',p.grd||'',p.esp||'',p.ape||'',p.nom||'',p.mi||'',p.ce||'',p.email||'',p.emailInst||'',p.uni||'',p.fp||'']); });
+  var wsP = XLSX.utils.aoa_to_sheet(perData);
+  XLSX.utils.book_append_sheet(wb, wsP, 'Personal');
+
+  // Equipos
+  var CATS = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var eqData = [['CAT','TIPO','MARCA','MODELO','SERIE','ESTADO','UBICACIÓN','AÑO','CUENTA','OBS']];
+  CATS.forEach(function(c){ (DB[c]||[]).forEach(function(e){ eqData.push([c.toUpperCase(),e.tipo||'',e.marca||'',e.modelo||'',e.serie||e.prov||'',e.estado||'',e.ubi||'',e.anio||'',e.cuenta||'',e.obs||'']); }); });
+  var wsE = XLSX.utils.aoa_to_sheet(eqData);
+  XLSX.utils.book_append_sheet(wb, wsE, 'Equipos');
+
+  // OTs
+  var otData = [['N° OT','TÍTULO','PRIORIDAD','ESTADO','RESPONSABLE','FECHA','FECHA LÍM','DESCRIPCIÓN','RESPUESTA']];
+  (DB.ot||[]).forEach(function(o){ otData.push([o.nro||'',o.titulo||o.rub||o.dsc||'',o.prioridad||o.pri||'',o.estado||o.est||'',o.responsable||o.asg||'',o.fecha||o.fch||'',o.fechaLim||o.vnc||'',o.descripcion||o.dsc||'',o.resp||'']); });
+  var wsOT = XLSX.utils.aoa_to_sheet(otData);
+  XLSX.utils.book_append_sheet(wb, wsOT, 'OTs');
+
+  // Logs
+  var logData = [['FECHA','HORA','USUARIO','DNI','DETALLE']];
+  (DB.logs||[]).slice().reverse().forEach(function(l){ logData.push([l.fecha||'',l.hora||'',l.nombre||'',l.dni||'',l.detalle||'']); });
+  var wsL = XLSX.utils.aoa_to_sheet(logData);
+  XLSX.utils.book_append_sheet(wb, wsL, 'Auditoría');
+
+  // Mantenimientos
+  if((DB.mantenimientos||[]).length){
+    var mData=[['N°','EQUIPO','TIPO','TÉCNICO','ESTADO POST','DESCRIPCIÓN','FECHA']];
+    DB.mantenimientos.forEach(function(m){ mData.push([m.nro||'',m.equipo||'',m.tipo||'',m.tec||'',m.estPost||'',m.desc||'',m.fecha||'']); });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mData), 'Mantenimientos');
+  }
+
+  XLSX.writeFile(wb, 'TICOM_ESLOMIT_COMPLETO_'+fecha+'.xlsx');
+  addLog('Exportó todo el sistema a Excel');
+}
+
+// ══ RENDERIZAR ESTADÍSTICAS ══
+function renderEstadisticas(){
+  var CATS = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var totalEq = CATS.reduce(function(s,c){return s+(DB[c]||[]).length;},0);
+  var eqOp = CATS.reduce(function(s,c){return s+(DB[c]||[]).filter(function(e){return(e.estado||'').toLowerCase()==='operativo';}).length;},0);
+  var otTotal=(DB.ot||[]).length;
+  var otComp=(DB.ot||[]).filter(function(o){var e=o.estado||o.est||'';return e==='completada'||e==='Completada';}).length;
+  var otPend=(DB.ot||[]).filter(function(o){var e=o.estado||o.est||'';return e==='pendiente'||e==='Pendiente';}).length;
+
+  // Stat cards
+  var sg=document.getElementById('statsGeneral');
+  if(sg) sg.innerHTML=
+    statCard('📋',otTotal,'OTs Total','','nav-ot')+
+    statCard('✅',otComp,'Completadas','var(--green2)','nav-ot')+
+    statCard('⏳',otPend,'Pendientes',otPend>0?'var(--red2)':'','nav-ot')+
+    statCard('📡',totalEq,'Total Equipos','','nav-equipos')+
+    statCard('✅',eqOp,'Operativos','var(--green2)','nav-equipos');
+
+  // Gráfico OTs por estado
+  var estados={Completada:0,Pendiente:0,'En proceso':0,Cancelado:0};
+  (DB.ot||[]).forEach(function(o){
+    var e=o.estado||o.est||'pendiente';
+    if(e==='completada'||e==='Completada') estados.Completada++;
+    else if(e==='En proceso') estados['En proceso']++;
+    else if(e==='Cancelado'||e==='Cancelada') estados.Cancelado++;
+    else estados.Pendiente++;
+  });
+  dibujarTorta('statsOTChart','statsOTLegend',estados,{Completada:'#2E7D32',Pendiente:'#E65100','En proceso':'#1565C0',Cancelado:'#9E9E9E'});
+
+  // Gráfico OTs por prioridad
+  var pris={Urgente:0,Alta:0,Media:0,Normal:0};
+  (DB.ot||[]).forEach(function(o){
+    var p=(o.prioridad||o.pri||'normal').toLowerCase();
+    if(p==='urgente') pris.Urgente++;
+    else if(p==='alta') pris.Alta++;
+    else if(p==='media') pris.Media++;
+    else pris.Normal++;
+  });
+  dibujarTorta('statsPriChart','statsPriLegend',pris,{Urgente:'#e53e3e',Alta:'#dd6b20',Media:'#d69e2e',Normal:'#3182ce'});
+
+  // Barras equipos por estado
+  var estEq={Operativo:0,'En reparación':0,'Dado de baja':0,Otros:0};
+  CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){
+    var est=e.estado||'Otros';
+    if(estEq[est]!==undefined) estEq[est]++; else estEq.Otros++;
+  });});
+  var maxEq=Math.max.apply(null,Object.values(estEq))||1;
+  var colEq={Operativo:'#2E7D32','En reparación':'#E65100','Dado de baja':'#C62828',Otros:'#9E9E9E'};
+  var ebEl=document.getElementById('statsEqBarChart');
+  if(ebEl) ebEl.innerHTML='<div class="bar-chart">'+Object.entries(estEq).filter(function(kv){return kv[1]>0;}).map(function(kv){
+    return '<div class="bar-row"><span class="bar-label" style="width:100px">'+kv[0]+'</span>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+Math.round(kv[1]/maxEq*100)+'%;background:'+(colEq[kv[0]]||'#666')+'"><span class="bar-val">'+kv[1]+'</span></div></div></div>';
+  }).join('')+'</div>';
+
+  // Barras OTs por responsable
+  var resps={};
+  (DB.ot||[]).forEach(function(o){var r=o.responsable||o.asg||'Sin asignar';resps[r]=(resps[r]||0)+1;});
+  var respArr=Object.entries(resps).sort(function(a,b){return b[1]-a[1];}).slice(0,6);
+  var maxR=respArr.length?respArr[0][1]:1;
+  var rEl=document.getElementById('statsRespChart');
+  if(rEl) rEl.innerHTML='<div class="bar-chart">'+respArr.map(function(kv){
+    var label=kv[0].length>20?kv[0].substring(0,18)+'...':kv[0];
+    return '<div class="bar-row"><span class="bar-label" style="width:120px;font-size:9px">'+label+'</span>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+Math.round(kv[1]/maxR*100)+'%;background:#0B3566"><span class="bar-val">'+kv[1]+'</span></div></div></div>';
+  }).join('')+'</div>';
+
+  // Tiempo promedio de resolución
+  var tiempos=[];
+  (DB.ot||[]).filter(function(o){return (o.estado||o.est||'').toLowerCase()==='completada'&&(o.fecha||o.fch)&&(o.fechaLim||o.vnc);}).forEach(function(o){
+    var inicio=new Date(o.fecha||o.fch),fin=new Date(o.fechaLim||o.vnc);
+    var dias=Math.abs(Math.floor((fin-inicio)/86400000));
+    if(!isNaN(dias)) tiempos.push(dias);
+  });
+  var tEl=document.getElementById('statsTiempoRes');
+  if(tEl){
+    if(tiempos.length){
+      var prom=Math.round(tiempos.reduce(function(a,b){return a+b;},0)/tiempos.length);
+      var min=Math.min.apply(null,tiempos),max=Math.max.apply(null,tiempos);
+      tEl.innerHTML='<div style="display:flex;gap:20px;flex-wrap:wrap">'+
+        '<div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#0B3566">'+prom+'</div><div style="font-size:11px;color:#718096">días promedio</div></div>'+
+        '<div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#2E7D32">'+min+'</div><div style="font-size:11px;color:#718096">días mínimo</div></div>'+
+        '<div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#C62828">'+max+'</div><div style="font-size:11px;color:#718096">días máximo</div></div>'+
+        '<div style="text-align:center"><div style="font-size:28px;font-weight:800;color:#718096">'+tiempos.length+'</div><div style="font-size:11px;color:#718096">OTs medidas</div></div></div>';
+    } else {
+      tEl.innerHTML='<div style="color:#718096;font-size:13px">Sin OTs completadas para calcular.</div>';
+    }
+  }
+
+  // Vencimientos próximos
+  var hoy=today;
+  var venc30=[];
+  CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){if(e.garantia){var d=(new Date(e.garantia)-new Date(hoy))/86400000;if(d>=0&&d<=30)venc30.push({tipo:'Garantía',nombre:e.marca+' '+e.modelo,fecha:e.garantia,dias:Math.round(d)});}});});
+  (DB.ot||[]).forEach(function(o){var est=o.estado||o.est||'';var v=o.fechaLim||o.vnc||'';if(v&&est!=='completada'&&est!=='Completada'){var d=(new Date(v)-new Date(hoy))/86400000;if(d>=0&&d<=30)venc30.push({tipo:'OT',nombre:(o.titulo||o.rub||o.nro||''),fecha:v,dias:Math.round(d)});}});
+  venc30.sort(function(a,b){return a.dias-b.dias;});
+  var vEl=document.getElementById('statsVencimientos');
+  if(vEl){
+    if(!venc30.length){vEl.innerHTML='<div style="color:#2E7D32;font-size:13px">✅ Sin vencimientos en los próximos 30 días</div>';}
+    else{vEl.innerHTML=venc30.slice(0,8).map(function(v){
+      var col=v.dias<=3?'#C62828':v.dias<=7?'#E65100':'#0B3566';
+      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px">'+
+        '<span style="background:'+col+';color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap">'+v.dias+'d</span>'+
+        '<span style="background:#e2e8f0;color:#4a5568;border-radius:4px;padding:1px 6px;font-size:10px">'+v.tipo+'</span>'+
+        '<span style="flex:1;font-weight:600">'+v.nombre+'</span>'+
+        '<span style="color:#718096">'+v.fecha+'</span></div>';
+    }).join('');}
+  }
+
+  // Log auditoría
+  var lb=document.getElementById('statsLogBody');
+  if(lb){
+    lb.innerHTML='';
+    (DB.logs||[]).slice().reverse().slice(0,50).forEach(function(l){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+l.fecha+'</td><td>'+l.hora+'</td><td style="font-weight:600">'+l.nombre+'</td><td style="font-family:monospace">'+l.dni+'</td><td>'+l.detalle+'</td>';
+      lb.appendChild(tr);
+    });
+  }
+}
+
+function dibujarTorta(canvasId, legendId, datos, colores){
+  var canvas=document.getElementById(canvasId);if(!canvas)return;
+  var ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=Math.min(W,H)/2-10;
+  ctx.clearRect(0,0,W,H);
+  var total=Object.values(datos).reduce(function(a,b){return a+b;},0);
+  if(!total){ctx.fillStyle='#e0e0e0';ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fill();return;}
+  var start=-Math.PI/2;
+  Object.entries(datos).forEach(function(kv){
+    if(!kv[1])return;
+    var slice=kv[1]/total*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,start,start+slice);ctx.closePath();
+    ctx.fillStyle=colores[kv[0]]||'#ccc';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    var mid=start+slice/2;
+    if(slice>0.25){ctx.fillStyle='#fff';ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.fillText(Math.round(kv[1]/total*100)+'%',cx+Math.cos(mid)*(R*.65),cy+Math.sin(mid)*(R*.65)+4);}
+    start+=slice;
+  });
+  ctx.beginPath();ctx.arc(cx,cy,R*.38,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.fillStyle='#0B3566';ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText(total,cx,cy+5);
+  ctx.font='9px sans-serif';ctx.fillStyle='#888';ctx.fillText('total',cx,cy+18);
+  var legEl=document.getElementById(legendId);
+  if(legEl)legEl.innerHTML=Object.entries(datos).filter(function(kv){return kv[1]>0;}).map(function(kv){
+    return '<div style="display:flex;align-items:center;gap:6px">'+
+      '<span style="width:11px;height:11px;border-radius:2px;background:'+(colores[kv[0]]||'#ccc')+';display:inline-block;flex-shrink:0"></span>'+
+      '<span style="font-weight:600">'+kv[0]+'</span><span style="margin-left:auto;font-weight:800;color:'+(colores[kv[0]]||'#ccc')+'">'+kv[1]+'</span></div>';
+  }).join('');
+}
+
+// Exportar estadísticas a PDF
+function exportEstadisticasPDF(){
+  var {jsPDF}=window.jspdf;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var fecha=new Date().toLocaleDateString('es-AR');
+  doc.setFillColor(11,53,102);doc.rect(0,0,210,28,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('GENDARMERÍA NACIONAL ARGENTINA',105,10,{align:'center'});
+  doc.setFontSize(10);doc.text('Escuadrón 18 "Lomitas" · TICOM-ESLOMIT · Informe de Estadísticas',105,18,{align:'center'});
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Generado: '+fecha,105,25,{align:'center'});
+  var y=34;
+  var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+  var totalEq=CATS.reduce(function(s,c){return s+(DB[c]||[]).length;},0);
+  var eqOp=CATS.reduce(function(s,c){return s+(DB[c]||[]).filter(function(e){return(e.estado||'').toLowerCase()==='operativo';}).length;},0);
+  doc.setFillColor(240,245,255);doc.rect(10,y,190,24,'F');
+  doc.setTextColor(11,53,102);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text('RESUMEN GENERAL',14,y+8);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);
+  doc.text('Personal: '+(DB.per||[]).length+' · Equipos: '+totalEq+' ('+eqOp+' op.) · OTs: '+(DB.ot||[]).length,14,y+16);y+=30;
+  var otRows=(DB.ot||[]).map(function(o){return[o.nro||'',o.titulo||o.rub||'',o.prioridad||o.pri||'',o.estado||o.est||'',o.responsable||o.asg||''];});
+  if(otRows.length){
+    doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text('ÓRDENES DE TRABAJO',14,y);y+=4;
+    doc.autoTable({head:[['N° OT','Título','Prioridad','Estado','Responsable']],body:otRows,startY:y,styles:{fontSize:7},headStyles:{fillColor:[11,53,102],textColor:255},margin:{left:10,right:10}});
+    y=doc.lastAutoTable.finalY+8;
+  }
+  doc.setFontSize(7);doc.setTextColor(150);doc.text('TICOM-ESLOMIT · '+fecha,105,291,{align:'center'});
+  doc.save('TICOM_ESTADISTICAS_'+fecha.replace(/\//g,'-')+'.pdf');
+  addLog('Exportó estadísticas a PDF');
+}
+
 </script>
 
 <!-- Modal Perfil Usuario -->
@@ -4614,6 +5017,76 @@ function notificarRespuestaOT(o){
     <div class="login-notif-footer">
       <button class="btn" onclick="cerrarLoginNotif()">Revisar más tarde</button>
       <button class="btn btn-primary" onclick="irAOTs()">Ver todas las OTs</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ESTADÍSTICAS ══ -->
+<div id="tab-estadisticas" class="panel">
+  <div class="export-bar" style="margin-bottom:14px">
+    <button class="btn-export btn-exp-pdf" onclick="exportEstadisticasPDF()">📄 Exportar PDF</button>
+    <button class="btn-export btn-exp-xls" onclick="exportTodoExcel()">📊 Exportar TODO a Excel</button>
+  </div>
+
+  <!-- Resumen general -->
+  <div class="stat-grid" id="statsGeneral" style="margin-bottom:14px"></div>
+
+  <div class="grid2" style="gap:14px;margin-bottom:14px">
+    <!-- OTs por estado -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📋</span>OTs por Estado</div>
+      <canvas id="statsOTChart" width="300" height="220"></canvas>
+      <div id="statsOTLegend" style="font-size:11px;margin-top:8px;line-height:2"></div>
+    </div>
+    <!-- OTs por prioridad -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">🎯</span>OTs por Prioridad</div>
+      <canvas id="statsPriChart" width="300" height="220"></canvas>
+      <div id="statsPriLegend" style="font-size:11px;margin-top:8px;line-height:2"></div>
+    </div>
+  </div>
+
+  <div class="grid2" style="gap:14px;margin-bottom:14px">
+    <!-- Equipos por estado -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📡</span>Equipos por Estado</div>
+      <div id="statsEqBarChart" class="bar-chart"></div>
+    </div>
+    <!-- Top responsables -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">👤</span>OTs por Responsable</div>
+      <div id="statsRespChart" class="bar-chart"></div>
+    </div>
+  </div>
+
+  <div class="grid2" style="gap:14px;margin-bottom:14px">
+    <!-- Tiempo promedio resolución -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">⏱</span>Tiempo Promedio de Resolución</div>
+      <div id="statsTiempoRes" style="font-size:13px;padding:10px 0"></div>
+    </div>
+    <!-- Vencimientos próximos -->
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">⚠️</span>Vencimientos Próximos (30 días)</div>
+      <div id="statsVencimientos" style="font-size:12px"></div>
+    </div>
+  </div>
+
+  <!-- Log de auditoría -->
+  <div class="card">
+    <div class="card-title"><span class="ct-icon">🔍</span>Log de Auditoría
+      <div class="export-bar" style="margin-left:auto">
+        <button class="btn-export btn-exp-xls" onclick="exportXLS('historial')" style="font-size:11px;padding:4px 10px">📊 Excel</button>
+        <button class="btn-export btn-exp-print" onclick="printTab('historial')" style="font-size:11px;padding:4px 10px">🖨️ Imprimir</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table style="width:100%;font-size:11px">
+        <thead><tr>
+          <th>Fecha</th><th>Hora</th><th>Usuario</th><th>DNI</th><th>Acción</th>
+        </tr></thead>
+        <tbody id="statsLogBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
