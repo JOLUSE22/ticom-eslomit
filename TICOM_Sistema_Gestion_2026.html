@@ -3169,7 +3169,7 @@ function setWUI(ico,temp,desc,city,hum,wind){var el;el=document.getElementById('
 // ══════════════════════════════════════════
 // EMAILJS — NOTIFICACIONES POR CORREO
 // ══════════════════════════════════════════
-var EJS_SERVICE  = 'service_avg51tl';
+var EJS_SERVICE  = 'service_jr0b1io';
 var EJS_TEMPLATE = 'template_p8a4s05';
 var EJS_PUBKEY   = 'rYzR9HaderpDTT5fn';
 var _ejsReady    = false;
@@ -3187,6 +3187,10 @@ function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otD
   if(!_ejsReady){ console.warn('EmailJS no inicializado'); return; }
   if(!destinatarioEmail){ console.warn('Sin email destino'); return; }
   var params = {
+    to_email:     destinatarioEmail,
+    to_name:      destinatarioNombre || destinatarioEmail,
+    from_name:    'TICOM-ESLOMIT',
+    reply_to:     'noreply@ticom.gna',
     destinatario: destinatarioNombre || destinatarioEmail,
     asunto:       asunto,
     mensaje:      mensaje,
