@@ -2753,10 +2753,14 @@ function saveOT(){
   } else {
     o._id=DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return x._id;}))+1:1;
     DB.ot.push(o);
-    setTimeout(function(){ emailNuevaOT(o); tgNuevaOT(o); }, 500);
     addLog('Creó OT '+nro+': '+o.titulo);
   }
   saveDB();
+  // Notificar DESPUÉS de saveDB con copia del objeto
+  if(otEditId===null){
+    var oCopy = JSON.parse(JSON.stringify(DB.ot[DB.ot.length-1]));
+    setTimeout(function(){ emailNuevaOT(oCopy); tgNuevaOT(oCopy); }, 1000);
+  }
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
   cancelOTForm(); renderOTList(); renderDashboard();
 }
