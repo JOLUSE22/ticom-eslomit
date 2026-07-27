@@ -929,6 +929,16 @@ table.dt tr:hover td{background:#EEF6FF}
 
 <!-- ══ DASHBOARD ══ -->
 <div id="tab-dashboard" class="panel active">
+  <!-- Saludo bienvenida -->
+  <div id="dashBienvenida" style="background:linear-gradient(135deg,#0B3566,#1565C0);color:#fff;border-radius:12px;padding:16px 22px;margin-bottom:14px;display:flex;align-items:center;gap:16px">
+    <div style="font-size:38px" id="dashSaludoIcon">👋</div>
+    <div style="flex:1">
+      <div style="font-size:18px;font-weight:800;letter-spacing:.3px" id="dashSaludoNombre"></div>
+      <div style="font-size:12px;opacity:.85;margin-top:2px" id="dashSaludoRol"></div>
+      <div style="font-size:11px;opacity:.7;margin-top:1px" id="dashSaludoFecha"></div>
+    </div>
+    <div style="text-align:right;font-size:11px;opacity:.8" id="dashSaludoOTs"></div>
+  </div>
   <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
     <button class="btn-export btn-exp-pdf" onclick="reporteMensual()">📊 Informe Mensual PDF</button>
   </div>
@@ -2310,6 +2320,7 @@ function renderDashboard(){
   if(eqResEl) eqResEl.innerHTML = eqResumen || '<div style="color:var(--text3);font-size:12px">Sin equipos registrados.</div>';
 
   checkResetPendientes();
+  renderSaludo();
 }
 
 function statCard(icon,val,lbl,color,tabId){
@@ -4953,6 +4964,55 @@ function exportEstadisticasPDF(){
   doc.setFontSize(7);doc.setTextColor(150);doc.text('TICOM-ESLOMIT · '+fecha,105,291,{align:'center'});
   doc.save('TICOM_ESTADISTICAS_'+fecha.replace(/\//g,'-')+'.pdf');
   addLog('Exportó estadísticas a PDF');
+}
+
+
+// ══ SALUDO BIENVENIDA ══
+function renderSaludo(){
+  if(!currentUser) return;
+  var hora = new Date().getHours();
+  var saludo = hora<12?'Buenos días':hora<18?'Buenas tardes':'Buenas noches';
+  var icon = hora<12?'🌅':hora<18?'☀️':'🌙';
+
+  // Buscar datos completos del usuario en Personal
+  var p = (DB.per||[]).find(function(x){ return x.mi===currentUser.dni; });
+  var nombreCompleto = p ? (p.grd+' '+p.ape+' '+p.nom) : currentUser.nombre;
+  var rol = currentUser.rol==='admin' ? '🔐 Administrador del sistema' : '👤 Usuario operador';
+  var unidad = p ? p.uni||'ESLOMIT' : 'ESLOMIT';
+
+  // Fecha y hora actual
+  var ahora = new Date();
+  var fechaStr = ahora.toLocaleDateString('es-AR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  fechaStr = fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1);
+
+  // OTs pendientes del usuario
+  var misPend = (DB.ot||[]).filter(function(o){
+    var est = o.estado||o.est||'';
+    if(est==='completada'||est==='Completada'||est==='Cancelado') return false;
+    if(currentUser.rol==='admin') return true;
+    var asg = (o.responsable||o.asg||'').toLowerCase();
+    return asg.includes(currentUser.nombre.toLowerCase())||asg.includes(currentUser.dni);
+  });
+
+  var otTxt = '';
+  if(misPend.length===0) otTxt = '✅ Sin OTs pendientes';
+  else {
+    var urgentes = misPend.filter(function(o){var p=o.prioridad||o.pri||'';return p.toLowerCase()==='urgente'||p.toLowerCase()==='alta';});
+    otTxt = '📋 '+misPend.length+' OT'+(misPend.length>1?'s':'')+' pendiente'+(misPend.length>1?'s':'');
+    if(urgentes.length) otTxt += '\n⚠️ '+urgentes.length+' de alta prioridad';
+  }
+
+  var iconEl = document.getElementById('dashSaludoIcon');
+  var nomEl  = document.getElementById('dashSaludoNombre');
+  var rolEl  = document.getElementById('dashSaludoRol');
+  var fchEl  = document.getElementById('dashSaludoFecha');
+  var otEl   = document.getElementById('dashSaludoOTs');
+
+  if(iconEl) iconEl.textContent = icon;
+  if(nomEl)  nomEl.textContent  = saludo+', '+nombreCompleto;
+  if(rolEl)  rolEl.textContent  = rol+' · '+unidad;
+  if(fchEl)  fchEl.textContent  = fechaStr;
+  if(otEl)   otEl.innerHTML     = otTxt.replace('\n','<br>');
 }
 
 </script>
