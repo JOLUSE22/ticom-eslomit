@@ -1215,7 +1215,12 @@ table.dt tr:hover td{background:#EEF6FF}
         </div>
       </div>
       <div class="row">
-        <div class="col"><label>Asignado a</label><input id="otAsg" placeholder="Técnico responsable"></div>
+        <div class="col"><label>Asignado a</label>
+          <select id="otAsgSel" onchange="otAsgSelChange(this)">
+            <option value="">— Seleccionar personal —</option>
+          </select>
+          <input id="otAsg" placeholder="O escribí manualmente" style="margin-top:4px;font-size:11px">
+        </div>
         <div class="col"><label>Autoriza</label><input id="otAut" placeholder="Quien autoriza"></div>
         <div class="col"><label>Unidad</label><input id="otUni" value="ESLOMIT"></div>
       </div>
@@ -2728,6 +2733,7 @@ function saveOT(){
     titulo:document.getElementById('otRub').value,
     asg:document.getElementById('otAsg').value,
     responsable:document.getElementById('otAsg').value,
+    responsableMI:document.getElementById('otAsg').dataset&&document.getElementById('otAsg').dataset.mi?document.getElementById('otAsg').dataset.mi:'',
     aut:document.getElementById('otAut').value,
     autor:document.getElementById('otAut').value,
     uni:document.getElementById('otUni').value,
@@ -3329,16 +3335,19 @@ function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otD
 // Buscar personal por cualquier combinación de nombre/DNI
 function buscarPersonal(txt){
   if(!txt) return null;
-  txt = txt.toLowerCase().trim();
+  var txtLow = txt.toLowerCase().trim();
+  // Buscar por MI exacto primero
+  var porMI = (DB.per||[]).find(function(x){ return x.mi===txt || x.mi===txtLow; });
+  if(porMI) return porMI;
+  // Buscar por nombre
   return (DB.per||[]).find(function(x){
     var nombreCompleto = (x.ape+' '+x.nom).toLowerCase();
     var nombreInverso  = (x.nom+' '+x.ape).toLowerCase();
     var conGrado = (x.grd+' '+x.ape+' '+x.nom).toLowerCase();
-    return x.mi===txt ||
-      nombreCompleto.includes(txt) ||
-      nombreInverso.includes(txt) ||
-      txt.includes(x.ape.toLowerCase()) ||
-      conGrado.includes(txt);
+    return nombreCompleto.includes(txtLow) ||
+      nombreInverso.includes(txtLow) ||
+      txtLow.includes(x.ape.toLowerCase()) ||
+      conGrado.includes(txtLow);
   });
 }
 
@@ -3353,9 +3362,10 @@ function getEmailUsuario(dniONombre){
 // Notificar al responsable cuando se crea/asigna una OT
 function emailNuevaOT(o){
   if(!_ejsReady || !o) return;
+  var mi  = o.responsableMI||'';
   var asg = o.responsable||o.asg||'';
-  if(!asg) return;
-  var dest = getEmailUsuario(asg);
+  if(!asg && !mi) return;
+  var dest = mi ? getEmailUsuario(mi) : getEmailUsuario(asg);
   if(!dest || !dest.email) return;
   var titulo = o.titulo||o.rub||o.dsc||'Sin título';
   var pri = (o.prioridad||o.pri||'normal').toUpperCase();
@@ -4270,6 +4280,14 @@ function fillOTEqpSelect(){
   CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){var opt=document.createElement('option');opt.value=c+'|'+e._id;opt.textContent=c.toUpperCase()+': '+e.marca+' '+e.modelo+' (S/N: '+(e.serie||e.prov||'—')+')';sel.appendChild(opt);});});
 }
 function otEqpSelChange(val){if(!val)return;var parts=val.split('|'),cat=parts[0],id=parseInt(parts[1]);var e=(DB[cat]||[]).find(function(x){return x._id===id;});if(!e)return;document.getElementById('otEqp').value=cat.toUpperCase()+': '+e.marca+' '+e.modelo+' — S/N: '+(e.serie||e.prov||'S/N');}
+function otAsgSelChange(sel){
+  var mi=sel.value;
+  var txt=sel.options[sel.selectedIndex].text;
+  if(mi==='') return;
+  // Guardar el MI en el campo oculto y el nombre visible en otAsg
+  document.getElementById('otAsg').value=txt;
+  document.getElementById('otAsg').dataset.mi=mi;
+}
 function fillPersonalSelect(selId,val){var sel=document.getElementById(selId);if(!sel)return;sel.innerHTML='<option value="">— Sin asignar —</option>';(DB.per||[]).forEach(function(p){var opt=document.createElement('option');opt.value=p.mi||'';opt.textContent=p.grd+' '+p.ape+' '+p.nom;if(val&&val===p.mi)opt.selected=true;sel.appendChild(opt);});}
 
 // ══ QR POR EQUIPO ══
@@ -4731,8 +4749,10 @@ function getTGAdmins(){
 // Notificar OT nueva al responsable
 function tgNuevaOT(o){
   var asg = o.responsable||o.asg||'';
-  if(!asg) return;
-  var chatId = getTGChatId(asg);
+  var mi  = o.responsableMI||'';
+  if(!asg && !mi) return;
+  // Buscar por MI primero (más exacto)
+  var chatId = mi ? getTGChatId(mi) : getTGChatId(asg);
   if(!chatId) return;
   var pri = (o.prioridad||o.pri||'normal').toUpperCase();
   var titulo = o.titulo||o.rub||o.dsc||'Sin título';
