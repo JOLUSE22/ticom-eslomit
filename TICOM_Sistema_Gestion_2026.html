@@ -2772,6 +2772,7 @@ function saveOT(){
     addLog('Creó OT '+nro+': '+o.titulo);
   }
   var _esNuevaOT = (otEditId===null);
+  console.log('saveOT: otEditId=',otEditId,' _esNuevaOT=',_esNuevaOT);
   saveDB();
   // Notificar solo si es OT nueva
   if(_esNuevaOT){
