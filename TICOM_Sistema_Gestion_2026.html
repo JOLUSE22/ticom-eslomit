@@ -2755,12 +2755,14 @@ function saveOT(){
     DB.ot.push(o);
     addLog('Creó OT '+nro+': '+o.titulo);
   }
+  var _esNuevaOT = (otEditId===null);
   saveDB();
-  // Notificar directamente después de saveDB
-  if(otEditId===null){
+  // Notificar solo si es OT nueva
+  if(_esNuevaOT){
     var oCopy = JSON.parse(JSON.stringify(DB.ot[DB.ot.length-1]));
     emailNuevaOT(oCopy);
     tgNuevaOT(oCopy);
+    console.log('Notificaciones enviadas para OT:', oCopy.nro, 'MI:', oCopy.responsableMI);
   }
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
   cancelOTForm(); renderOTList(); renderDashboard();
