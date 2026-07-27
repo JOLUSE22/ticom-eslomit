@@ -2687,12 +2687,12 @@ function renderOTList(){
 }
 
 function openOTForm(id){
-  otEditId=id;
+  otEditId = (id===undefined||id===null||id==='') ? null : id;
   document.getElementById('otListView').style.display='none';
   document.getElementById('otRespView').style.display='none';
   document.getElementById('otFormView').style.display='block';
   var hoy=new Date().toISOString().split('T')[0];
-  if(id===null){
+  if(otEditId===null){
     document.getElementById('otFormTitle').textContent='Nueva Orden de Trabajo';
     var maxNro=(DB.ot.length?Math.max.apply(null,DB.ot.map(function(x){return parseInt((x.nro||'0').replace(/[^0-9]/g,''))||0;})):0)+1;
     document.getElementById('otN').value='OT-'+String(maxNro).padStart(2,'0');
@@ -2735,6 +2735,7 @@ function openOTForm(id){
 
 function openOTResp(id){var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='block';document.getElementById('otRespTitle').textContent='OT N '+o.nro+' - '+o.rub;['nro','fch','vnc','rub','pri','est','asg','aut','dsc','eqp','obs'].forEach(function(k){var el=document.getElementById('ro_'+k);if(el)el.textContent=o[k]||'-';});document.getElementById('respTexto').value=o.resp||'';document.getElementById('respInforme').value=o.informe||'';document.getElementById('respConf').value=o.conf||'';document.getElementById('respFirma').value=o.firma||currentUser.nombre;document.getElementById('respEst').value='';[0,1,2,3].forEach(function(i){clearFoto(i);});clearRespPDF();}
 function saveOT(){
+  var _esNuevaOT = (otEditId===null);
   var nro = document.getElementById('otN').value.trim();
   var fch = document.getElementById('otF').value;
   var pri = document.getElementById('otPri').value;
@@ -2771,8 +2772,7 @@ function saveOT(){
     DB.ot.push(o);
     addLog('Creó OT '+nro+': '+o.titulo);
   }
-  var _esNuevaOT = (otEditId===null);
-  console.log('saveOT: otEditId=',otEditId,' _esNuevaOT=',_esNuevaOT);
+  console.log('saveOT: _esNuevaOT=',_esNuevaOT,'otEditId=',otEditId);
   saveDB();
   // Notificar solo si es OT nueva
   if(_esNuevaOT){
