@@ -3321,14 +3321,25 @@ function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otD
     .catch(function(e){ console.warn('Email error:', e); });
 }
 
-// Buscar email de un usuario por DNI o nombre
-function getEmailUsuario(dniONombre){
-  // Buscar en Personal
-  var p = (DB.per||[]).find(function(x){
-    return x.mi===dniONombre || (x.ape+' '+x.nom).toLowerCase().includes(dniONombre.toLowerCase());
+// Buscar personal por cualquier combinación de nombre/DNI
+function buscarPersonal(txt){
+  if(!txt) return null;
+  txt = txt.toLowerCase().trim();
+  return (DB.per||[]).find(function(x){
+    var nombreCompleto = (x.ape+' '+x.nom).toLowerCase();
+    var nombreInverso  = (x.nom+' '+x.ape).toLowerCase();
+    var conGrado = (x.grd+' '+x.ape+' '+x.nom).toLowerCase();
+    return x.mi===txt ||
+      nombreCompleto.includes(txt) ||
+      nombreInverso.includes(txt) ||
+      txt.includes(x.ape.toLowerCase()) ||
+      conGrado.includes(txt);
   });
+}
+
+function getEmailUsuario(dniONombre){
+  var p = buscarPersonal(dniONombre);
   if(p) return { email: p.emailInst||p.email||'', nombre: p.grd+' '+p.ape+' '+p.nom };
-  // Buscar en _users
   var u = (DB._users||[]).find(function(x){ return x.dni===dniONombre; });
   if(u) return { email: '', nombre: u.nombre };
   return null;
@@ -4698,11 +4709,7 @@ function tgSend(chatId, texto){
 
 // Buscar chat_id de un usuario por DNI/nombre
 function getTGChatId(dniONombre){
-  // Buscar en Personal por MI o nombre
-  var p = (DB.per||[]).find(function(x){
-    return x.mi===dniONombre ||
-      (x.ape+' '+x.nom).toLowerCase().includes(dniONombre.toLowerCase());
-  });
+  var p = buscarPersonal(dniONombre);
   return p ? (p.tgChatId||'') : '';
 }
 
