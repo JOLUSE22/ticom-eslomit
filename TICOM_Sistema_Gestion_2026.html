@@ -2756,10 +2756,11 @@ function saveOT(){
     addLog('Creó OT '+nro+': '+o.titulo);
   }
   saveDB();
-  // Notificar DESPUÉS de saveDB con copia del objeto
+  // Notificar directamente después de saveDB
   if(otEditId===null){
     var oCopy = JSON.parse(JSON.stringify(DB.ot[DB.ot.length-1]));
-    setTimeout(function(){ emailNuevaOT(oCopy); tgNuevaOT(oCopy); }, 1000);
+    emailNuevaOT(oCopy);
+    tgNuevaOT(oCopy);
   }
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
   cancelOTForm(); renderOTList(); renderDashboard();
