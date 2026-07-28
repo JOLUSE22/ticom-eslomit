@@ -1028,6 +1028,21 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
   </div>
 </div>
 
+<!-- Modal 2FA -->
+<div id="modal2FA" style="display:none">
+  <div class="twofa-box">
+    <div class="twofa-icon">🔐</div>
+    <div class="twofa-title">Verificación en dos pasos</div>
+    <div class="twofa-sub" id="twoFASub">Enviamos un código de 6 dígitos a tu Telegram y Email</div>
+    <input class="twofa-input" type="number" id="twoFAInput" placeholder="000000" maxlength="6"
+      oninput="if(this.value.length>=6) verificar2FA()">
+    <div class="twofa-timer" id="twoFATimer">El código expira en <span id="twoFACount">120</span> segundos</div>
+    <button class="btn btn-primary" onclick="verificar2FA()" style="width:100%;margin-bottom:8px">✓ Verificar</button>
+    <button class="btn" onclick="reenviar2FA()" style="width:100%;background:#f0f5ff;color:#0B3566">↺ Reenviar código</button>
+    <div id="twoFAErr" style="color:#e53e3e;font-size:12px;margin-top:8px;min-height:16px"></div>
+  </div>
+</div>
+
 <!-- ══════════════════ APP ══════════════════ -->
 <div id="app">
 
@@ -6500,19 +6515,5 @@ function completarLogin(user){
   </div>
 </div>
 
-<!-- Modal 2FA -->
-<div id="modal2FA" style="display:none">
-  <div class="twofa-box">
-    <div class="twofa-icon">🔐</div>
-    <div class="twofa-title">Verificación en dos pasos</div>
-    <div class="twofa-sub" id="twoFASub">Enviamos un código de 6 dígitos a tu Telegram y Email</div>
-    <input class="twofa-input" type="number" id="twoFAInput" placeholder="000000" maxlength="6"
-      oninput="if(this.value.length>=6) verificar2FA()">
-    <div class="twofa-timer" id="twoFATimer">El código expira en <span id="twoFACount">120</span> segundos</div>
-    <button class="btn btn-primary" onclick="verificar2FA()" style="width:100%;margin-bottom:8px">✓ Verificar</button>
-    <button class="btn" onclick="reenviar2FA()" style="width:100%;background:#f0f5ff;color:#0B3566">↺ Reenviar código</button>
-    <div id="twoFAErr" style="color:#e53e3e;font-size:12px;margin-top:8px;min-height:16px"></div>
-  </div>
-</div>
 </body>
 </html>
