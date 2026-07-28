@@ -9,6 +9,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TICOM">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>SISTEMA DE INVENTARIO TICOM-ESLOMIT</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -3446,7 +3449,7 @@ function emailOTVencida(o){
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/ticom-eslomit/sw.js')
+    navigator.serviceWorker.register('/ticom-eslomit/sw.js?v='+Date.now())
       .then(function(reg){
         console.log('SW registrado OK');
         reg.addEventListener('updatefound', function(){
