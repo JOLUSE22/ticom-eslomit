@@ -602,6 +602,24 @@ table.dt tr:hover td{background:#EEF6FF}
 .nav-label{flex:1;}
 .sidebar-footer{margin-top:auto;padding:14px 0 12px;}
 .admin-only{display:none;}
+/* ══ MEJORAS VISUALES ══ */
+.topbar{ background:linear-gradient(135deg,#0B3566 0%,#1a4a8a 100%); }
+.stat-card{ border-radius:14px; border:none; box-shadow:0 2px 12px rgba(11,53,102,.1); transition:transform .2s,box-shadow .2s; }
+.stat-card:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(11,53,102,.15); cursor:pointer; }
+.card{ border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); border:1px solid rgba(11,53,102,.08); }
+.btn{ border-radius:8px; font-weight:600; transition:all .15s; }
+.btn:hover{ opacity:.88; transform:translateY(-1px); }
+.btn-primary{ background:linear-gradient(135deg,#0B3566,#1565C0); }
+.btn-success{ background:linear-gradient(135deg,#2E7D32,#388E3C); }
+.btn-danger{ background:linear-gradient(135deg,#C62828,#e53e3e); }
+.tab.active{ background:linear-gradient(135deg,rgba(99,179,237,.18),rgba(99,179,237,.08)); }
+input:focus, select:focus, textarea:focus{ border-color:#3182ce; box-shadow:0 0 0 3px rgba(49,130,206,.15); outline:none; }
+.modal-box{ border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.25); }
+table thead tr{ background:linear-gradient(135deg,#0B3566,#1565C0); }
+table thead th{ color:#fff; font-weight:700; letter-spacing:.3px; }
+table tbody tr:hover{ background:rgba(11,53,102,.04); }
+.login-card{ border-radius:20px; box-shadow:0 24px 80px rgba(0,0,0,.5); }
+
 /* ══ CHAT INTERNO ══ */
 #chatPanel{position:fixed;bottom:70px;right:20px;width:340px;height:420px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.25);z-index:9989;display:none;flex-direction:column;overflow:hidden;}
 .chat-header{background:#0B3566;color:#fff;padding:12px 16px;font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center;}
@@ -785,6 +803,24 @@ table.dt tr:hover td{background:#EEF6FF}
   color:rgba(220,240,255,.9);
 }
 .admin-only{display:none;}
+/* ══ MEJORAS VISUALES ══ */
+.topbar{ background:linear-gradient(135deg,#0B3566 0%,#1a4a8a 100%); }
+.stat-card{ border-radius:14px; border:none; box-shadow:0 2px 12px rgba(11,53,102,.1); transition:transform .2s,box-shadow .2s; }
+.stat-card:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(11,53,102,.15); cursor:pointer; }
+.card{ border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); border:1px solid rgba(11,53,102,.08); }
+.btn{ border-radius:8px; font-weight:600; transition:all .15s; }
+.btn:hover{ opacity:.88; transform:translateY(-1px); }
+.btn-primary{ background:linear-gradient(135deg,#0B3566,#1565C0); }
+.btn-success{ background:linear-gradient(135deg,#2E7D32,#388E3C); }
+.btn-danger{ background:linear-gradient(135deg,#C62828,#e53e3e); }
+.tab.active{ background:linear-gradient(135deg,rgba(99,179,237,.18),rgba(99,179,237,.08)); }
+input:focus, select:focus, textarea:focus{ border-color:#3182ce; box-shadow:0 0 0 3px rgba(49,130,206,.15); outline:none; }
+.modal-box{ border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.25); }
+table thead tr{ background:linear-gradient(135deg,#0B3566,#1565C0); }
+table thead th{ color:#fff; font-weight:700; letter-spacing:.3px; }
+table tbody tr:hover{ background:rgba(11,53,102,.04); }
+.login-card{ border-radius:20px; box-shadow:0 24px 80px rgba(0,0,0,.5); }
+
 /* ══ CHAT INTERNO ══ */
 #chatPanel{position:fixed;bottom:70px;right:20px;width:340px;height:420px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.25);z-index:9989;display:none;flex-direction:column;overflow:hidden;}
 .chat-header{background:#0B3566;color:#fff;padding:12px 16px;font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center;}
@@ -1012,6 +1048,7 @@ table.dt tr:hover td{background:#EEF6FF}
   <button class="tab" id="nav-archivos" onclick="showTab('archivos',this)"><span class="tab-icon">☁️</span><span class="tab-txt">Archivos Drive</span></button>
   <button class="tab" id="nav-historial" onclick="showTab('historial',this)"><span class="tab-icon">📁</span><span class="tab-txt">Historial</span></button>
 <button class="tab" id="nav-calendario" onclick="showTab('calendario',this)"><span class="tab-icon">📅</span><span class="tab-txt">Calendario</span></button>
+<button class="tab" id="nav-directivas" onclick="showTab('directivas',this)"><span class="tab-icon">📚</span><span class="tab-txt">Directivas</span></button>
 <button class="tab admin-only" id="nav-estadisticas" onclick="showTab('estadisticas',this)"><span class="tab-icon">📈</span><span class="tab-txt">Estadísticas</span></button>
 </div>
 <div>
@@ -1700,6 +1737,90 @@ table.dt tr:hover td{background:#EEF6FF}
 
 <!-- tab-calendario se agrega via JS -->
 
+
+<!-- ══ DIRECTIVAS ══ -->
+<div id="tab-directivas" class="panel">
+  <div class="export-bar" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:700;color:var(--text2)">📚 Biblioteca de Directivas y Documentos Institucionales</div>
+    <button class="btn btn-primary btn-sm admin-only" onclick="openModalDirectiva()">+ Agregar Directiva</button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filter-bar" style="margin-bottom:14px">
+    <select id="dirFiltroTipo" onchange="renderDirectivas()" style="max-width:200px">
+      <option value="">— Todos los tipos —</option>
+      <option value="Orden General">Orden General</option>
+      <option value="Orden Particular">Orden Particular</option>
+      <option value="Directiva">Directiva</option>
+      <option value="Circular">Circular</option>
+      <option value="Memorándum">Memorándum</option>
+      <option value="Reglamento">Reglamento</option>
+      <option value="Manual">Manual</option>
+      <option value="Procedimiento">Procedimiento</option>
+      <option value="Otro">Otro</option>
+    </select>
+    <input id="dirFiltroTexto" placeholder="🔍 Buscar..." oninput="renderDirectivas()" style="max-width:220px">
+  </div>
+
+  <!-- Lista de directivas -->
+  <div id="dirLista"></div>
+
+  <!-- Modal agregar directiva -->
+  <div id="modalDirectiva" class="modal-overlay" style="display:none">
+    <div class="modal-box" style="max-width:560px">
+      <div class="modal-title">📚 Agregar Directiva</div>
+      <div class="row">
+        <div class="col"><label>Tipo</label>
+          <select id="dirTipo">
+            <option>Orden General</option>
+            <option>Orden Particular</option>
+            <option>Directiva</option>
+            <option>Circular</option>
+            <option>Memorándum</option>
+            <option>Reglamento</option>
+            <option>Manual</option>
+            <option>Procedimiento</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="col"><label>N° / Referencia</label>
+          <input id="dirNro" placeholder="Ej: OG-001/2026">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Título</label>
+          <input id="dirTitulo" placeholder="Título del documento">
+        </div>
+        <div class="col"><label>Fecha</label>
+          <input type="date" id="dirFecha">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col"><label>Emisor / Origen</label>
+          <input id="dirEmisor" placeholder="Ej: Jefatura GNA, TICOM, etc.">
+        </div>
+        <div class="col"><label>Vigencia hasta</label>
+          <input type="date" id="dirVigencia">
+        </div>
+      </div>
+      <label>Descripción / Resumen</label>
+      <textarea id="dirDesc" style="min-height:70px" placeholder="Breve descripción del contenido..."></textarea>
+      <label>Adjuntar PDF / Imagen</label>
+      <div class="adj-box" onclick="adjuntarDirectiva()" id="dirAdjBox" style="cursor:pointer;border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;color:var(--text3)">
+        <span style="font-size:24px">📎</span>
+        <div id="dirAdjLabel" style="font-size:12px;margin-top:4px">Clic para adjuntar PDF o imagen (máx 5MB)</div>
+      </div>
+      <input type="hidden" id="dirAdjData">
+      <input type="hidden" id="dirAdjNombre">
+      <input type="hidden" id="dirEditId">
+      <div class="act-row" style="margin-top:14px">
+        <button class="btn btn-success" onclick="guardarDirectiva()">💾 Guardar</button>
+        <button class="btn" onclick="closeModal('modalDirectiva')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ BACKUP (admin) ══ -->
 <div id="tab-backup" class="panel">
   <div class="grid2">
@@ -2069,11 +2190,20 @@ function loadDB() {
       var dniEnLS = (parsed._users||[]).map(function(u){return u.dni;});
       var faltantes = DB_INITIAL._users.filter(function(u){return !dniEnLS.includes(u.dni);});
       if(faltantes.length > 0){ parsed._users = (parsed._users||[]).concat(faltantes); }
-      // Asegurar rol admin
+      // Asegurar rol admin SIN tocar contraseñas
       DB_INITIAL._users.forEach(function(uI){
-        if(uI.rol==='admin'){
-          var uLS=parsed._users.find(function(u){return u.dni===uI.dni;});
-          if(uLS&&uLS.rol!=='admin'){ uLS.rol='admin'; }
+        var uLS = parsed._users.find(function(u){return u.dni===uI.dni;});
+        if(uLS){
+          // Solo actualizar rol, NO la contraseña
+          if(uI.rol==='admin') uLS.rol='admin';
+          // EXCEPCIÓN: si el usuario ya tiene contraseña en LS, preservarla
+          // Solo resetear si es la contraseña genérica Admin1234 del admin principal
+          if(uI.dni==='32695288'){
+            // Siempre preservar la contraseña del admin principal
+            // No tocar nada
+          }
+          // Para usuarios sin contraseña propia (nueva instalación), usar la del INITIAL
+          if(!uLS.pass) uLS.pass = uI.pass;
         }
       });
       // Fusionar categorías de equipos del INITIAL si están vacías en LS
@@ -2089,6 +2219,7 @@ function loadDB() {
   } catch(e) {}
   return JSON.parse(JSON.stringify(DB_INITIAL));
 }
+
 function saveDB() {
   try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
   window._lastSaveTs = Date.now();
@@ -5709,6 +5840,197 @@ function startLoginClock(){
 document.addEventListener('DOMContentLoaded', function(){
   startLoginClock();
 });
+
+
+// ══════════════════════════════════════════
+// MÓDULO DE DIRECTIVAS
+// ══════════════════════════════════════════
+
+function openModalDirectiva(id){
+  var hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('dirEditId').value = id||'';
+  document.getElementById('dirAdjData').value = '';
+  document.getElementById('dirAdjNombre').value = '';
+  document.getElementById('dirAdjLabel').textContent = 'Clic para adjuntar PDF o imagen (máx 5MB)';
+  document.getElementById('dirFecha').value = hoy;
+  document.getElementById('dirVigencia').value = '';
+  document.getElementById('dirNro').value = '';
+  document.getElementById('dirTitulo').value = '';
+  document.getElementById('dirEmisor').value = '';
+  document.getElementById('dirDesc').value = '';
+
+  if(id){
+    var d = (DB.directivas||[]).find(function(x){return x._id===id;});
+    if(d){
+      document.getElementById('dirTipo').value     = d.tipo||'Directiva';
+      document.getElementById('dirNro').value      = d.nro||'';
+      document.getElementById('dirTitulo').value   = d.titulo||'';
+      document.getElementById('dirFecha').value    = d.fecha||hoy;
+      document.getElementById('dirVigencia').value = d.vigencia||'';
+      document.getElementById('dirEmisor').value   = d.emisor||'';
+      document.getElementById('dirDesc').value     = d.desc||'';
+      if(d.adjunto){
+        document.getElementById('dirAdjData').value   = d.adjunto;
+        document.getElementById('dirAdjNombre').value = d.adjuntoNombre||'';
+        document.getElementById('dirAdjLabel').textContent = '📎 '+( d.adjuntoNombre||'Archivo adjunto');
+      }
+    }
+  }
+  document.getElementById('modalDirectiva').style.display='flex';
+}
+
+function adjuntarDirectiva(){
+  var input=document.createElement('input');
+  input.type='file'; input.accept='application/pdf,image/*';
+  input.onchange=function(){
+    var file=input.files[0]; if(!file) return;
+    if(file.size>5*1024*1024){ alert('Máximo 5MB.'); return; }
+    var reader=new FileReader();
+    reader.onload=function(e){
+      document.getElementById('dirAdjData').value=e.target.result;
+      document.getElementById('dirAdjNombre').value=file.name;
+      document.getElementById('dirAdjLabel').textContent='📎 '+file.name;
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function guardarDirectiva(){
+  var titulo = document.getElementById('dirTitulo').value.trim();
+  if(!titulo){ alert('Ingresá el título.'); return; }
+  if(!DB.directivas) DB.directivas=[];
+  var editId = document.getElementById('dirEditId').value;
+  var d = {
+    _id: editId ? parseInt(editId) : (DB.directivas.length ? Math.max.apply(null,DB.directivas.map(function(x){return x._id;})) + 1 : 1),
+    tipo:    document.getElementById('dirTipo').value,
+    nro:     document.getElementById('dirNro').value.trim(),
+    titulo:  titulo,
+    fecha:   document.getElementById('dirFecha').value,
+    vigencia:document.getElementById('dirVigencia').value,
+    emisor:  document.getElementById('dirEmisor').value.trim(),
+    desc:    document.getElementById('dirDesc').value.trim(),
+    adjunto: document.getElementById('dirAdjData').value,
+    adjuntoNombre: document.getElementById('dirAdjNombre').value,
+    cargadoPor: currentUser?currentUser.nombre:'',
+    fechaCarga: new Date().toLocaleDateString('es-AR')
+  };
+  if(editId){
+    var idx=DB.directivas.findIndex(function(x){return x._id===parseInt(editId);});
+    if(idx>=0) DB.directivas[idx]=d; else DB.directivas.push(d);
+  } else {
+    DB.directivas.push(d);
+  }
+  addLog('Cargó directiva: '+d.tipo+' '+d.nro+' - '+d.titulo);
+  saveDB();
+  closeModal('modalDirectiva');
+  renderDirectivas();
+  showFbToast('✅ Directiva guardada');
+}
+
+function renderDirectivas(){
+  var lista = document.getElementById('dirLista');
+  if(!lista) return;
+  var tipo  = document.getElementById('dirFiltroTipo')?document.getElementById('dirFiltroTipo').value:'';
+  var texto = (document.getElementById('dirFiltroTexto')?document.getElementById('dirFiltroTexto').value:'').toLowerCase();
+  var dirs  = (DB.directivas||[]).filter(function(d){
+    var matchTipo = !tipo || d.tipo===tipo;
+    var matchTxt  = !texto || (d.titulo+d.nro+d.emisor+d.desc).toLowerCase().includes(texto);
+    return matchTipo && matchTxt;
+  }).slice().reverse();
+
+  if(!dirs.length){
+    lista.innerHTML = '<div style="text-align:center;color:var(--text3);padding:40px;font-size:13px">'+
+      '📚 Sin directivas cargadas.<br><span style="font-size:11px">Usá el botón "+ Agregar Directiva" para comenzar.</span></div>';
+    return;
+  }
+
+  var tipoColors = {
+    'Orden General':'#0B3566','Orden Particular':'#1565C0','Directiva':'#6b46c1',
+    'Circular':'#2E7D32','Memorándum':'#E65100','Reglamento':'#C62828',
+    'Manual':'#00838f','Procedimiento':'#558b2f','Otro':'#9E9E9E'
+  };
+
+  var hoy = today;
+  lista.innerHTML = dirs.map(function(d){
+    var color = tipoColors[d.tipo]||'#0B3566';
+    var vencida = d.vigencia && d.vigencia < hoy;
+    var porVencer = d.vigencia && !vencida && Math.floor((new Date(d.vigencia)-new Date(hoy))/86400000) <= 30;
+    var isAdmin = currentUser && currentUser.rol==='admin';
+
+    return '<div style="border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;'+
+      (vencida?'opacity:.6':'')+'">'+
+      '<div style="display:flex;align-items:flex-start;gap:12px">'+
+        '<div style="flex:1">'+
+          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">'+
+            '<span style="background:'+color+';color:#fff;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700">'+d.tipo+'</span>'+
+            (d.nro?'<span style="font-size:12px;color:var(--text3);font-weight:600">'+d.nro+'</span>':'')+
+            (vencida?'<span style="background:#fdecea;color:#c62828;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">VENCIDA</span>':'')+
+            (porVencer?'<span style="background:#fff3e0;color:#e65100;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">⚠️ Por vencer</span>':'')+
+          '</div>'+
+          '<div style="font-weight:700;font-size:14px;margin-bottom:4px">'+d.titulo+'</div>'+
+          '<div style="font-size:11px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap">'+
+            (d.emisor?'<span>📋 '+d.emisor+'</span>':'')+
+            (d.fecha?'<span>📅 '+d.fecha+'</span>':'')+
+            (d.vigencia?'<span>⏳ Vigente hasta: '+d.vigencia+'</span>':'')+
+            '<span>👤 '+d.cargadoPor+'</span>'+
+          '</div>'+
+          (d.desc?'<div style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5">'+d.desc+'</div>':'')+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">'+
+          (d.adjunto?'<button class="btn btn-sm btn-primary" onclick="verAdjuntoDirectiva('+d._id+')">📎 Ver</button>':'')+
+          (d.adjunto?'<button class="btn btn-sm" style="background:#2E7D32;color:#fff" onclick="descargarDirectiva('+d._id+')">⬇️</button>':'')+
+          (isAdmin?'<button class="btn btn-sm" style="background:#e2e8f0;color:#4a5568" onclick="openModalDirectiva('+d._id+')">✏️</button>':'')+
+          (isAdmin?'<button class="btn btn-sm btn-danger" onclick="delDirectiva('+d._id+')">🗑️</button>':'')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function verAdjuntoDirectiva(id){
+  var d=(DB.directivas||[]).find(function(x){return x._id===id;});
+  if(!d||!d.adjunto) return;
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:14px;padding:20px;max-width:90%;max-height:90vh;overflow:auto;text-align:center;min-width:300px';
+  var hdr=document.createElement('div');
+  hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:12px';
+  hdr.innerHTML='<span style="font-weight:700">'+d.tipo+' '+d.nro+' — '+(d.adjuntoNombre||'Documento')+'</span>';
+  var bC=document.createElement('button');
+  bC.textContent='✕';bC.style.cssText='background:#e2e8f0;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:16px';
+  bC.onclick=function(){overlay.remove();};
+  hdr.appendChild(bC);box.appendChild(hdr);
+  if(d.adjunto.startsWith('data:image')){
+    var img=document.createElement('img');img.src=d.adjunto;img.style.cssText='max-width:100%;border-radius:8px';
+    box.appendChild(img);
+  } else if(d.adjunto.startsWith('data:application/pdf')){
+    var embed=document.createElement('embed');
+    embed.src=d.adjunto;embed.type='application/pdf';embed.style.cssText='width:100%;height:70vh;border-radius:8px';
+    box.appendChild(embed);
+  } else {
+    var a=document.createElement('a');a.href=d.adjunto;a.download=d.adjuntoNombre||'directiva.pdf';
+    a.textContent='⬇️ Descargar';a.className='btn btn-primary';box.appendChild(a);
+  }
+  overlay.appendChild(box);document.body.appendChild(overlay);
+}
+
+function descargarDirectiva(id){
+  var d=(DB.directivas||[]).find(function(x){return x._id===id;});
+  if(!d||!d.adjunto) return;
+  var a=document.createElement('a');a.href=d.adjunto;a.download=d.adjuntoNombre||'directiva';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+function delDirectiva(id){
+  var d=(DB.directivas||[]).find(function(x){return x._id===id;});
+  confirmDialog('Eliminar Directiva','¿Eliminar '+( d?d.tipo+' '+d.nro:'esta directiva')+'?','📚',function(){
+    DB.directivas=(DB.directivas||[]).filter(function(x){return x._id!==id;});
+    addLog('Eliminó directiva id '+id);
+    saveDB();renderDirectivas();
+  });
+}
 
 </script>
 
