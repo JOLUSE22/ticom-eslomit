@@ -2854,10 +2854,12 @@ function renderOTList(){
   });
 }
 
+var _otFormIsNew = true; // true = nueva OT, false = editar
 function openOTForm(id){
-  otEditId = (id===undefined||id===null||id===''||id==='null') ? null : id;
-  if(otEditId===null) console.log('openOTForm: nueva OT, otEditId=null');
-  else console.log('openOTForm: editar OT', otEditId);
+  var esNueva = (id===undefined||id===null||id===''||id==='null');
+  otEditId = esNueva ? null : id;
+  _otFormIsNew = esNueva;
+  console.log('openOTForm:', esNueva?'NUEVA':'EDITAR', 'id=', id, 'otEditId=', otEditId);
   document.getElementById('otListView').style.display='none';
   document.getElementById('otRespView').style.display='none';
   document.getElementById('otFormView').style.display='block';
@@ -2905,7 +2907,8 @@ function openOTForm(id){
 
 function openOTResp(id){var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='block';document.getElementById('otRespTitle').textContent='OT N '+o.nro+' - '+o.rub;['nro','fch','vnc','rub','pri','est','asg','aut','dsc','eqp','obs'].forEach(function(k){var el=document.getElementById('ro_'+k);if(el)el.textContent=o[k]||'-';});document.getElementById('respTexto').value=o.resp||'';document.getElementById('respInforme').value=o.informe||'';document.getElementById('respConf').value=o.conf||'';document.getElementById('respFirma').value=o.firma||currentUser.nombre;document.getElementById('respEst').value='';[0,1,2,3].forEach(function(i){clearFoto(i);});clearRespPDF();}
 function saveOT(){
-  var _esNuevaOT = (otEditId===null);
+  var _esNuevaOT = _otFormIsNew===true;
+  console.log('saveOT: _esNuevaOT=',_esNuevaOT,'otEditId=',otEditId,'_otFormIsNew=',_otFormIsNew);
   var nro = document.getElementById('otN').value.trim();
   var fch = document.getElementById('otF').value;
   var pri = document.getElementById('otPri').value;
@@ -2942,7 +2945,6 @@ function saveOT(){
     DB.ot.push(o);
     addLog('Creó OT '+nro+': '+o.titulo);
   }
-  console.log('saveOT: _esNuevaOT=',_esNuevaOT,'otEditId=',otEditId);
   saveDB();
   // Notificar solo si es OT nueva
   if(_esNuevaOT){
