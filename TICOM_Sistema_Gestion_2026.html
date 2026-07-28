@@ -693,8 +693,9 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
   .topbar{flex-wrap:wrap;gap:6px;padding:8px 10px;}
   .topbar-right{flex-wrap:wrap;gap:4px;}
   .topbar-right input{width:120px!important;}
-  .tab-bar{overflow-x:auto;flex-wrap:nowrap;}
-  .tab{min-width:80px;padding:8px 6px;}
+  .tab-bar{overflow-x:auto!important;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .tab-bar::-webkit-scrollbar{display:none;}
+  .tab{min-width:80px;padding:8px 6px;flex-shrink:0;}
   .tab-txt{font-size:10px;}
   .grid2{grid-template-columns:1fr!important;}
   .stat-grid{grid-template-columns:1fr 1fr!important;}
@@ -894,8 +895,9 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
   .topbar{flex-wrap:wrap;gap:6px;padding:8px 10px;}
   .topbar-right{flex-wrap:wrap;gap:4px;}
   .topbar-right input{width:120px!important;}
-  .tab-bar{overflow-x:auto;flex-wrap:nowrap;}
-  .tab{min-width:80px;padding:8px 6px;}
+  .tab-bar{overflow-x:auto!important;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .tab-bar::-webkit-scrollbar{display:none;}
+  .tab{min-width:80px;padding:8px 6px;flex-shrink:0;}
   .tab-txt{font-size:10px;}
   .grid2{grid-template-columns:1fr!important;}
   .stat-grid{grid-template-columns:1fr 1fr!important;}
@@ -3438,7 +3440,73 @@ function renderHistorial(){
 function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta','entrega','baja','mantenimiento'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});if(v==='entrega'||v==='baja'||v==='mantenimiento') initDocForms();}
 function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}
   else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}doc.adjunto=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
-function renderDocsGuardados(){var el=document.getElementById('docsGuardadosBody');if(!el)return;var docs=(DB.docs||[]).slice().reverse();if(!docs.length){el.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr>';return;}el.innerHTML=docs.map(function(d){return '<tr><td style="font-weight:600">'+(d.nro||'')+'</td><td><span class="badge b-blue">'+(d.tipo||'')+'</span></td><td>'+(d.titulo||'')+'</td><td style="font-size:11px">'+(d.fecha||'')+'</td><td style="font-size:11px">'+(d.autor||'')+'</td></tr>';}).join('');}
+function renderDocsGuardados(){
+  var el=document.getElementById('docsGuardadosBody');
+  if(!el) return;
+  var docs=(DB.docs||[]).slice().reverse();
+  if(!docs.length){
+    el.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr>';
+    return;
+  }
+  var isAdmin=currentUser&&currentUser.rol==='admin';
+  el.innerHTML='';
+  docs.forEach(function(d){
+    var tr=document.createElement('tr');
+    var td1=document.createElement('td'); td1.style.fontWeight='600'; td1.textContent=d.nro||''; tr.appendChild(td1);
+    var td2=document.createElement('td'); td2.innerHTML='<span class="badge b-blue">'+(d.tipo||'')+'</span>'; tr.appendChild(td2);
+    var td3=document.createElement('td'); td3.textContent=d.titulo||''; tr.appendChild(td3);
+    var td4=document.createElement('td'); td4.style.fontSize='11px'; td4.textContent=d.fecha||''; tr.appendChild(td4);
+    var td5=document.createElement('td'); td5.style.fontSize='11px'; td5.textContent=d.autor||''; tr.appendChild(td5);
+    var td6=document.createElement('td'); td6.style.whiteSpace='nowrap';
+    if(d.adjunto){
+      var bVer=document.createElement('button'); bVer.className='btn btn-sm btn-primary'; bVer.textContent='👁️ Ver';
+      bVer.onclick=(function(id){return function(){verDocGuardado(id);};})(d._id);
+      td6.appendChild(bVer); td6.appendChild(document.createTextNode(' '));
+    }
+    if(isAdmin){
+      var bDel=document.createElement('button'); bDel.className='btn btn-sm btn-danger'; bDel.textContent='🗑️';
+      bDel.onclick=(function(id){return function(){delDocGuardado(id);};})(d._id);
+      td6.appendChild(bDel);
+    }
+    tr.appendChild(td6);
+    el.appendChild(tr);
+  });
+}
+
+
+function verDocGuardado(id){
+  var d=(DB.docs||[]).find(function(x){return x._id===id||String(x._id)===String(id);});
+  if(!d) return;
+  if(d.adjunto){
+    var overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center';
+    var box=document.createElement('div');
+    box.style.cssText='background:#fff;border-radius:14px;padding:20px;max-width:90%;max-height:90vh;overflow:auto;min-width:300px';
+    var hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-bottom:12px';
+    hdr.innerHTML='<span style="font-weight:700">'+d.tipo+' — '+(d.titulo||d.nro||'Documento')+'</span>';
+    var bC=document.createElement('button');
+    bC.textContent='✕';bC.style.cssText='background:#e2e8f0;border:none;border-radius:6px;padding:4px 10px;cursor:pointer';
+    bC.onclick=function(){overlay.remove();};
+    hdr.appendChild(bC);box.appendChild(hdr);
+    if(d.adjunto.startsWith('data:image')){
+      var img=document.createElement('img');img.src=d.adjunto;img.style.cssText='max-width:100%;border-radius:8px';box.appendChild(img);
+    } else {
+      var embed=document.createElement('embed');embed.src=d.adjunto;embed.type='application/pdf';embed.style.cssText='width:100%;height:70vh';box.appendChild(embed);
+    }
+    overlay.appendChild(box);document.body.appendChild(overlay);
+  } else {
+    alert(d.tipo+' N°'+(d.nro||'')+': '+(d.titulo||'')+'\nFecha: '+(d.fecha||'')+'\nAutor: '+(d.autor||''));
+  }
+}
+
+function delDocGuardado(id){
+  confirmDialog('Eliminar Documento','¿Eliminar este documento guardado?','📄',function(){
+    DB.docs=(DB.docs||[]).filter(function(x){return String(x._id)!==String(id);});
+    addLog('Eliminó documento id '+id);
+    saveDB();renderDocsGuardados();
+  });
+}
 function prevDoc(t){var el=document.getElementById('pv-'+t);if(el)el.textContent=toText(buildDoc(t));}
 function prevActa(){document.getElementById('actaPrev').textContent=toText(buildActa());}
 function buildActa(){var tipo=document.getElementById('aTipo').value,sis=document.getElementById('aSis').value||'[NO ESPECIFICADO]';var cuerpos={'Acta de Confidencialidad':'El/la firmante declara que toda informacion relacionada con el sistema "'+sis+'" es de caracter estrictamente confidencial. Queda prohibida la divulgacion no autorizada.','Acta de VPN':'El/la firmante recibe acceso VPN al sistema "'+sis+'". Se compromete a utilizarlo solo para tareas autorizadas y a no compartir credenciales.','Acta de Acceso al Sistema':'El/la firmante recibe credenciales de acceso al sistema "'+sis+'". Se compromete a mantener su confidencialidad.','Memorandum interno':'El/la firmante ha sido notificado sobre los procedimientos del sistema "'+sis+'".'};return{title:tipo.toUpperCase(),num:document.getElementById('aNum').value,lines:[['Unidad',document.getElementById('aEmp').value||'-'],['Funcionario',document.getElementById('aFirm').value||'-'],['Grado/Cargo',document.getElementById('aCargo').value||'-'],['DNI/MI/CE',document.getElementById('aDni2').value||'-'],['Expediente GDE',(document.getElementById('aGDE')||{value:'-'}).value||'-'],['Fecha',document.getElementById('aFecha').value],['Sistema',sis],['',''],['TEXTO DEL ACTA',''],['',cuerpos[tipo]||''],['',''],['Observaciones',document.getElementById('aObs').value||'-'],['PDF adjunto',adjData['acta']?adjData['acta'].name:'(sin adjunto)'],['',''],['Firma','______________________________'],['Aclaracion','______________________________'],['DNI','______________________________'],['Fecha de firma','______________________________']]};}
@@ -5486,7 +5554,9 @@ function enviarChat(){
 // Mostrar chat y detectar mensajes nuevos via Firebase
 function initChat(){
   var btn=document.getElementById('chatBtn');
-  if(btn&&currentUser) btn.style.display='block';
+  if(btn&&currentUser){ btn.style.display='block'; btn.style.position='fixed'; }
+  // Renderizar mensajes iniciales
+  renderChatMsgs();
   // Detectar mensajes nuevos cuando Firebase sincroniza
   var lastCount=(DB.chatMsgs||[]).length;
   setInterval(function(){
