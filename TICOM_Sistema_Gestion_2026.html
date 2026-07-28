@@ -2799,19 +2799,7 @@ function renderOTList(){
     var estCls = est.replace(' ','-').toLowerCase();
     var vcls = vencido?'color:var(--red2);font-weight:700':'';
     var colPri = pri==='alta'||pri==='urgente'?'#e53e3e':pri==='media'?'#dd6b20':'#2b6cb0';
-    var celResp = '';
-    var pResp = o.responsableMI ? buscarPersonal(o.responsableMI) : buscarPersonal(o.responsable||o.asg||'');
-    if(pResp && pResp.cel) celResp = pResp.cel.replace(/[^0-9]/g,'');
-    var waMsg = encodeURIComponent('📋 TICOM-ESLOMIT\nOT '+( o.nro||o._id)+': '+(o.titulo||o.rub||o.dsc||'')+'\nPrioridad: '+(o.prioridad||o.pri||'').toUpperCase()+'\nVence: '+(o.fechaLim||o.vnc||'Sin fecha')+'\nhttps://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html');
-    var btnWA = celResp ? '<a href="https://wa.me/549'+celResp+'?text='+waMsg+'" target="_blank" class="btn btn-sm" style="background:#25D366;color:#fff;text-decoration:none">📱</a> ' : '';
-    var acc = isAdmin
-      ? btnWA+
-        '<button class="btn btn-sm btn-primary" onclick="openOTForm('+o._id+')">✏️</button> '+
-        '<button class="btn btn-sm btn-pdf" onclick="exportOTPDFById('+o._id+')">PDF</button> '+
-        '<button class="btn btn-sm" style="background:#6b46c1;color:#fff" onclick="verHistorialOT('+o._id+')">📋</button> '+
-        '<button class="btn btn-sm btn-danger" onclick="delOT('+o._id+')">🗑️</button>'
-      : '<button class="btn btn-sm btn-success" onclick="openOTResp('+o._id+')">✏️ Responder</button> '+
-        '<button class="btn btn-sm btn-pdf" onclick="exportOTPDFById('+o._id+')">PDF</button>';
+    // Botones de acción
     var tr=document.createElement('tr');
     tr.innerHTML=
       '<td style="font-weight:700">'+nro+'</td>'+
@@ -2822,8 +2810,47 @@ function renderOTList(){
       '<td style="font-size:11px">'+asg+'</td>'+
       '<td style="font-size:11px">'+aut+'</td>'+
       '<td><span class="est-'+estCls+'">'+est+'</span>'+(o.resp?' 💬':'')+'</td>'+
-      '<td style="white-space:nowrap">'+acc+'</td>';
+      '<td style="white-space:nowrap" id="acc-'+o._id+'"></td>';
     tbody.appendChild(tr);
+
+    // Celda de acciones con DOM API
+    var tdAcc = document.getElementById('acc-'+o._id);
+    if(tdAcc){
+      // WhatsApp
+      var pResp = o.responsableMI ? buscarPersonal(o.responsableMI) : buscarPersonal(o.responsable||o.asg||'');
+      if(pResp && pResp.cel){
+        var celNum = pResp.cel.replace(/[^0-9]/g,'');
+        var waMsg = encodeURIComponent('📋 TICOM-ESLOMIT\nOT '+(o.nro||o._id)+': '+(o.titulo||o.rub||o.dsc||'')+'\nPrioridad: '+(o.prioridad||o.pri||'').toUpperCase()+'\nVence: '+(o.fechaLim||o.vnc||'Sin fecha')+'\nhttps://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html');
+        var bWA=document.createElement('a');
+        bWA.href='https://wa.me/549'+celNum+'?text='+waMsg;
+        bWA.target='_blank';
+        bWA.className='btn btn-sm';
+        bWA.style.cssText='background:#25D366;color:#fff;text-decoration:none;margin-right:2px';
+        bWA.textContent='📱';
+        tdAcc.appendChild(bWA);
+      }
+      if(isAdmin){
+        var bEdit=document.createElement('button'); bEdit.className='btn btn-sm btn-primary'; bEdit.textContent='✏️';
+        bEdit.onclick=(function(id){return function(){openOTForm(id);};})(o._id);
+        tdAcc.appendChild(bEdit); tdAcc.appendChild(document.createTextNode(' '));
+        var bPDF=document.createElement('button'); bPDF.className='btn btn-sm btn-pdf'; bPDF.textContent='PDF';
+        bPDF.onclick=(function(id){return function(){exportOTPDFById(id);};})(o._id);
+        tdAcc.appendChild(bPDF); tdAcc.appendChild(document.createTextNode(' '));
+        var bHist=document.createElement('button'); bHist.className='btn btn-sm'; bHist.style.cssText='background:#6b46c1;color:#fff'; bHist.textContent='📋';
+        bHist.onclick=(function(id){return function(){verHistorialOT(id);};})(o._id);
+        tdAcc.appendChild(bHist); tdAcc.appendChild(document.createTextNode(' '));
+        var bDel=document.createElement('button'); bDel.className='btn btn-sm btn-danger'; bDel.textContent='🗑️';
+        bDel.onclick=(function(id){return function(){delOT(id);};})(o._id);
+        tdAcc.appendChild(bDel);
+      } else {
+        var bResp=document.createElement('button'); bResp.className='btn btn-sm btn-success'; bResp.textContent='✏️ Responder';
+        bResp.onclick=(function(id){return function(){openOTResp(id);};})(o._id);
+        tdAcc.appendChild(bResp); tdAcc.appendChild(document.createTextNode(' '));
+        var bPDF2=document.createElement('button'); bPDF2.className='btn btn-sm btn-pdf'; bPDF2.textContent='PDF';
+        bPDF2.onclick=(function(id){return function(){exportOTPDFById(id);};})(o._id);
+        tdAcc.appendChild(bPDF2);
+      }
+    }
   });
 }
 
