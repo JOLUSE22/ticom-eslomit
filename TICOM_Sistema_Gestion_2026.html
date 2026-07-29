@@ -98,6 +98,13 @@ function initFirebase(){
 
         // Aplicar si Firebase es más nuevo O si es otra PC (localTs=0)
         if(fbTs >= localTs){
+          // Asegurar que las categorías clave existan como arrays (si vino un
+          // snapshot viejo/incompleto de Firebase sin alguna, ej: "ot"),
+          // para que el resto del sistema no explote con "Cannot read
+          // properties of undefined (reading 'length')".
+          var _catsFB=['pc','poc','portatil','radio','antena','fuente','imp','mon','ot_eq','per','ot','docs','logs','resetSolicitudes'];
+          _catsFB.forEach(function(c){ if(!Array.isArray(clean[c])) clean[c]=[]; });
+
           // Guardar en localStorage
           try{ localStorage.setItem(LS_KEY, JSON.stringify(clean)); }catch(e){}
 
@@ -1197,6 +1204,11 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
         <div style="flex:1;min-width:120px"><div id="eqChartLegend" style="font-size:12px;line-height:2.2"></div></div>
       </div>
     </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title"><span class="ct-icon">📲</span>Notificaciones por Telegram — Personal</div>
+    <div id="dashTgResumen"></div>
   </div>
 </div>
 
@@ -2560,6 +2572,32 @@ function renderDashboard(){
   var eqResEl = document.getElementById('dashEqResumen');
   if(eqResEl) eqResEl.innerHTML = eqResumen || '<div style="color:var(--text3);font-size:12px">Sin equipos registrados.</div>';
 
+  // ── Resumen Telegram del Personal ──
+  var tgResEl = document.getElementById('dashTgResumen');
+  if(tgResEl){
+    var perList = (DB.per||[]).slice().sort(function(a,b){return (a.ord||'').localeCompare(b.ord||'');});
+    var conTg = perList.filter(function(p){return p.tgChatId;});
+    var sinTg = perList.filter(function(p){return !p.tgChatId;});
+    var resumenHtml =
+      '<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">'+
+        '<span style="background:#e8f5e9;color:#2E7D32;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">✅ '+conTg.length+' con Telegram</span>'+
+        '<span style="background:#fdecea;color:#c62828;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">⚠️ '+sinTg.length+' sin cargar</span>'+
+      '</div>';
+    if(sinTg.length===0){
+      resumenHtml += '<div style="color:var(--green2);font-weight:600;font-size:12px">✅ Todo el personal tiene su Chat ID cargado.</div>';
+    } else {
+      resumenHtml += '<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Hacé clic en un nombre para cargarle el Chat ID:</div>';
+      resumenHtml += sinTg.map(function(p){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer" onclick="showTab(\'personal\',document.getElementById(\'nav-personal\'));editPer('+p._id+')">'+
+          '<span style="font-size:14px">📲</span>'+
+          '<span style="flex:1;font-weight:600">'+(p.grd||'')+' '+(p.ape||'')+' '+(p.nom||'')+'</span>'+
+          '<span class="badge b-red">Sin cargar</span>'+
+          '</div>';
+      }).join('');
+    }
+    tgResEl.innerHTML = resumenHtml;
+  }
+
   checkResetPendientes();
   renderSaludo();
 }
@@ -2584,7 +2622,10 @@ function renderPersonal(){
     var meses=p.meses?'<span class="badge b-amber">'+p.meses+'m</span>':'';
     var isA=currentUser&&currentUser.rol==='admin';
     var tr=document.createElement('tr');
-    tr.innerHTML='<td style="font-weight:700">'+(p.ord||'')+'</td><td style="font-size:11px;font-weight:600">'+(p.grd||'')+'</td><td><span class="badge b-purple">'+(p.esp||'')+'</span></td><td style="font-weight:600;white-space:nowrap">'+(p.ape||'')+', '+(p.nom||'')+'</td><td style="font-family:monospace;font-size:11px">'+(p.mi||'')+'</td><td style="font-size:11px">'+(p.ce||'')+'</td><td style="font-size:11px">'+(p.emailInst||p.email||'')+(p.cel?' · 📱'+p.cel:'')+'</td><td><span class="badge b-gray">'+(p.uni||'')+'</span></td><td style="font-size:11px">'+(p.mtoPase||'')+' '+(p.fp?'<br>'+p.fp:'')+' '+meses+'</td><td><span class="perm-live badge b-blue" data-fp="'+(p.fp||'')+'">-</span></td><td>'+sis+'</td><td style="white-space:nowrap">'+(isA?'<button class="btn btn-sm btn-primary" onclick="editPer('+p._id+')">&#9999;</button> <button class="btn btn-sm btn-danger" onclick="delPer('+p._id+')">&#128465;</button>':'')+'</td>';
+    var tgBadge = p.tgChatId
+      ? '<span class="badge b-green" title="Telegram configurado" style="cursor:pointer" onclick="editPer('+p._id+')">📲 OK</span>'
+      : '<span class="badge b-red" title="Sin Chat ID de Telegram — click para cargarlo" style="cursor:pointer" onclick="editPer('+p._id+')">📲 Sin cargar</span>';
+    tr.innerHTML='<td style="font-weight:700">'+(p.ord||'')+'</td><td style="font-size:11px;font-weight:600">'+(p.grd||'')+'</td><td><span class="badge b-purple">'+(p.esp||'')+'</span></td><td style="font-weight:600;white-space:nowrap">'+(p.ape||'')+', '+(p.nom||'')+'</td><td style="font-family:monospace;font-size:11px">'+(p.mi||'')+'</td><td style="font-size:11px">'+(p.ce||'')+'</td><td style="font-size:11px">'+(p.emailInst||p.email||'')+(p.cel?' · 📱'+p.cel:'')+'<br>'+tgBadge+'</td><td><span class="badge b-gray">'+(p.uni||'')+'</span></td><td style="font-size:11px">'+(p.mtoPase||'')+' '+(p.fp?'<br>'+p.fp:'')+' '+meses+'</td><td><span class="perm-live badge b-blue" data-fp="'+(p.fp||'')+'">-</span></td><td>'+sis+'</td><td style="white-space:nowrap">'+(isA?'<button class="btn btn-sm btn-primary" onclick="editPer('+p._id+')">&#9999;</button> <button class="btn btn-sm btn-danger" onclick="delPer('+p._id+')">&#128465;</button>':'')+'</td>';
     tbody.appendChild(tr);
   });
 }
@@ -2603,8 +2644,21 @@ function tickPerms(){
 }
 setInterval(tickPerms,1000);
 
-function initPerForm(){document.getElementById('pEditId').value='';document.getElementById('perModalTitle').textContent='Nuevo Integrante';['pOrd','pGrd','pEsp','pApe','pNom','pMi','pCe','pEciv','pEmail','pEmailI','pMto','pSis','pObs'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('pUni').value='ESLOMIT';document.getElementById('pFp').value=today;}
-function editPer(id){var p=DB.per.find(function(x){return x._id===id;});if(!p)return;document.getElementById('pEditId').value=id;document.getElementById('perModalTitle').textContent='Editar - '+p.ape;document.getElementById('pOrd').value=p.ord||'';document.getElementById('pGrd').value=p.grd||'';document.getElementById('pEsp').value=p.esp||'';document.getElementById('pApe').value=p.ape||'';document.getElementById('pNom').value=p.nom||'';document.getElementById('pMi').value=p.mi||'';document.getElementById('pCe').value=p.ce||'';document.getElementById('pEciv').value=p.eciv||'';document.getElementById('pEmail').value=p.email||'';document.getElementById('pEmailI').value=p.emailInst||'';document.getElementById('pUni').value=p.uni||'ESLOMIT';document.getElementById('pMto').value=p.mtoPase||'';document.getElementById('pFp').value=p.fp||today;document.getElementById('pSis').value=(p.sis||[]).join(', ');document.getElementById('pObs').value=p.obs||'';openModal('modalPer');}
+function initPerForm(){document.getElementById('pEditId').value='';document.getElementById('perModalTitle').textContent='Nuevo Integrante';['pOrd','pGrd','pEsp','pApe','pNom','pMi','pCe','pEciv','pEmail','pEmailI','pMto','pSis','pObs'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('pUni').value='ESLOMIT';document.getElementById('pFp').value=today;
+  var _pTg=document.getElementById('pTgChatId');if(_pTg)_pTg.value='';
+  var _pCel=document.getElementById('pCelular');if(_pCel)_pCel.value='';
+  var _pCelI=document.getElementById('pCelularInst');if(_pCelI)_pCelI.value='';
+  quitarFotoPer();
+}
+function editPer(id){var p=DB.per.find(function(x){return x._id===id;});if(!p)return;document.getElementById('pEditId').value=id;document.getElementById('perModalTitle').textContent='Editar - '+p.ape;document.getElementById('pOrd').value=p.ord||'';document.getElementById('pGrd').value=p.grd||'';document.getElementById('pEsp').value=p.esp||'';document.getElementById('pApe').value=p.ape||'';document.getElementById('pNom').value=p.nom||'';document.getElementById('pMi').value=p.mi||'';document.getElementById('pCe').value=p.ce||'';document.getElementById('pEciv').value=p.eciv||'';document.getElementById('pEmail').value=p.email||'';document.getElementById('pEmailI').value=p.emailInst||'';document.getElementById('pUni').value=p.uni||'ESLOMIT';document.getElementById('pMto').value=p.mtoPase||'';document.getElementById('pFp').value=p.fp||today;document.getElementById('pSis').value=(p.sis||[]).join(', ');document.getElementById('pObs').value=p.obs||'';
+  var _pTg=document.getElementById('pTgChatId');if(_pTg)_pTg.value=p.tgChatId||'';
+  var _pCel=document.getElementById('pCelular');if(_pCel)_pCel.value=p.cel||'';
+  var _pCelI=document.getElementById('pCelularInst');if(_pCelI)_pCelI.value=p.celInst||'';
+  var _fData=document.getElementById('perFotoData');if(_fData)_fData.value=p.foto||'';
+  var _fPrev=document.getElementById('perFotoPreview');
+  if(p.foto && _fPrev){_fPrev.src=p.foto;_fPrev.style.display='block';var _bq=document.getElementById('btnQuitarFoto');if(_bq)_bq.style.display='inline-block';}
+  else if(_fPrev){_fPrev.style.display='none';var _bq2=document.getElementById('btnQuitarFoto');if(_bq2)_bq2.style.display='none';}
+  openModal('modalPer');}
 function savePer(){var editId=document.getElementById('pEditId').value;var p={_id:editId?parseInt(editId):(DB.per.length?Math.max.apply(null,DB.per.map(function(x){return x._id;}))+1:1),ord:document.getElementById('pOrd').value,grd:document.getElementById('pGrd').value,esp:document.getElementById('pEsp').value,ape:document.getElementById('pApe').value,nom:document.getElementById('pNom').value,mi:document.getElementById('pMi').value,ce:document.getElementById('pCe').value,eciv:document.getElementById('pEciv').value,email:document.getElementById('pEmail').value,emailInst:document.getElementById('pEmailI').value,uni:document.getElementById('pUni').value,mtoPase:document.getElementById('pMto').value,fp:document.getElementById('pFp').value,sis:document.getElementById('pSis').value.split(',').map(function(s){return s.trim();}).filter(Boolean),obs:document.getElementById('pObs').value,
     cel:document.getElementById('pCelular')?document.getElementById('pCelular').value:'',
     celInst:document.getElementById('pCelularInst')?document.getElementById('pCelularInst').value:'',
@@ -2843,6 +2897,17 @@ function renderOTList(){
   });
 }
 
+function fillOTAsgSelect(valorMI){
+  var sel=document.getElementById('otAsgSel');if(!sel)return;
+  sel.innerHTML='<option value="">— Seleccionar personal —</option>';
+  (DB.per||[]).slice().sort(function(a,b){return (a.ord||'').localeCompare(b.ord||'');}).forEach(function(p){
+    var opt=document.createElement('option');
+    opt.value=p.mi||'';
+    opt.textContent=(p.grd||'')+' '+(p.ape||'')+' '+(p.nom||'')+(p.tgChatId?' 📲':'');
+    if(valorMI && valorMI===p.mi) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
 var _otFormIsNew = true; // true = nueva OT, false = editar
 function openOTForm(id){
   var esNueva = (id===undefined||id===null||id===''||id==='null');
@@ -2862,6 +2927,8 @@ function openOTForm(id){
     document.getElementById('otPri').value='normal';
     document.getElementById('otRub').value='Comunicaciones HF/UHF';
     document.getElementById('otAsg').value='';
+    document.getElementById('otAsg').dataset.mi='';
+    fillOTAsgSelect('');
     document.getElementById('otAut').value=currentUser?currentUser.nombre:'';
     document.getElementById('otUni').value='ESLOMIT';
     document.getElementById('otEst').value='pendiente';
@@ -2881,6 +2948,8 @@ function openOTForm(id){
     document.getElementById('otPri').value=o.pri||o.prioridad||'normal';
     document.getElementById('otRub').value=o.rub||o.titulo||'';
     document.getElementById('otAsg').value=o.asg||o.responsable||'';
+    document.getElementById('otAsg').dataset.mi=o.responsableMI||'';
+    fillOTAsgSelect(o.responsableMI||'');
     document.getElementById('otAut').value=o.aut||o.autor||'';
     document.getElementById('otUni').value=o.uni||'ESLOMIT';
     document.getElementById('otEst').value=o.est||o.estado||'pendiente';
@@ -2896,6 +2965,7 @@ function openOTForm(id){
 
 function openOTResp(id){var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='block';document.getElementById('otRespTitle').textContent='OT N '+o.nro+' - '+o.rub;['nro','fch','vnc','rub','pri','est','asg','aut','dsc','eqp','obs'].forEach(function(k){var el=document.getElementById('ro_'+k);if(el)el.textContent=o[k]||'-';});document.getElementById('respTexto').value=o.resp||'';document.getElementById('respInforme').value=o.informe||'';document.getElementById('respConf').value=o.conf||'';document.getElementById('respFirma').value=o.firma||currentUser.nombre;document.getElementById('respEst').value='';[0,1,2,3].forEach(function(i){clearFoto(i);});clearRespPDF();}
 function saveOT(){
+  if(!DB.ot) DB.ot=[];
   var _esNuevaOT = _otFormIsNew===true;
   console.log('saveOT: _esNuevaOT=',_esNuevaOT,'otEditId=',otEditId,'_otFormIsNew=',_otFormIsNew);
   var nro = document.getElementById('otN').value.trim();
