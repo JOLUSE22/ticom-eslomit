@@ -38,6 +38,13 @@ var _fbRef = null;
 window._fbReady = false;
 window._fbPush = null;
 window._lastSaveTs = 0;
+try{
+  var _lsBoot = localStorage.getItem('ticom_eslomit_db_v7');
+  if(_lsBoot){
+    var _lsBootParsed = JSON.parse(_lsBoot);
+    if(_lsBootParsed && _lsBootParsed._localTs) window._lastSaveTs = _lsBootParsed._localTs;
+  }
+}catch(e){}
 
 function initFirebase(){
   try {
@@ -78,6 +85,16 @@ function initFirebase(){
         }
 
         var localTs = window._lastSaveTs || 0;
+
+        // Si Firebase quedó más viejo que nuestro último guardado local (ej: se
+        // reinició el sistema antes de que el push anterior terminara de subir),
+        // no perder los datos locales: volver a subirlos para completar la sync.
+        if(localTs > 0 && fbTs < localTs){
+          console.log('FB: datos remotos más viejos que los locales, re-subiendo...');
+          if(window._fbPush) window._fbPush(JSON.parse(JSON.stringify(window.DB || DB)));
+          updateFbBadge(true);
+          return;
+        }
 
         // Aplicar si Firebase es más nuevo O si es otra PC (localTs=0)
         if(fbTs >= localTs){
@@ -2258,8 +2275,9 @@ function loadDB() {
 }
 
 function saveDB() {
-  try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
   window._lastSaveTs = Date.now();
+  try{ DB._localTs = window._lastSaveTs; }catch(e){}
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
   if(window._fbReady && window._fbPush){
     window._fbPush(JSON.parse(JSON.stringify(DB)));
   } else {
