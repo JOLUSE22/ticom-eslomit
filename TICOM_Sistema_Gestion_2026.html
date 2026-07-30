@@ -59,11 +59,12 @@ function initFirebase(){
     _fbRef = _fbDB.ref('ticom_eslomit');
     window._fbReady = true;
 
-    // PUSH: subir datos a Firebase
+    // PUSH: subir datos a Firebase (update, no set, para no pisar/borrar
+    // ramas que se manejan aparte como chatMsgs)
     window._fbPush = function(data){
       var payload = JSON.parse(JSON.stringify(data));
       payload._ts = Date.now();
-      _fbRef.set(payload)
+      _fbRef.update(payload)
         .then(function(){ updateFbBadge(true); console.log('FB: push OK'); })
         .catch(function(e){ console.warn('FB push error:', e); updateFbBadge(false); });
     };
@@ -1091,6 +1092,11 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
     <button id="notifBtn" onclick="toggleNotifPanel()" title="Notificaciones">
       🔔<span id="notifCount">0</span>
     </button>
+    <div style="position:relative">
+      <input id="buscadorGlobal" placeholder="🔎 Buscar personal, equipo, OT..." oninput="buscadorGlobalRun(this.value)" onfocus="if(this.value)buscadorGlobalRun(this.value)"
+        style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 10px;font-size:12px;width:190px;outline:none">
+      <div id="buscadorGlobalResultados" style="display:none;position:absolute;top:32px;left:0;width:320px;max-height:360px;overflow:auto;background:#fff;color:#222;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:500;font-size:12px"></div>
+    </div>
     <button id="btnConfig" class="admin-only" onclick="openConfig()" title="Configuración" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer">⚙️</button>
     <button id="btnDarkMode" onclick="toggleDarkMode()" title="Modo oscuro" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer">🌙</button>
     <span class="user-chip" onclick="openPerfil()" title="Mi perfil" style="cursor:pointer"><span class="role-dot" id="roleDot"></span><span id="userLabel">—</span></span>
@@ -1207,7 +1213,7 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
   </div>
 
   <div class="card" style="margin-top:14px">
-    <div class="card-title"><span class="ct-icon">📲</span>Notificaciones por Telegram — Personal</div>
+    <div class="card-title"><span class="ct-icon">📲</span>Notificaciones (Telegram / WhatsApp) — Personal</div>
     <div id="dashTgResumen"></div>
   </div>
 </div>
@@ -2106,6 +2112,19 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
         Para obtener tu Chat ID: buscá @ticom_eslomit_bot en Telegram → escribí /start → pedíselo al admin
       </label></div>
     </div>
+    <div class="row">
+      <div class="col"><label>WhatsApp — Número</label>
+        <input id="pWaNumero" placeholder="Ej: 543718123456 (con código país, sin +)">
+      </div>
+      <div class="col"><label>WhatsApp — API Key (CallMeBot)</label>
+        <input id="pWaApiKey" placeholder="Ej: 123456">
+      </div>
+    </div>
+    <div class="row"><div class="col">
+      <label style="font-size:10px;color:var(--text3)">
+        Para habilitar WhatsApp: guardá el contacto <strong>+34 684 783 708</strong> en tu celular (ese número puede cambiar, verificar en callmebot.com si no funciona), mandale por WhatsApp el mensaje <strong>"I allow callmebot to send me messages"</strong>, esperá la respuesta con tu API Key, y cargá acá tu número completo (con código de país, sin espacios) y esa key.
+      </label>
+    </div></div>
     <div class="row"><div class="col">
       <label>Foto de perfil</label>
       <div style="display:flex;align-items:center;gap:12px">
@@ -2290,15 +2309,22 @@ function saveDB() {
   window._lastSaveTs = Date.now();
   try{ DB._localTs = window._lastSaveTs; }catch(e){}
   try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
+  // El chat interno se sincroniza aparte (ver enviarChat/initChat), para que
+  // guardar cualquier otra cosa (Personal, Equipos, OT, etc.) no pise ni
+  // borre mensajes nuevos que hayan llegado de otros usuarios.
+  var _payload = JSON.parse(JSON.stringify(DB));
+  delete _payload.chatMsgs;
   if(window._fbReady && window._fbPush){
-    window._fbPush(JSON.parse(JSON.stringify(DB)));
+    window._fbPush(_payload);
   } else {
     // Firebase no listo: reintentar hasta 10 veces
     var _sv=0, _si=setInterval(function(){
       _sv++;
       if(window._fbReady && window._fbPush){
         window._lastSaveTs = Date.now();
-        window._fbPush(JSON.parse(JSON.stringify(DB)));
+        var _payload2 = JSON.parse(JSON.stringify(DB));
+        delete _payload2.chatMsgs;
+        window._fbPush(_payload2);
         clearInterval(_si);
       }
       if(_sv>=10) clearInterval(_si);
@@ -2396,6 +2422,7 @@ function initApp(){
     checkPrimerLogin();
     updateTopbarFoto();
     initChat();
+    if(currentUser && currentUser.rol==='admin') checkBackupReminder();
   }, 1500);
 }
 // ════ AUTO-LOGOUT POR INACTIVIDAD (1 minuto) ════
@@ -2572,26 +2599,32 @@ function renderDashboard(){
   var eqResEl = document.getElementById('dashEqResumen');
   if(eqResEl) eqResEl.innerHTML = eqResumen || '<div style="color:var(--text3);font-size:12px">Sin equipos registrados.</div>';
 
-  // ── Resumen Telegram del Personal ──
+  // ── Resumen Telegram/WhatsApp del Personal ──
   var tgResEl = document.getElementById('dashTgResumen');
   if(tgResEl){
     var perList = (DB.per||[]).slice().sort(function(a,b){return (a.ord||'').localeCompare(b.ord||'');});
     var conTg = perList.filter(function(p){return p.tgChatId;});
     var sinTg = perList.filter(function(p){return !p.tgChatId;});
+    var conWa = perList.filter(function(p){return p.waNumero&&p.waApiKey;});
+    var sinWa = perList.filter(function(p){return !(p.waNumero&&p.waApiKey);});
     var resumenHtml =
       '<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">'+
         '<span style="background:#e8f5e9;color:#2E7D32;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">✅ '+conTg.length+' con Telegram</span>'+
-        '<span style="background:#fdecea;color:#c62828;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">⚠️ '+sinTg.length+' sin cargar</span>'+
+        '<span style="background:#fdecea;color:#c62828;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">⚠️ '+sinTg.length+' sin Telegram</span>'+
+        '<span style="background:#e8f5e9;color:#2E7D32;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">✅ '+conWa.length+' con WhatsApp</span>'+
+        '<span style="background:#fdecea;color:#c62828;border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px">⚠️ '+sinWa.length+' sin WhatsApp</span>'+
       '</div>';
-    if(sinTg.length===0){
-      resumenHtml += '<div style="color:var(--green2);font-weight:600;font-size:12px">✅ Todo el personal tiene su Chat ID cargado.</div>';
+    var faltantes = perList.filter(function(p){return !p.tgChatId || !(p.waNumero&&p.waApiKey);});
+    if(faltantes.length===0){
+      resumenHtml += '<div style="color:var(--green2);font-weight:600;font-size:12px">✅ Todo el personal tiene Telegram y WhatsApp cargados.</div>';
     } else {
-      resumenHtml += '<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Hacé clic en un nombre para cargarle el Chat ID:</div>';
-      resumenHtml += sinTg.map(function(p){
+      resumenHtml += '<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Hacé clic en un nombre para completar sus datos de contacto:</div>';
+      resumenHtml += faltantes.map(function(p){
+        var faltaTg = !p.tgChatId, faltaWa = !(p.waNumero&&p.waApiKey);
         return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer" onclick="showTab(\'personal\',document.getElementById(\'nav-personal\'));editPer('+p._id+')">'+
-          '<span style="font-size:14px">📲</span>'+
           '<span style="flex:1;font-weight:600">'+(p.grd||'')+' '+(p.ape||'')+' '+(p.nom||'')+'</span>'+
-          '<span class="badge b-red">Sin cargar</span>'+
+          (faltaTg?'<span class="badge b-red">📲 Sin Telegram</span>':'')+
+          (faltaWa?'<span class="badge b-red">📱 Sin WhatsApp</span>':'')+
           '</div>';
       }).join('');
     }
@@ -2651,6 +2684,8 @@ function initPerForm(){document.getElementById('pEditId').value='';document.getE
   quitarFotoPer();
 }
 function editPer(id){var p=DB.per.find(function(x){return x._id===id;});if(!p)return;document.getElementById('pEditId').value=id;document.getElementById('perModalTitle').textContent='Editar - '+p.ape;document.getElementById('pOrd').value=p.ord||'';document.getElementById('pGrd').value=p.grd||'';document.getElementById('pEsp').value=p.esp||'';document.getElementById('pApe').value=p.ape||'';document.getElementById('pNom').value=p.nom||'';document.getElementById('pMi').value=p.mi||'';document.getElementById('pCe').value=p.ce||'';document.getElementById('pEciv').value=p.eciv||'';document.getElementById('pEmail').value=p.email||'';document.getElementById('pEmailI').value=p.emailInst||'';document.getElementById('pUni').value=p.uni||'ESLOMIT';document.getElementById('pMto').value=p.mtoPase||'';document.getElementById('pFp').value=p.fp||today;document.getElementById('pSis').value=(p.sis||[]).join(', ');document.getElementById('pObs').value=p.obs||'';
+  var _pWaN=document.getElementById('pWaNumero');if(_pWaN)_pWaN.value=p.waNumero||'';
+  var _pWaK=document.getElementById('pWaApiKey');if(_pWaK)_pWaK.value=p.waApiKey||'';
   var _pTg=document.getElementById('pTgChatId');if(_pTg)_pTg.value=p.tgChatId||'';
   var _pCel=document.getElementById('pCelular');if(_pCel)_pCel.value=p.cel||'';
   var _pCelI=document.getElementById('pCelularInst');if(_pCelI)_pCelI.value=p.celInst||'';
@@ -2663,6 +2698,8 @@ function savePer(){var editId=document.getElementById('pEditId').value;var p={_i
     cel:document.getElementById('pCelular')?document.getElementById('pCelular').value:'',
     celInst:document.getElementById('pCelularInst')?document.getElementById('pCelularInst').value:'',
     tgChatId:document.getElementById('pTgChatId')?document.getElementById('pTgChatId').value:'',
+    waNumero:document.getElementById('pWaNumero')?document.getElementById('pWaNumero').value.replace(/[^0-9]/g,''):'',
+    waApiKey:document.getElementById('pWaApiKey')?document.getElementById('pWaApiKey').value.trim():'',
     foto:document.getElementById('perFotoData')?document.getElementById('perFotoData').value:''
   };if(!p.ape){alert('Ingrese al menos el apellido.');return;}if(editId){var idx=DB.per.findIndex(function(x){return x._id===parseInt(editId);});if(idx>=0)DB.per[idx]=p;}else DB.per.push(p);saveDB();closeModal('modalPer');renderPersonal();renderDashboard();}
 function delPer(id){if(!confirm('Eliminar?'))return;DB.per=DB.per.filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();}
@@ -2903,7 +2940,7 @@ function fillOTAsgSelect(valorMI){
   (DB.per||[]).slice().sort(function(a,b){return (a.ord||'').localeCompare(b.ord||'');}).forEach(function(p){
     var opt=document.createElement('option');
     opt.value=p.mi||'';
-    opt.textContent=(p.grd||'')+' '+(p.ape||'')+' '+(p.nom||'')+(p.tgChatId?' 📲':'');
+    opt.textContent=(p.grd||'')+' '+(p.ape||'')+' '+(p.nom||'')+(p.tgChatId?' 📲':'')+((p.waNumero&&p.waApiKey)?' 📱':'');
     if(valorMI && valorMI===p.mi) opt.selected=true;
     sel.appendChild(opt);
   });
@@ -3007,6 +3044,7 @@ function saveOT(){
         var oCopy2=JSON.parse(JSON.stringify(DB.ot[idx]));
         emailNuevaOT(oCopy2);
         tgNuevaOT(oCopy2);
+        waNuevaOT(oCopy2);
         console.log('Notif por cambio de responsable:', newResp);
       }
     }
@@ -3021,6 +3059,7 @@ function saveOT(){
     var oCopy = JSON.parse(JSON.stringify(DB.ot[DB.ot.length-1]));
     emailNuevaOT(oCopy);
     tgNuevaOT(oCopy);
+    waNuevaOT(oCopy);
     console.log('Notificaciones enviadas para OT:', oCopy.nro, 'MI:', oCopy.responsableMI);
   }
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
@@ -3240,7 +3279,78 @@ function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=
 function delUser(i){if(!confirm('Eliminar usuario "'+DB._users[i].nombre+'"?'))return;DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();renderDashboard();}
 function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nombre+':','');if(nueva===null)return;if(nueva.length<3){alert('Min 3 caracteres.');return;}DB._users[i].pass=nueva;saveDB();renderUsuarios();alert('Contrasena actualizada.');}
 
-function exportBackup(){var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='TICOM_BACKUP_'+today+'.json';a.click();URL.revokeObjectURL(url);document.getElementById('expLog').textContent='Backup exportado: TICOM_BACKUP_'+today+'.json';}
+function exportBackup(){var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='TICOM_BACKUP_'+today+'.json';a.click();URL.revokeObjectURL(url);document.getElementById('expLog').textContent='Backup exportado: TICOM_BACKUP_'+today+'.json';try{localStorage.setItem('ticom_lastBackup', Date.now());}catch(e){}}
+function checkBackupReminder(){
+  try{
+    var last = parseInt(localStorage.getItem('ticom_lastBackup')||'0',10);
+    var dias = last ? Math.floor((Date.now()-last)/86400000) : 999;
+    if(dias>=7 && typeof showFbToast==='function'){
+      showFbToast('💾 Van '+dias+' días sin hacer un backup. Recomendado: exportar uno desde Configuración → Backup.');
+    }
+  }catch(e){}
+}
+
+// ── Búsqueda global ──
+var _CATS_EQ = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
+function buscadorGlobalRun(q){
+  var box = document.getElementById('buscadorGlobalResultados');
+  if(!box) return;
+  q = (q||'').trim().toLowerCase();
+  if(q.length<2){ box.style.display='none'; box.innerHTML=''; return; }
+  var res = [];
+  // Personal
+  (DB.per||[]).forEach(function(p){
+    var texto = [p.grd,p.ape,p.nom,p.mi,p.esp].join(' ').toLowerCase();
+    if(texto.indexOf(q)>-1){
+      res.push({tipo:'👤 Personal', titulo:(p.grd||'')+' '+(p.ape||'')+' '+(p.nom||''), sub:'MI: '+(p.mi||'—'), onclick:"showTab('personal',document.getElementById('nav-personal'));editPer("+p._id+")"});
+    }
+  });
+  // Equipos (todas las categorías)
+  _CATS_EQ.forEach(function(cat){
+    (DB[cat]||[]).forEach(function(e){
+      var texto = [e.marca,e.modelo,e.serie,e.cuenta,e.prov].join(' ').toLowerCase();
+      if(texto.indexOf(q)>-1){
+        res.push({tipo:'🖥️ Equipo', titulo:(e.marca||'')+' '+(e.modelo||''), sub:'N° Serie: '+(e.serie||e.prov||'—'), onclick:"showTab('equipos',document.getElementById('nav-equipos'));editEq('"+cat+"',"+e._id+")"});
+      }
+    });
+  });
+  // OT
+  (DB.ot||[]).forEach(function(o){
+    var texto = [o.nro,o.titulo,o.rub,o.dsc,o.responsable,o.asg].join(' ').toLowerCase();
+    if(texto.indexOf(q)>-1){
+      res.push({tipo:'🛠️ OT', titulo:(o.nro||'')+' — '+(o.titulo||o.rub||o.dsc||''), sub:'Estado: '+(o.estado||o.est||'—'), onclick:"showTab('ot',document.getElementById('nav-ot'));openOTForm("+o._id+")"});
+    }
+  });
+  // Documentos guardados
+  (DB.docs||[]).forEach(function(d){
+    var texto = [d.tipo,d.nro,d.desc,d.titulo].join(' ').toLowerCase();
+    if(texto.indexOf(q)>-1){
+      res.push({tipo:'📄 Documento', titulo:d.titulo||d.nro||d.tipo||'Documento', sub:d.tipo||'', onclick:"showTab('historial',document.getElementById('nav-historial'))"});
+    }
+  });
+  if(res.length===0){
+    box.innerHTML = '<div style="padding:14px;color:#888;text-align:center">Sin resultados para "'+q+'"</div>';
+  } else {
+    box.innerHTML = res.slice(0,25).map(function(r){
+      return '<div onclick="'+r.onclick.replace(/"/g,'&quot;')+';cerrarBuscadorGlobal()" style="padding:8px 12px;border-bottom:1px solid #eee;cursor:pointer" onmouseover="this.style.background=\'#f5f8ff\'" onmouseout="this.style.background=\'#fff\'">'+
+        '<div style="font-size:10px;color:#0B3566;font-weight:700">'+r.tipo+'</div>'+
+        '<div style="font-weight:600">'+r.titulo+'</div>'+
+        '<div style="font-size:11px;color:#888">'+r.sub+'</div></div>';
+    }).join('');
+  }
+  box.style.display='block';
+}
+function cerrarBuscadorGlobal(){
+  var box=document.getElementById('buscadorGlobalResultados');
+  if(box) box.style.display='none';
+  var inp=document.getElementById('buscadorGlobal');
+  if(inp) inp.value='';
+}
+document.addEventListener('click', function(e){
+  var box=document.getElementById('buscadorGlobalResultados');
+  var inp=document.getElementById('buscadorGlobal');
+  if(box && inp && !box.contains(e.target) && e.target!==inp) box.style.display='none';
+});
 function previewImport(){var file=document.getElementById('importFile').files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{importData=JSON.parse(e.target.result);var nP=(importData.per||[]).length,nO=(importData.ot||[]).length,nU=(importData._users||[]).length;document.getElementById('importPreview').innerHTML='Valido: '+nP+' personal, '+nO+' OTs, '+nU+' usuarios.';document.getElementById('btnImport').disabled=false;}catch(err){document.getElementById('importPreview').textContent='Archivo JSON invalido.';document.getElementById('btnImport').disabled=true;importData=null;}};reader.readAsText(file);}
 function doImport(){if(!importData)return;if(!confirm('Reemplazar TODOS los datos?'))return;DB=importData;saveDB();renderPersonal();renderEquipos();renderOTList();renderUsuarios();renderDashboard();renderDocsGuardados();importData=null;document.getElementById('btnImport').disabled=true;document.getElementById('importPreview').textContent='';document.getElementById('importFile').value='';}
 // ════ GOOGLE DRIVE INTEGRATION ════
@@ -4676,6 +4786,13 @@ function fichaEquipo(cat,id){
   var campos=[['Estado',eq.estado||'—'],['Ubicación',eq.ubi||'—'],['N° Cuenta',eq.cuenta||'—'],['Año',eq.anio||'—'],['N° Serie',eq.serie||eq.prov||'S/N'],['N° Informe',eq.informe||'—'],['Garantía hasta',eq.garantia||'—'],['Parque',eq.parque||'—']];
   doc.setFontSize(9);campos.forEach(function(c,i){var col=i%2===0?14:110;if(i%2===0&&i>0)y+=10;doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text(c[0]+':',col,y);doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(c[1],col+36,y);});y+=16;
   doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(11,53,102);doc.text('Observaciones:',14,y);y+=6;doc.setFont('helvetica','normal');doc.setTextColor(50,50,50);doc.text(eq.obs||'Sin observaciones.',14,y,{maxWidth:182});y+=20;
+  var histMto = (DB.mantenimientos||[]).filter(function(m){return m.cat===cat && m.eqId===id;}).sort(function(a,b){return (a._id||0)-(b._id||0);});
+  if(histMto.length){
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(11,53,102);doc.text('Historial de Mantenimiento ('+histMto.length+'):',14,y);y+=4;
+    var mRows = histMto.map(function(m){return [m.fecha||'',m.nro||'',m.tipo||'',m.tec||'',m.desc||''];});
+    doc.autoTable({head:[['Fecha','N° Registro','Tipo','Técnico','Descripción']],body:mRows,startY:y,styles:{fontSize:7},headStyles:{fillColor:[11,53,102],textColor:255},margin:{left:14,right:14}});
+    y = doc.lastAutoTable.finalY + 10;
+  } else { y+=4; }
   doc.setDrawColor(80);doc.setLineWidth(0.3);doc.line(14,y,90,y);doc.line(120,y,196,y);doc.setFontSize(8);doc.setTextColor(80);doc.text('Conformidad Responsable',52,y+5,{align:'center'});doc.text('Visto Bueno Jefe TIC',158,y+5,{align:'center'});
   doc.setFontSize(7);doc.setTextColor(150);doc.text('TICOM-ESLOMIT · '+fecha,105,289,{align:'center'});
   doc.save('TICOM_FICHA_EQ_'+nombre.replace(/ /g,'_')+'_'+fecha.replace(/\//g,'-')+'.pdf');
@@ -5064,6 +5181,40 @@ function tgSend(chatId, texto){
     else console.warn('TG error:', d.description);
   })
   .catch(function(e){ console.warn('TG fetch error:', e); });
+}
+
+// Buscar datos de WhatsApp (CallMeBot) de un usuario por DNI/nombre
+function getWAContacto(dniONombre){
+  var p = buscarPersonal(dniONombre);
+  return (p && p.waNumero && p.waApiKey) ? {numero:p.waNumero, key:p.waApiKey} : null;
+}
+// Enviar mensaje por WhatsApp vía CallMeBot
+function waSend(numero, apikey, texto){
+  if(!numero || !apikey) return;
+  var num = numero.indexOf('+')===0 ? numero : ('+'+numero);
+  var url = 'https://api.callmebot.com/whatsapp.php?phone='+encodeURIComponent(num)+'&text='+encodeURIComponent(texto)+'&apikey='+encodeURIComponent(apikey);
+  fetch(url).catch(function(e){ console.warn('WhatsApp (CallMeBot) error:', e); });
+}
+// Notificar OT nueva al responsable por WhatsApp
+function waNuevaOT(o){
+  if(_CONFIG&&_CONFIG.whatsapp===0) return;
+  var asg = o.responsable||o.asg||'';
+  var mi  = o.responsableMI||'';
+  if(!asg && !mi) return;
+  var wa = mi ? getWAContacto(mi) : getWAContacto(asg);
+  if(!wa) return;
+  var pri = (o.prioridad||o.pri||'normal').toUpperCase();
+  var titulo = o.titulo||o.rub||o.dsc||'Sin título';
+  var vnc = o.fechaLim||o.vnc||'Sin fecha límite';
+  var emoji = pri==='URGENTE'?'🚨':pri==='ALTA'?'⚠️':pri==='MEDIA'?'📋':'📌';
+  var msg =
+    emoji+' *NUEVA OT ASIGNADA*\n'+
+    '📋 *OT N°:* '+(o.nro||o._id)+'\n'+
+    '📝 *Título:* '+titulo+'\n'+
+    '🎯 *Prioridad:* '+pri+'\n'+
+    '📅 *Fecha límite:* '+vnc+'\n'+
+    '🔗 https://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html';
+  waSend(wa.numero, wa.key, msg);
 }
 
 // Buscar chat_id de un usuario por DNI/nombre
@@ -5650,11 +5801,19 @@ function enviarChat(){
     hora:now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),
     fecha:now.toLocaleDateString('es-AR')
   };
+  input.value='';
+  // Mostrarlo ya mismo en pantalla (optimista) mientras se sincroniza
   DB.chatMsgs.push(msg);
   if(DB.chatMsgs.length>200) DB.chatMsgs=DB.chatMsgs.slice(-200);
-  input.value='';
-  saveDB();
   renderChatMsgs();
+  // Escribir directo al canal de chat en Firebase (clave única por mensaje,
+  // así no depende del guardado general de la base y no hay pisadas entre
+  // usuarios escribiendo al mismo tiempo)
+  if(window._fbDB){
+    try{ window._fbDB.ref('ticom_eslomit/chatMsgs').push(msg); }
+    catch(e){ console.warn('Chat push error:', e); }
+  }
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }catch(e){}
   // Scroll al final
   var cont=document.getElementById('chatMsgs');
   if(cont) cont.scrollTop=cont.scrollHeight;
