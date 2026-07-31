@@ -19,6 +19,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 // ══ FIREBASE — Sincronización automática en tiempo real ══
@@ -55,9 +57,34 @@ function initFirebase(){
     if(window._fbReady) return; // ya inicializado
 
     _fbApp = firebase.initializeApp(FB_CONFIG);
-    _fbDB  = firebase.database();
-    _fbRef = _fbDB.ref('ticom_eslomit');
-    window._fbReady = true;
+
+    // ══ App Check — protege la base contra bots y abuso de la API ══
+    try{
+      firebase.appCheck().activate(
+        '6LdST28tAAAAAA150G22kVvMcAx1I2013XQLI86y',
+        true // auto-refresh del token
+      );
+    }catch(eAC){
+      console.warn('App Check no se pudo activar:', eAC);
+    }
+
+    // ══ Autenticación anónima — requerida por las reglas de seguridad ══
+    // No afecta el login DNI/contraseña de la app: es una capa técnica
+    // invisible para el usuario que habilita el acceso a la base.
+    firebase.auth().signInAnonymously().catch(function(authErr){
+      console.warn('FB auth anónima error:', authErr);
+    });
+
+    firebase.auth().onAuthStateChanged(function(user){
+      if(user && !window._fbReady){
+        conectarFbDatabase();
+      }
+    });
+
+    function conectarFbDatabase(){
+      _fbDB  = firebase.database();
+      _fbRef = _fbDB.ref('ticom_eslomit');
+      window._fbReady = true;
 
     // PUSH: subir datos a Firebase (update, no set, para no pisar/borrar
     // ramas que se manejan aparte como chatMsgs)
@@ -136,8 +163,10 @@ function initFirebase(){
       }
     });
 
-    updateFbBadge(true);
-    console.log('Firebase conectado OK');
+      updateFbBadge(true);
+      console.log('Firebase conectado OK (auth anónima activa)');
+    } // fin conectarFbDatabase
+
   } catch(e){
     console.warn('Firebase init error:', e);
     updateFbBadge(false);
@@ -2359,11 +2388,34 @@ var fotoDataResp = [null,null,null,null];
 var CAT_LBL = {radio:'Radio',antena:'Antena',fuente:'Fuente',portatil:'Portatil',poc:'POC',pc:'PC',imp:'Impresora',mon:'Monitor',ups:'UPS',est:'Estacion',cam:'Camara',ot_eq:'Otro'};
 var CATS = ['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','est','cam','ot_eq'];
 
-function doLogin(){
+// ══ Hashing de contraseñas (SHA-256) — nunca se guarda texto plano ══
+async function hashPass(text){
+  try{
+    var enc = new TextEncoder().encode(String(text));
+    var buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.prototype.map.call(new Uint8Array(buf), function(b){return b.toString(16).padStart(2,'0');}).join('');
+  }catch(e){
+    console.warn('hashPass: crypto.subtle no disponible (¿HTTP sin TLS?), fallback inseguro.', e);
+    return String(text);
+  }
+}
+function looksHashed(s){ return typeof s==='string' && /^[0-9a-f]{64}$/.test(s); }
+
+async function doLogin(){
   var dni=document.getElementById('lgDni').value.trim(), pass=document.getElementById('lgPass').value;
   if(checkLoginBloqueado(dni)) return;
-  var user=DB._users.find(function(u){return u.dni===dni&&u.pass===pass;});
-  if(!user){ registrarIntentoFallido(dni); return; }
+  var user=DB._users.find(function(u){return u.dni===dni;});
+  var ok=false;
+  if(user){
+    if(looksHashed(user.pass)){
+      ok = (await hashPass(pass)) === user.pass;
+    } else {
+      // Migración transparente: usuario todavía tiene contraseña vieja en texto plano
+      ok = (user.pass===pass);
+      if(ok){ user.pass = await hashPass(pass); saveDB(); }
+    }
+  }
+  if(!ok){ registrarIntentoFallido(dni); return; }
   // Verificar si necesita 2FA
   if(needs2FA(dni)){
     generar2FA(user);
@@ -2375,7 +2427,7 @@ function showResetPass(){
   var box=document.getElementById('resetPassBox');
   if(box) box.style.display=box.style.display==='none'?'block':'none';
 }
-function solicitarResetPass(){
+async function solicitarResetPass(){
   var dni=document.getElementById('rpDni').value.trim();
   var passActual=document.getElementById('rpPassActual')?document.getElementById('rpPassActual').value:'';
   var p1=document.getElementById('rpPass1').value;
@@ -2387,9 +2439,10 @@ function solicitarResetPass(){
   var user=DB._users.find(function(u){return u.dni===dni;});
   if(!user){msg.style.color='#dc2626';msg.textContent='DNI no encontrado en el sistema.';return;}
   if(user.rol==='admin'){msg.style.color='#dc2626';msg.textContent='Los admins usan el panel de Usuarios.';return;}
-  if(user.pass!==passActual){msg.style.color='#dc2626';msg.textContent='La contraseña actual es incorrecta.';return;}
+  var actualOk = looksHashed(user.pass) ? (await hashPass(passActual))===user.pass : user.pass===passActual;
+  if(!actualOk){msg.style.color='#dc2626';msg.textContent='La contraseña actual es incorrecta.';return;}
   // Cambiar directo
-  user.pass=p1;
+  user.pass=await hashPass(p1);
   saveDB();
   msg.style.color='#16a34a';
   msg.textContent='✅ Contraseña cambiada correctamente. Ya podés ingresar.';
@@ -3192,11 +3245,11 @@ function showResetSolicitudes(){
   }
   openModal('modalResetSolic');
 }
-function aprobarReset(idx){
+async function aprobarReset(idx){
   var solic=DB.resetSolicitudes.filter(function(s){return s.estado==='pendiente';})[idx];
   if(!solic)return;
   var user=DB._users.find(function(u){return u.dni===solic.dni;});
-  if(user){ user.pass=solic.nuevaPass; }
+  if(user){ user.pass=await hashPass(solic.nuevaPass); }
   solic.estado='aprobada';
   saveDB();renderUsuarios();renderUsuariosAdmin();checkResetPendientes();
   showResetSolicitudes();
@@ -3272,12 +3325,12 @@ function initUserForm(rolDefault){
   document.getElementById('userModalTitle').textContent=rolDefault==='admin'?'Nuevo Administrador':'Nuevo Usuario Normal';
   var el=document.getElementById('prevUser_txt');if(el)el.textContent='Complete los campos...';
 }
-function editUser(i){var u=DB._users[i];document.getElementById('uDni').value=u.dni;document.getElementById('uNombre').value=u.nombre;document.getElementById('uPass').value=u.pass;document.getElementById('uRol').value=u.rol;document.getElementById('uEditIdx').value=i;document.getElementById('userErr').textContent='';document.getElementById('userModalTitle').textContent='Editar - '+u.nombre;openModal('modalUser');}
+function editUser(i){var u=DB._users[i];document.getElementById('uDni').value=u.dni;document.getElementById('uNombre').value=u.nombre;document.getElementById('uPass').value='';document.getElementById('uPass').placeholder='Dejar en blanco para no cambiar la contraseña';document.getElementById('uRol').value=u.rol;document.getElementById('uEditIdx').value=i;document.getElementById('userErr').textContent='';document.getElementById('userModalTitle').textContent='Editar - '+u.nombre;openModal('modalUser');prevUser();}
 function togglePassVis(){var inp=document.getElementById('uPass');inp.type=inp.type==='text'?'password':'text';}
-function prevUser(){var dni=document.getElementById('uDni').value.trim()||'-';var pass=document.getElementById('uPass').value||'-';var rol=document.getElementById('uRol').value==='admin'?'ADMIN':'NORMAL';var el=document.getElementById('prevUser_txt');if(el)el.textContent='DNI: '+dni+' | Pass: '+pass+' | Rol: '+rol;}
-function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=document.getElementById('uNombre').value.trim(),pass=document.getElementById('uPass').value,rol=document.getElementById('uRol').value,editIdx=parseInt(document.getElementById('uEditIdx').value),errEl=document.getElementById('userErr');if(!dni||!nombre||!pass){errEl.textContent='Todos los campos son obligatorios.';return;}if(editIdx===-1){if(DB._users.find(function(u){return u.dni===dni;})){errEl.textContent='Ya existe un usuario con ese DNI.';return;}DB._users.push({dni:dni,pass:pass,nombre:nombre,rol:rol});}else{DB._users[editIdx]={dni:dni,pass:pass,nombre:nombre,rol:rol};if(currentUser.dni===dni){currentUser=DB._users[editIdx];document.getElementById('userLabel').textContent=currentUser.nombre+(currentUser.rol==='admin'?' ADMIN':' NORMAL');}}saveDB();closeModal('modalUser');renderUsuarios();renderUsuariosAdmin();renderDashboard();}
+function prevUser(){var dni=document.getElementById('uDni').value.trim()||'-';var editIdx=parseInt(document.getElementById('uEditIdx').value);var passInput=document.getElementById('uPass').value;var pass=passInput||(editIdx!==-1?'(sin cambios)':'-');var rol=document.getElementById('uRol').value==='admin'?'ADMIN':'NORMAL';var el=document.getElementById('prevUser_txt');if(el)el.textContent='DNI: '+dni+' | Pass: '+pass+' | Rol: '+rol;}
+async function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=document.getElementById('uNombre').value.trim(),pass=document.getElementById('uPass').value,rol=document.getElementById('uRol').value,editIdx=parseInt(document.getElementById('uEditIdx').value),errEl=document.getElementById('userErr');if(!dni||!nombre||(editIdx===-1&&!pass)){errEl.textContent='Todos los campos son obligatorios.';return;}if(editIdx===-1){if(DB._users.find(function(u){return u.dni===dni;})){errEl.textContent='Ya existe un usuario con ese DNI.';return;}DB._users.push({dni:dni,pass:await hashPass(pass),nombre:nombre,rol:rol});}else{var passHash=pass?await hashPass(pass):DB._users[editIdx].pass;DB._users[editIdx]={dni:dni,pass:passHash,nombre:nombre,rol:rol};if(currentUser.dni===dni){currentUser=DB._users[editIdx];document.getElementById('userLabel').textContent=currentUser.nombre+(currentUser.rol==='admin'?' ADMIN':' NORMAL');}}saveDB();closeModal('modalUser');renderUsuarios();renderUsuariosAdmin();renderDashboard();}
 function delUser(i){if(!confirm('Eliminar usuario "'+DB._users[i].nombre+'"?'))return;DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();renderDashboard();}
-function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nombre+':','');if(nueva===null)return;if(nueva.length<3){alert('Min 3 caracteres.');return;}DB._users[i].pass=nueva;saveDB();renderUsuarios();alert('Contrasena actualizada.');}
+async function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nombre+':','');if(nueva===null)return;if(nueva.length<3){alert('Min 3 caracteres.');return;}DB._users[i].pass=await hashPass(nueva);saveDB();renderUsuarios();alert('Contrasena actualizada.');}
 
 function exportBackup(){var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='TICOM_BACKUP_'+today+'.json';a.click();URL.revokeObjectURL(url);document.getElementById('expLog').textContent='Backup exportado: TICOM_BACKUP_'+today+'.json';try{localStorage.setItem('ticom_lastBackup', Date.now());}catch(e){}}
 function checkBackupReminder(){
@@ -4322,18 +4375,20 @@ function openPerfil(){
   document.getElementById('perfilMsg').textContent='';
   document.getElementById('modalPerfil').style.display='flex';
 }
-function guardarPerfil(){
+async function guardarPerfil(){
   var actual=document.getElementById('perfilPassActual').value;
   var nueva=document.getElementById('perfilPassNueva').value;
   var confirm2=document.getElementById('perfilPassConfirm').value;
   var msg=document.getElementById('perfilMsg');
   var u=DB._users.find(function(x){return x.dni===currentUser.dni;});
   if(!u){ msg.style.color='red'; msg.textContent='Error: usuario no encontrado.'; return; }
-  if(u.pass!==actual){ msg.style.color='red'; msg.textContent='❌ Contraseña actual incorrecta.'; return; }
+  var actualOk = looksHashed(u.pass) ? (await hashPass(actual))===u.pass : u.pass===actual;
+  if(!actualOk){ msg.style.color='red'; msg.textContent='❌ Contraseña actual incorrecta.'; return; }
   if(nueva.length<6){ msg.style.color='red'; msg.textContent='❌ La nueva contraseña debe tener al menos 6 caracteres.'; return; }
   if(nueva!==confirm2){ msg.style.color='red'; msg.textContent='❌ Las contraseñas no coinciden.'; return; }
-  u.pass=nueva;
-  currentUser.pass=nueva;
+  var nuevaHash=await hashPass(nueva);
+  u.pass=nuevaHash;
+  currentUser.pass=nuevaHash;
   addLog('Cambió su contraseña');
   saveDB();
   msg.style.color='green'; msg.textContent='✅ Contraseña actualizada correctamente.';
