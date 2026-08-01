@@ -1044,6 +1044,16 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
 .btn-exp-pdf{background:#e53e3e;color:#fff;} .btn-exp-pdf:hover{background:#c53030;}
 .btn-exp-xls{background:#276749;color:#fff;} .btn-exp-xls:hover{background:#1e4d36;}
 .btn-exp-print{background:#2b6cb0;color:#fff;} .btn-exp-print:hover{background:#2c5282;}
+
+/* ══ Mascota animada ══ */
+@keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(-3deg)}}
+@keyframes mascotTail{0%,100%{transform:rotate(0deg)}50%{transform:rotate(18deg)}}
+#mascotWrap{position:fixed;bottom:20px;left:20px;z-index:9985;display:none}
+#mascotAvatar{width:58px;height:58px;cursor:pointer;animation:mascotBob 2.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
+#mascotAvatar:active{animation:none;transform:scale(.92)}
+#mascotBubble{display:none;background:#fff;border:2px solid #0B3566;border-radius:14px;padding:10px 30px 10px 14px;max-width:230px;font-size:12px;color:#0B3566;font-weight:600;line-height:1.4;margin-bottom:8px;box-shadow:0 6px 20px rgba(0,0,0,.22);position:relative}
+#mascotBubble:after{content:'';position:absolute;bottom:-8px;left:20px;border-width:8px 8px 0 0;border-style:solid;border-color:#0B3566 transparent transparent transparent}
+#mascotBubbleClose{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:#e53e3e;color:#fff;border:none;font-size:11px;cursor:pointer;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 </style>
 </head>
 <body>
@@ -1155,6 +1165,10 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
   <div id="dashAviso" style="display:none;background:#fffbeb;border:1px solid #fbbf24;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:13px">
     <span style="font-weight:700">📢 Aviso del administrador:</span>
     <span id="dashAvisoTexto"></span>
+  </div>
+  <div id="dashBackupAviso" style="display:none;background:#fff0f0;border:1px solid #ef4444;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:13px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <span>⚠️ <span id="dashBackupAvisoTexto"></span></span>
+    <button class="btn btn-sm" style="white-space:nowrap" onclick="showTab('backup',document.getElementById('nav-backup'))">💾 Ir a Backup</button>
   </div>
   <!-- Saludo bienvenida -->
   <div id="dashBienvenida" style="background:linear-gradient(135deg,#0B3566,#1565C0);color:#fff;border-radius:12px;padding:16px 22px;margin-bottom:14px;display:flex;align-items:center;gap:16px">
@@ -1329,6 +1343,15 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
           <option value="">— Prioridad —</option>
           <option value="alta">Alta</option><option value="urgente">Urgente</option><option value="normal">Normal</option>
         </select>
+        <select id="otFiltroRub" onchange="renderOTList()" style="max-width:180px">
+          <option value="">— Rubro —</option>
+        </select>
+        <select id="otFiltroAsg" onchange="renderOTList()" style="max-width:180px">
+          <option value="">— Asignado a —</option>
+        </select>
+        <input type="date" id="otFiltroDesde" onchange="renderOTList()" title="Desde" style="max-width:140px">
+        <input type="date" id="otFiltroHasta" onchange="renderOTList()" title="Hasta" style="max-width:140px">
+        <button class="btn btn-sm" onclick="limpiarFiltrosOT()" style="white-space:nowrap">✕ Limpiar filtros</button>
       </div>
       <div class="tbl-wrap">
         <table class="dt">
@@ -1455,6 +1478,15 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
               <option value="pendiente">Pendiente</option>
             </select>
           </div>
+        </div>
+
+        <div class="sec-div" style="margin-top:6px">✍️ Firma digital (opcional)</div>
+        <p style="font-size:11px;color:var(--text3);margin-bottom:8px">Dibujá tu firma con el mouse o el dedo. Si no firmás acá, se usa igual el nombre tipeado arriba.</p>
+        <div style="border:1px solid var(--border2);border-radius:8px;background:#fff;display:inline-block">
+          <canvas id="sigCanvasResp" width="320" height="120" style="touch-action:none;cursor:crosshair;display:block"></canvas>
+        </div>
+        <div style="margin-top:6px">
+          <button type="button" class="btn btn-sm" onclick="clearSigPad('sigCanvasResp')">🧹 Limpiar firma</button>
         </div>
 
         <div class="sec-div" style="margin-top:6px">📝 Informe técnico</div>
@@ -1945,6 +1977,16 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
       <button class="btn btn-warn" id="btnImport" onclick="doImport()" disabled>📥 Importar y reemplazar datos</button>
       <div class="logbox" id="impLog" style="margin-top:10px">—</div>
     </div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span><span class="ct-icon">🗑️</span>Papelera de Reciclaje <span id="papeleraCount" style="background:#e53e3e;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;margin-left:6px">0</span></span>
+      <button class="btn btn-sm" style="background:#e53e3e;color:#fff" onclick="vaciarPapelera()">Vaciar papelera</button>
+    </div>
+    <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px">
+      Personal, equipos y OTs eliminados quedan acá antes de borrarse para siempre. Podés restaurarlos con un click.
+    </p>
+    <div id="papeleraLista" style="border:1px solid var(--border2);border-radius:10px;max-height:320px;overflow-y:auto"></div>
   </div>
   <div class="card">
     <div class="card-title"><span class="ct-icon">☁️</span>Sincronización Firebase — Tiempo Real entre PCs</div>
@@ -2464,7 +2506,7 @@ function initApp(){
   saveDB();
   document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.value)d.value=today;});
   startClock(); checkNet(); renderDashboard(); renderPersonal(); renderEquipos();
-  renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial();
+  renderOTList(); renderUsuarios(); renderUsuariosAdmin(); renderDocsGuardados(); renderHistorial(); renderPapelera();
   setTimeout(function(){tickPerms();autoWeather();},500);
   setTimeout(function(){
     checkOTVencidas();
@@ -2504,6 +2546,7 @@ function showTab(id,el){
   if(panel) panel.classList.add('active');
   if(el) el.classList.add('active');
   if(id==='historial') renderHistorial();
+  if(id==='backup') renderPapelera();
   if(id==='archivos'){
     driveCheckToken();
     if(driveToken) driveListFiles();
@@ -2893,21 +2936,51 @@ function toggleEqDetail(rowId,e){
 }
 function clearEqAdj(){eqAdjData=null;var el=document.getElementById('eqAdjLabel');if(el)el.textContent='Adjuntar archivo...';var prev=document.getElementById('eqAdjPreview');if(prev)prev.style.display='none';var inp=document.getElementById('eqAdjInput');if(inp)inp.value='';}
 
+function limpiarFiltrosOT(){
+  ['otFiltro','otFiltroEst','otFiltroPri','otFiltroRub','otFiltroAsg','otFiltroDesde','otFiltroHasta'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  renderOTList();
+}
 function renderOTList(){
   var filtro=(document.getElementById('otFiltro').value||'').toLowerCase();
   var estF=document.getElementById('otFiltroEst').value;
   var priF=document.getElementById('otFiltroPri').value;
+  var rubF=document.getElementById('otFiltroRub')?document.getElementById('otFiltroRub').value:'';
+  var asgF=document.getElementById('otFiltroAsg')?document.getElementById('otFiltroAsg').value:'';
+  var desdeF=document.getElementById('otFiltroDesde')?document.getElementById('otFiltroDesde').value:'';
+  var hastaF=document.getElementById('otFiltroHasta')?document.getElementById('otFiltroHasta').value:'';
   var isAdmin=currentUser&&currentUser.rol==='admin';
+  // Poblar combos de rubro/asignado dinámicamente según lo que exista en las OTs
+  var selRub=document.getElementById('otFiltroRub'), selAsg=document.getElementById('otFiltroAsg');
+  if(selRub){
+    var valRub=selRub.value;
+    var rubs=Array.from(new Set((DB.ot||[]).map(function(o){return o.rubro||o.rub||'';}).filter(Boolean))).sort();
+    selRub.innerHTML='<option value="">— Rubro —</option>'+rubs.map(function(r){return '<option value="'+r.replace(/"/g,'&quot;')+'">'+r+'</option>';}).join('');
+    selRub.value=valRub;
+  }
+  if(selAsg){
+    var valAsg=selAsg.value;
+    var asgs=Array.from(new Set((DB.ot||[]).map(function(o){return o.responsable||o.asg||'';}).filter(Boolean))).sort();
+    selAsg.innerHTML='<option value="">— Asignado a —</option>'+asgs.map(function(a){return '<option value="'+a.replace(/"/g,'&quot;')+'">'+a+'</option>';}).join('');
+    selAsg.value=valAsg;
+  }
   var data=(DB.ot||[]).filter(function(o){
     var est = o.estado||o.est||'';
     var pri = o.prioridad||o.pri||'normal';
     var asg = o.responsable||o.asg||'';
+    var rub = o.rubro||o.rub||'';
+    var fch = o.fechaInicio||o.fch||o.fecha||'';
     var matchFiltro=!filtro||JSON.stringify(o).toLowerCase().includes(filtro);
     var matchEst=!estF||est===estF;
     var matchPri=!priF||pri===priF;
+    var matchRub=!rubF||rub===rubF;
+    var matchAsg=!asgF||asg===asgF;
+    var matchDesde=!desdeF||(fch&&fch>=desdeF);
+    var matchHasta=!hastaF||(fch&&fch<=hastaF);
     var matchUser=isAdmin||(asg.toLowerCase().includes((currentUser.nombre||'').toLowerCase()))||
                   (asg.includes(currentUser.dni));
-    return matchFiltro&&matchEst&&matchPri&&matchUser;
+    return matchFiltro&&matchEst&&matchPri&&matchRub&&matchAsg&&matchDesde&&matchHasta&&matchUser;
   });
   var bannerEl=document.getElementById('otUserBanner');
   if(bannerEl) bannerEl.style.display=isAdmin?'none':'block';
@@ -3053,7 +3126,48 @@ function openOTForm(id){
   document.getElementById('ot-dlog').textContent='';
 }
 
-function openOTResp(id){var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='block';document.getElementById('otRespTitle').textContent='OT N '+o.nro+' - '+o.rub;['nro','fch','vnc','rub','pri','est','asg','aut','dsc','eqp','obs'].forEach(function(k){var el=document.getElementById('ro_'+k);if(el)el.textContent=o[k]||'-';});document.getElementById('respTexto').value=o.resp||'';document.getElementById('respInforme').value=o.informe||'';document.getElementById('respConf').value=o.conf||'';document.getElementById('respFirma').value=o.firma||currentUser.nombre;document.getElementById('respEst').value='';[0,1,2,3].forEach(function(i){clearFoto(i);});clearRespPDF();}
+// ══ Firma digital (canvas) — genérica, reutilizable ══
+var _sigPads = {}; // { canvasId: {drawing:bool, hasContent:bool} }
+function initSigPad(canvasId){
+  var cv = document.getElementById(canvasId);
+  if(!cv || cv._sigInit) return;
+  cv._sigInit = true;
+  var ctx = cv.getContext('2d');
+  ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = '#0B3566';
+  _sigPads[canvasId] = {drawing:false, hasContent:false};
+  function pos(e){
+    var r = cv.getBoundingClientRect();
+    var x = (e.touches?e.touches[0].clientX:e.clientX) - r.left;
+    var y = (e.touches?e.touches[0].clientY:e.clientY) - r.top;
+    return {x:x,y:y};
+  }
+  function start(e){ e.preventDefault(); var p=pos(e); _sigPads[canvasId].drawing=true; ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  function move(e){ if(!_sigPads[canvasId].drawing) return; e.preventDefault(); var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); _sigPads[canvasId].hasContent=true; }
+  function end(){ _sigPads[canvasId].drawing=false; }
+  cv.addEventListener('mousedown', start); cv.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+  cv.addEventListener('touchstart', start, {passive:false}); cv.addEventListener('touchmove', move, {passive:false}); cv.addEventListener('touchend', end);
+}
+function clearSigPad(canvasId){
+  var cv = document.getElementById(canvasId); if(!cv) return;
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+  if(_sigPads[canvasId]) _sigPads[canvasId].hasContent=false;
+}
+function sigPadHasContent(canvasId){ return !!(_sigPads[canvasId] && _sigPads[canvasId].hasContent); }
+function sigPadDataURL(canvasId){
+  var cv = document.getElementById(canvasId); if(!cv) return null;
+  return sigPadHasContent(canvasId) ? cv.toDataURL('image/png') : null;
+}
+function sigPadLoadImage(canvasId, dataUrl){
+  var cv = document.getElementById(canvasId); if(!cv) return;
+  var ctx = cv.getContext('2d'); ctx.clearRect(0,0,cv.width,cv.height);
+  if(_sigPads[canvasId]) _sigPads[canvasId].hasContent=false;
+  if(!dataUrl) return;
+  var img = new Image();
+  img.onload = function(){ ctx.drawImage(img,0,0,cv.width,cv.height); if(_sigPads[canvasId]) _sigPads[canvasId].hasContent=true; };
+  img.src = dataUrl;
+}
+
+function openOTResp(id){var o=DB.ot.find(function(x){return x._id===id;});if(!o)return;otEditId=id;document.getElementById('otListView').style.display='none';document.getElementById('otFormView').style.display='none';document.getElementById('otRespView').style.display='block';document.getElementById('otRespTitle').textContent='OT N '+o.nro+' - '+o.rub;['nro','fch','vnc','rub','pri','est','asg','aut','dsc','eqp','obs'].forEach(function(k){var el=document.getElementById('ro_'+k);if(el)el.textContent=o[k]||'-';});document.getElementById('respTexto').value=o.resp||'';document.getElementById('respInforme').value=o.informe||'';document.getElementById('respConf').value=o.conf||'';document.getElementById('respFirma').value=o.firma||currentUser.nombre;document.getElementById('respEst').value='';[0,1,2,3].forEach(function(i){clearFoto(i);});clearRespPDF();initSigPad('sigCanvasResp');sigPadLoadImage('sigCanvasResp', o.firmaImg||null);}
 function saveOT(){
   if(!DB.ot) DB.ot=[];
   var _esNuevaOT = _otFormIsNew===true;
@@ -3118,7 +3232,7 @@ function saveOT(){
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
   cancelOTForm(); renderOTList(); renderDashboard();
 }
-function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();
+function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].firmaImg=sigPadDataURL('sigCanvasResp');DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();
   // Notificar al admin
   notificarRespuestaOT(DB.ot[idx]);
   var _oResp = JSON.parse(JSON.stringify(DB.ot[idx]));
@@ -3410,9 +3524,68 @@ function doImport(){if(!importData)return;if(!confirm('Reemplazar TODOS los dato
 const DRIVE_CLIENT_ID = '165498961066-p1omcnhqpsk4c4npnbtkjgsnaf4jnmj6.apps.googleusercontent.com';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE_FOLDER_NAME = 'TICOM-ESLOMIT';
+const AUTO_BACKUP_DIAS = 7; // frecuencia del backup automático
 let driveToken = null;
 let driveFolderId = null;
 let driveSelectedFile = null;
+
+// ══ Backup automático semanal ══
+// Si el admin tiene Drive conectado, sube el backup solo, sin pedir nada.
+// Si no está conectado, muestra un aviso en el dashboard para que lo haga a mano.
+function diasDesdeUltimoBackup(){
+  var last = parseInt(localStorage.getItem('ticom_lastBackup')||'0', 10);
+  if(!last) return 9999; // nunca se hizo backup
+  return (Date.now()-last)/(1000*60*60*24);
+}
+
+function checkAutoBackupSemanal(){
+  if(!currentUser || currentUser.rol!=='admin') return;
+  var dias = diasDesdeUltimoBackup();
+  var avisoEl = document.getElementById('dashBackupAviso');
+  var avisoTxt = document.getElementById('dashBackupAvisoTexto');
+  if(dias < AUTO_BACKUP_DIAS){
+    if(avisoEl) avisoEl.style.display='none';
+    return;
+  }
+  if(driveToken && driveFolderId){
+    autoBackupADrive();
+  } else if(avisoEl && avisoTxt){
+    var diasRedondeado = dias>=9999 ? 'nunca se hizo' : ('hace '+Math.floor(dias)+' días');
+    avisoTxt.textContent = 'No hay backup reciente ('+diasRedondeado+'). Conectá Google Drive o exportá uno manual desde la pestaña Backup.';
+    avisoEl.style.display='flex';
+  }
+}
+
+function autoBackupADrive(){
+  if(!driveToken || !driveFolderId) return;
+  var fechaArch = new Date().toISOString().slice(0,10);
+  var blob = new Blob([JSON.stringify(DB,null,2)], {type:'application/json'});
+  var metadata = {
+    name: 'TICOM_BACKUP_AUTO_'+fechaArch+'.json',
+    parents: [driveFolderId],
+    description: 'Backup automático semanal | '+new Date().toLocaleString('es-AR')
+  };
+  var form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
+  form.append('file', blob);
+  fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name', {
+    method: 'POST',
+    headers: {Authorization: 'Bearer '+driveToken},
+    body: form
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      if(d.id){
+        localStorage.setItem('ticom_lastBackup', Date.now());
+        var avisoEl = document.getElementById('dashBackupAviso');
+        if(avisoEl) avisoEl.style.display='none';
+        addLog('Backup automático subido a Drive: '+d.name);
+        console.log('✅ Backup automático subido a Drive:', d.name);
+        if(typeof driveListFiles==='function') driveListFiles();
+      } else {
+        console.warn('Backup automático: error al subir a Drive', d);
+      }
+    }).catch(function(e){ console.warn('Backup automático: error de red', e); });
+}
 
 function driveAuth(){
   var params = new URLSearchParams({
@@ -3541,6 +3714,7 @@ function driveGetOrCreateFolder(){
       if(d.files && d.files.length > 0){
         driveFolderId = d.files[0].id;
         driveListFiles();
+        checkAutoBackupSemanal();
       } else {
         // Crear carpeta
         fetch('https://www.googleapis.com/drive/v3/files', {
@@ -3548,7 +3722,7 @@ function driveGetOrCreateFolder(){
           headers: {Authorization: 'Bearer '+driveToken, 'Content-Type': 'application/json'},
           body: JSON.stringify({name: DRIVE_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder'})
         }).then(function(r){return r.json();})
-          .then(function(d){driveFolderId=d.id; driveListFiles();});
+          .then(function(d){driveFolderId=d.id; driveListFiles(); checkAutoBackupSemanal();});
       }
     }).catch(function(){});
 }
@@ -4696,12 +4870,130 @@ function confirmDialog(title,msg,icon,onConfirm){
   var bO=document.createElement('button');bO.className='btn btn-sm';bO.style.cssText='background:#e53e3e;color:#fff';bO.textContent='Eliminar';bO.onclick=function(){modal.remove();onConfirm();};
   btns.appendChild(bC);btns.appendChild(bO);box.appendChild(btns);modal.appendChild(box);document.body.appendChild(modal);
 }
-function delPer(id){var p=(DB.per||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Personal','¿Eliminar a '+(p?p.ape+' '+p.nom:'este registro')+'?','👤',function(){DB.per=(DB.per||[]).filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();});}
-function delEq(cat,id){var e=(DB[cat]||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Equipo','¿Eliminar '+(e?e.marca+' '+e.modelo:'este equipo')+'?','📡',function(){if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});saveDB();renderEquipos();renderDashboard();});}
-function delOT(id){var o=(DB.ot||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar OT','¿Eliminar OT '+(o?o.nro||id:'')+'?','📋',function(){DB.ot=(DB.ot||[]).filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();});}
+// ══ Papelera de reciclaje — soft-delete ══
+function moverAPapelera(tipo, item, extra){
+  if(!DB._papelera) DB._papelera=[];
+  DB._papelera.push({
+    tipo: tipo, // 'per' | 'ot' | 'eq'
+    cat: extra&&extra.cat || null, // solo para equipos
+    item: item,
+    borradoPor: currentUser?currentUser.nombre:'?',
+    borradoFecha: Date.now()
+  });
+  // Mantener la papelera acotada (últimos 200) para no inflar la base
+  if(DB._papelera.length>200) DB._papelera=DB._papelera.slice(DB._papelera.length-200);
+}
+function restaurarPapelera(idx){
+  var reg=(DB._papelera||[])[idx];
+  if(!reg) return;
+  if(reg.tipo==='per'){ (DB.per=DB.per||[]).push(reg.item); }
+  else if(reg.tipo==='ot'){ (DB.ot=DB.ot||[]).push(reg.item); }
+  else if(reg.tipo==='eq'){ DB[reg.cat]=DB[reg.cat]||[]; DB[reg.cat].push(reg.item); }
+  DB._papelera.splice(idx,1);
+  saveDB();renderPersonal();renderEquipos();renderOTList();renderDashboard();renderPapelera();
+  addLog('Restauró desde papelera: '+reg.tipo);
+}
+function delPapeleraDefinitivo(idx){
+  confirmDialog('Eliminar definitivamente','Esto no se puede deshacer. ¿Eliminar de forma permanente?','🗑️',function(){
+    (DB._papelera||[]).splice(idx,1);saveDB();renderPapelera();
+  });
+}
+function vaciarPapelera(){
+  confirmDialog('Vaciar papelera','Se eliminarán TODOS los elementos de la papelera de forma permanente. ¿Continuar?','🗑️',function(){
+    DB._papelera=[];saveDB();renderPapelera();
+  });
+}
+function renderPapelera(){
+  var cont=document.getElementById('papeleraLista');
+  if(!cont) return;
+  var items=DB._papelera||[];
+  var badge=document.getElementById('papeleraCount');
+  if(badge) badge.textContent=items.length;
+  if(items.length===0){ cont.innerHTML='<div style="padding:16px;color:#888;font-size:13px">La papelera está vacía.</div>'; return; }
+  var html='';
+  for(var i=items.length-1;i>=0;i--){
+    var reg=items[i];
+    var nombre='';
+    if(reg.tipo==='per') nombre='👤 '+(reg.item.ape||'')+' '+(reg.item.nom||'');
+    else if(reg.tipo==='ot') nombre='📋 OT '+(reg.item.nro||reg.item._id||'');
+    else if(reg.tipo==='eq') nombre='📡 '+(reg.item.marca||'')+' '+(reg.item.modelo||'');
+    var fecha=new Date(reg.borradoFecha).toLocaleString('es-AR');
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #eee">'+
+      '<div><div style="font-weight:600;font-size:13px">'+nombre+'</div>'+
+      '<div style="font-size:11px;color:#888">Borrado por '+reg.borradoPor+' · '+fecha+'</div></div>'+
+      '<div style="display:flex;gap:6px">'+
+      '<button class="btn btn-sm" style="background:#22c55e;color:#fff" onclick="restaurarPapelera('+i+')">↩️ Restaurar</button>'+
+      '<button class="btn btn-sm" style="background:#e53e3e;color:#fff" onclick="delPapeleraDefinitivo('+i+')">🗑️ Eliminar</button>'+
+      '</div></div>';
+  }
+  cont.innerHTML=html;
+}
+
+function delPer(id){var p=(DB.per||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Personal','¿Eliminar a '+(p?p.ape+' '+p.nom:'este registro')+'?','👤',function(){if(p)moverAPapelera('per',p);DB.per=(DB.per||[]).filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();});}
+function delEq(cat,id){var e=(DB[cat]||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Equipo','¿Eliminar '+(e?e.marca+' '+e.modelo:'este equipo')+'?','📡',function(){if(e)moverAPapelera('eq',e,{cat:cat});if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});saveDB();renderEquipos();renderDashboard();});}
+function delOT(id){var o=(DB.ot||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar OT','¿Eliminar OT '+(o?o.nro||id:'')+'?','📋',function(){if(o)moverAPapelera('ot',o);DB.ot=(DB.ot||[]).filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();});}
 function delUser(i){var u=DB._users[i];if(u&&u.rol==='admin'&&(DB._users||[]).filter(function(x){return x.rol==='admin';}).length<=1){alert('No podés eliminar el único admin.');return;}confirmDialog('Eliminar Usuario','¿Eliminar a '+(u?u.nombre:'')+'?','👤',function(){DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();});}
 
 // ══ NOTIFICACIONES OT ══
+// ══ Notificaciones nativas del navegador (por dispositivo) ══
+function activarNotifNavegador(){
+  var estEl=document.getElementById('notifNavEstado');
+  if(!('Notification' in window)){
+    if(estEl){estEl.textContent='❌ Tu navegador no soporta notificaciones.';estEl.style.color='#e53e3e';}
+    return;
+  }
+  Notification.requestPermission().then(function(perm){
+    actualizarEstadoNotifNav();
+    if(perm==='granted'){
+      new Notification('TICOM-ESLOMIT', {body:'✅ Notificaciones activadas en este dispositivo.', icon:'/ticom-eslomit/icon-192.png'});
+    }
+  });
+}
+function actualizarEstadoNotifNav(){
+  var estEl=document.getElementById('notifNavEstado'); if(!estEl) return;
+  if(!('Notification' in window)){ estEl.textContent='❌ No soportado en este navegador'; estEl.style.color='#e53e3e'; return; }
+  if(Notification.permission==='granted'){ estEl.textContent='✅ Activadas'; estEl.style.color='#22c55e'; }
+  else if(Notification.permission==='denied'){ estEl.textContent='🚫 Bloqueadas — habilitalas en la config del navegador'; estEl.style.color='#e53e3e'; }
+  else { estEl.textContent='⏳ Sin activar'; estEl.style.color='#888'; }
+}
+function notifBrowser(title, body){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  try{ new Notification(title, {body:body, icon:'/ticom-eslomit/icon-192.png'}); }catch(e){}
+}
+
+// ══ Mascota animada ══
+var MASCOT_TIPS=[
+  '¡Che! Acordate de exportar un backup de vez en cuando 💾',
+  'Podés firmar digitalmente al responder una OT ✍️',
+  'Si borrás algo por error, buscalo en la Papelera de Reciclaje 🗑️',
+  'En Órdenes de Trabajo podés filtrar por rubro, técnico y fechas 🔍',
+  'Activá las notificaciones del navegador en Configuración 🔔',
+  '¡Buen trabajo manteniendo todo actualizado! 🎖️',
+  'Conectá Google Drive para que tus backups se suban solos ☁️'
+];
+function mostrarMascota(){
+  var w=document.getElementById('mascotWrap');
+  if(w) w.style.display='block';
+}
+function ocultarBurbujaMascota(){
+  var b=document.getElementById('mascotBubble');
+  if(b) b.style.display='none';
+}
+function mascotaTip(){
+  var bubble=document.getElementById('mascotBubble');
+  var msgEl=document.getElementById('mascotMsg');
+  if(!bubble||!msgEl) return;
+  if(bubble.style.display==='block'){ bubble.style.display='none'; return; }
+  var dyn=null;
+  try{
+    var hoy=new Date().toISOString().split('T')[0];
+    var venc=(DB.ot||[]).filter(function(o){var est=o.estado||o.est||'';var v=o.fechaLim||o.vnc||'';return v&&v<hoy&&est!=='completada'&&est!=='Completada'&&est!=='Cancelado';});
+    if(venc.length>0) dyn='¡Guau! Tenés '+venc.length+' OT'+(venc.length>1?'s':'')+' vencida'+(venc.length>1?'s':'')+' 🐾';
+  }catch(e){}
+  msgEl.textContent = dyn || MASCOT_TIPS[Math.floor(Math.random()*MASCOT_TIPS.length)];
+  bubble.style.display='block';
+}
+
 function checkOTVencidas(){
   if(!currentUser)return;
   var hoy=new Date().toISOString().split('T')[0];
@@ -4711,6 +5003,13 @@ function checkOTVencidas(){
   if(badge){badge.style.display=total>0?'inline-flex':'none';badge.textContent=total;}
   if(venc.length>0)showFbToast('⚠️ '+venc.length+' OT vencida'+(venc.length>1?'s':''));
   else if(prox.length>0)showFbToast('📅 '+prox.length+' OT vence en 3 días o menos');
+  // Notificación nativa — como máximo una vez por día, para no ser invasivo
+  var hoyKey='ticom_notifNavDia_'+currentUser.dni;
+  if(total>0 && localStorage.getItem(hoyKey)!==hoy){
+    if(venc.length>0) notifBrowser('⚠️ OTs vencidas', venc.length+' orden'+(venc.length>1?'es':'')+' de trabajo vencida'+(venc.length>1?'s':'')+'.');
+    else if(prox.length>0) notifBrowser('📅 OTs por vencer', prox.length+' OT'+(prox.length>1?'s':'')+' vence'+(prox.length>1?'n':'')+' en los próximos 3 días.');
+    localStorage.setItem(hoyKey, hoy);
+  }
 }
 setInterval(checkOTVencidas,3600000);
 
@@ -6144,6 +6443,7 @@ function openConfig(){
   document.getElementById('cfgAviso').value    = _CONFIG.aviso||'';
   document.getElementById('cfgUnidad').value   = _CONFIG.unidad||'Escuadrón 18 Lomitas';
   document.getElementById('modalConfig').style.display='flex';
+  actualizarEstadoNotifNav();
 }
 
 function guardarConfig(){
@@ -6556,6 +6856,8 @@ function completarLogin(user){
   });
   addLog('Inicio de sesión exitoso'+(needs2FA(user.dni)?' (2FA)':''));
   initApp();
+  setTimeout(checkAutoBackupSemanal, 1500); // deja que Drive/DB terminen de cargar primero
+  setTimeout(mostrarMascota, 1000);
 }
 
 </script>
@@ -6739,6 +7041,28 @@ function completarLogin(user){
   </div>
 </div>
 
+<!-- Mascota animada -->
+<div id="mascotWrap">
+  <div id="mascotBubble">
+    <span id="mascotMsg"></span>
+    <button id="mascotBubbleClose" onclick="event.stopPropagation();ocultarBurbujaMascota()">✕</button>
+  </div>
+  <div id="mascotAvatar" onclick="mascotaTip()" title="Tocame para un tip">
+    <svg viewBox="0 0 100 100" width="58" height="58" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="27" cy="34" rx="13" ry="19" fill="#B97F42" transform="rotate(-22 27 34)"/>
+      <ellipse cx="73" cy="34" rx="13" ry="19" fill="#B97F42" transform="rotate(22 73 34)"/>
+      <ellipse cx="50" cy="58" rx="35" ry="30" fill="#E0A868"/>
+      <ellipse cx="50" cy="64" rx="17" ry="13" fill="#F3D6A8"/>
+      <circle cx="37" cy="52" r="5.5" fill="#2b2b2b"/>
+      <circle cx="63" cy="52" r="5.5" fill="#2b2b2b"/>
+      <circle cx="39" cy="50" r="1.6" fill="#fff"/>
+      <circle cx="65" cy="50" r="1.6" fill="#fff"/>
+      <ellipse cx="50" cy="66" rx="7" ry="5.5" fill="#5a3a24"/>
+      <path d="M43 74 Q50 80 57 74" stroke="#5a3a24" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
 <!-- Chat flotante -->
 <button id="chatBtn" onclick="toggleChat()" title="Chat interno">
   💬<span id="chatUnread">0</span>
@@ -6794,6 +7118,14 @@ function completarLogin(user){
           <option value="1">Activado</option>
           <option value="0">Desactivado</option>
         </select>
+      </div>
+    </div>
+    <div class="row" style="align-items:flex-end">
+      <div class="col">
+        <label>🔔 Notificaciones del navegador (este dispositivo)</label>
+        <p style="font-size:11px;color:var(--text3);margin:2px 0 6px">Avisa acá mismo, aunque tengas el sistema minimizado. Es por dispositivo — activalo en cada PC/celular donde quieras recibirlas.</p>
+        <button type="button" class="btn btn-sm" id="btnActivarNotifNav" onclick="activarNotifNavegador()">🔔 Activar en este dispositivo</button>
+        <span id="notifNavEstado" style="font-size:11px;margin-left:8px;color:var(--text3)"></span>
       </div>
     </div>
 
