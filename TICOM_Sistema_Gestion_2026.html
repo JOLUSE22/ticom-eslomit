@@ -1047,11 +1047,13 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
 
 /* ══ Mascota animada ══ */
 @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(-3deg)}}
+@keyframes mascotPirueta{0%{transform:rotate(0deg) scale(1)}25%{transform:rotate(180deg) scale(1.15)}50%{transform:rotate(360deg) scale(1)}70%{transform:rotate(360deg) scale(1.2) translateY(-14px)}100%{transform:rotate(360deg) scale(1)}}
+#mascotAvatar.pirueta{animation:mascotPirueta .9s ease-in-out}
 @keyframes mascotTail{0%,100%{transform:rotate(0deg)}50%{transform:rotate(18deg)}}
-#mascotWrap{position:fixed;bottom:20px;left:20px;z-index:9985;display:none}
-#mascotAvatar{width:58px;height:58px;cursor:pointer;animation:mascotBob 2.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
+#mascotWrap{position:fixed;bottom:20px;left:20px;z-index:9985;display:none;transition:none;pointer-events:none}
+#mascotAvatar{width:58px;height:58px;cursor:pointer;animation:mascotBob 2.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));pointer-events:auto}
 #mascotAvatar:active{animation:none;transform:scale(.92)}
-#mascotBubble{display:none;background:#fff;border:2px solid #0B3566;border-radius:14px;padding:10px 30px 10px 14px;max-width:230px;font-size:12px;color:#0B3566;font-weight:600;line-height:1.4;margin-bottom:8px;box-shadow:0 6px 20px rgba(0,0,0,.22);position:relative}
+#mascotBubble{display:none;background:#fff;border:2px solid #0B3566;border-radius:14px;padding:10px 30px 10px 14px;max-width:230px;font-size:12px;color:#0B3566;font-weight:600;line-height:1.4;margin-bottom:8px;box-shadow:0 6px 20px rgba(0,0,0,.22);position:relative;pointer-events:auto}
 #mascotBubble:after{content:'';position:absolute;bottom:-8px;left:20px;border-width:8px 8px 0 0;border-style:solid;border-color:#0B3566 transparent transparent transparent}
 #mascotBubbleClose{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;background:#e53e3e;color:#fff;border:none;font-size:11px;cursor:pointer;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 </style>
@@ -4974,12 +4976,46 @@ var MASCOT_TIPS=[
 function mostrarMascota(){
   var w=document.getElementById('mascotWrap');
   if(w) w.style.display='block';
+  iniciarSeguimientoMascota();
+}
+
+// ══ Mascota sigue al cursor (con retraso suave, tipo "corriendo detrás") ══
+var _mascotMouseX=window.innerWidth-100, _mascotMouseY=window.innerHeight-100;
+var _mascotX=_mascotMouseX, _mascotY=_mascotMouseY;
+var _mascotLoopIniciado=false;
+document.addEventListener('mousemove', function(e){ _mascotMouseX=e.clientX; _mascotMouseY=e.clientY; });
+document.addEventListener('touchmove', function(e){ if(e.touches&&e.touches[0]){_mascotMouseX=e.touches[0].clientX;_mascotMouseY=e.touches[0].clientY;} }, {passive:true});
+function iniciarSeguimientoMascota(){
+  if(_mascotLoopIniciado) return;
+  _mascotLoopIniciado=true;
+  requestAnimationFrame(_mascotLoop);
+  setInterval(mascotPirueta, 18000 + Math.random()*15000); // pirueta random cada 18-33s
+}
+function mascotPirueta(){
+  var av=document.getElementById('mascotAvatar');
+  if(!av || av.classList.contains('pirueta')) return;
+  av.classList.add('pirueta');
+  setTimeout(function(){ av.classList.remove('pirueta'); }, 950);
+}
+function _mascotLoop(){
+  var wrap=document.getElementById('mascotWrap');
+  if(wrap && wrap.style.display!=='none'){
+    var targetX = Math.min(_mascotMouseX+34, window.innerWidth-70);
+    var targetY = Math.min(_mascotMouseY+34, window.innerHeight-70);
+    _mascotX += (targetX-_mascotX)*0.08;
+    _mascotY += (targetY-_mascotY)*0.08;
+    wrap.style.left = Math.max(4,_mascotX)+'px';
+    wrap.style.top  = Math.max(4,_mascotY)+'px';
+    wrap.style.right='auto'; wrap.style.bottom='auto';
+  }
+  requestAnimationFrame(_mascotLoop);
 }
 function ocultarBurbujaMascota(){
   var b=document.getElementById('mascotBubble');
   if(b) b.style.display='none';
 }
 function mascotaTip(){
+  mascotPirueta();
   var bubble=document.getElementById('mascotBubble');
   var msgEl=document.getElementById('mascotMsg');
   if(!bubble||!msgEl) return;
