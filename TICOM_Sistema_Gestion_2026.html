@@ -2115,15 +2115,16 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
       <button class="btn-export btn-exp-print" onclick="printTab('historial')">🖨️ Imprimir</button>
     </div>
     <div class="card-title">
-      <span>📋</span> Registro de Accesos al Sistema
+      <span>📋</span> Historial y Auditoría del Sistema
       <button class="btn btn-sm btn-danger admin-only" style="margin-left:auto" onclick="clearLogs()">🗑 Limpiar</button>
     </div>
     <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
-      Cada inicio de sesión queda registrado con nombre, fecha, hora y dispositivo.
+      Cada inicio de sesión y cada acción importante (alta, edición, borrado) queda registrada con quién, cuándo y qué hizo.
     </p>
+    <input id="historialFiltro" placeholder="🔍 Buscar por usuario, acción, IP..." oninput="renderHistorial()" style="max-width:320px;margin-bottom:10px">
     <div class="tbl-wrap">
       <table class="dt">
-        <thead><tr><th style="width:30px">#</th><th>Usuario</th><th>Rol</th><th>Fecha / Hora</th><th>Dispositivo / SO</th><th>IP / Ubicación</th><th>Idioma</th></tr></thead>
+        <thead><tr><th style="width:30px">#</th><th>Usuario</th><th>Rol</th><th>Fecha / Hora</th><th>Acción</th><th>Dispositivo / SO</th><th>IP / Ubicación</th></tr></thead>
         <tbody id="historialBody"></tbody>
       </table>
     </div>
@@ -2799,7 +2800,7 @@ function savePer(){var editId=document.getElementById('pEditId').value;var p={_i
     waNumero:document.getElementById('pWaNumero')?document.getElementById('pWaNumero').value.replace(/[^0-9]/g,''):'',
     waApiKey:document.getElementById('pWaApiKey')?document.getElementById('pWaApiKey').value.trim():'',
     foto:document.getElementById('perFotoData')?document.getElementById('perFotoData').value:''
-  };if(!p.ape){alert('Ingrese al menos el apellido.');return;}if(editId){var idx=DB.per.findIndex(function(x){return x._id===parseInt(editId);});if(idx>=0)DB.per[idx]=p;}else DB.per.push(p);saveDB();closeModal('modalPer');renderPersonal();renderDashboard();}
+  };if(!p.ape){alert('Ingrese al menos el apellido.');return;}if(editId){var idx=DB.per.findIndex(function(x){return x._id===parseInt(editId);});if(idx>=0)DB.per[idx]=p;addLog('Editó Personal: '+p.ape+' '+p.nom);}else{DB.per.push(p);addLog('Cargó nuevo Personal: '+p.ape+' '+p.nom);}saveDB();closeModal('modalPer');renderPersonal();renderDashboard();}
 function delPer(id){if(!confirm('Eliminar?'))return;DB.per=DB.per.filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();}
 
 function getAllEq(){var a=[];CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){a.push(Object.assign({},e,{_cat:c}));});});return a;}
@@ -3208,6 +3209,7 @@ function saveOT(){
       var prevResp = DB.ot[idx].responsableMI||DB.ot[idx].responsable||DB.ot[idx].asg||'';
       var newResp  = o.responsableMI||o.responsable||o.asg||'';
       DB.ot[idx]=Object.assign({},DB.ot[idx],o);
+      addLog('Editó OT '+(o.nro||nro||otEditId));
       // Notificar si cambió el responsable
       if(newResp && newResp!==prevResp){
         var oCopy2=JSON.parse(JSON.stringify(DB.ot[idx]));
@@ -3444,7 +3446,7 @@ function initUserForm(rolDefault){
 function editUser(i){var u=DB._users[i];document.getElementById('uDni').value=u.dni;document.getElementById('uNombre').value=u.nombre;document.getElementById('uPass').value='';document.getElementById('uPass').placeholder='Dejar en blanco para no cambiar la contraseña';document.getElementById('uRol').value=u.rol;document.getElementById('uEditIdx').value=i;document.getElementById('userErr').textContent='';document.getElementById('userModalTitle').textContent='Editar - '+u.nombre;openModal('modalUser');prevUser();}
 function togglePassVis(){var inp=document.getElementById('uPass');inp.type=inp.type==='text'?'password':'text';}
 function prevUser(){var dni=document.getElementById('uDni').value.trim()||'-';var editIdx=parseInt(document.getElementById('uEditIdx').value);var passInput=document.getElementById('uPass').value;var pass=passInput||(editIdx!==-1?'(sin cambios)':'-');var rol=document.getElementById('uRol').value==='admin'?'ADMIN':'NORMAL';var el=document.getElementById('prevUser_txt');if(el)el.textContent='DNI: '+dni+' | Pass: '+pass+' | Rol: '+rol;}
-async function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=document.getElementById('uNombre').value.trim(),pass=document.getElementById('uPass').value,rol=document.getElementById('uRol').value,editIdx=parseInt(document.getElementById('uEditIdx').value),errEl=document.getElementById('userErr');if(!dni||!nombre||(editIdx===-1&&!pass)){errEl.textContent='Todos los campos son obligatorios.';return;}if(editIdx===-1){if(DB._users.find(function(u){return u.dni===dni;})){errEl.textContent='Ya existe un usuario con ese DNI.';return;}DB._users.push({dni:dni,pass:await hashPass(pass),nombre:nombre,rol:rol});}else{var passHash=pass?await hashPass(pass):DB._users[editIdx].pass;DB._users[editIdx]={dni:dni,pass:passHash,nombre:nombre,rol:rol};if(currentUser.dni===dni){currentUser=DB._users[editIdx];document.getElementById('userLabel').textContent=currentUser.nombre+(currentUser.rol==='admin'?' ADMIN':' NORMAL');}}saveDB();closeModal('modalUser');renderUsuarios();renderUsuariosAdmin();renderDashboard();}
+async function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=document.getElementById('uNombre').value.trim(),pass=document.getElementById('uPass').value,rol=document.getElementById('uRol').value,editIdx=parseInt(document.getElementById('uEditIdx').value),errEl=document.getElementById('userErr');if(!dni||!nombre||(editIdx===-1&&!pass)){errEl.textContent='Todos los campos son obligatorios.';return;}if(editIdx===-1){if(DB._users.find(function(u){return u.dni===dni;})){errEl.textContent='Ya existe un usuario con ese DNI.';return;}DB._users.push({dni:dni,pass:await hashPass(pass),nombre:nombre,rol:rol});addLog('Creó usuario: '+nombre+' ('+rol+')');}else{var passHash=pass?await hashPass(pass):DB._users[editIdx].pass;DB._users[editIdx]={dni:dni,pass:passHash,nombre:nombre,rol:rol};addLog('Editó usuario: '+nombre+(pass?' (cambió contraseña)':''));if(currentUser.dni===dni){currentUser=DB._users[editIdx];document.getElementById('userLabel').textContent=currentUser.nombre+(currentUser.rol==='admin'?' ADMIN':' NORMAL');}}saveDB();closeModal('modalUser');renderUsuarios();renderUsuariosAdmin();renderDashboard();}
 function delUser(i){if(!confirm('Eliminar usuario "'+DB._users[i].nombre+'"?'))return;DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();renderDashboard();}
 async function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nombre+':','');if(nueva===null)return;if(nueva.length<3){alert('Min 3 caracteres.');return;}DB._users[i].pass=await hashPass(nueva);saveDB();renderUsuarios();alert('Contrasena actualizada.');}
 
@@ -3841,34 +3843,35 @@ function clearLocalData(){if(!confirm('Limpiar localStorage y resetear?'))return
 function renderHistorial(){
   var el=document.getElementById('historialBody');
   if(!el)return;
-  var logs=(DB.logs||[]);
+  var filtro=(document.getElementById('historialFiltro')?document.getElementById('historialFiltro').value:'').toLowerCase();
+  var logs=(DB.logs||[]).filter(function(l){
+    if(!filtro) return true;
+    return JSON.stringify(l).toLowerCase().includes(filtro);
+  });
   if(!logs.length){
-    el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Sin accesos registrados aún.</td></tr>';
+    el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">Sin registros que coincidan.</td></tr>';
     return;
   }
-  el.innerHTML=logs.map(function(l,i){
+  el.innerHTML=logs.slice().reverse().map(function(l,i){
     var rolB=l.rol==='admin'?'<span class="badge b-amber">ADMIN</span>':'<span class="badge b-blue">NORMAL</span>';
     var dispIcon=(l.disp||'').includes('Móvil')?'📱':'💻';
-    var ipInfo=l.ip&&l.ip!=='...'?l.ip:'<span style="color:var(--text3)">obteniendo...</span>';
-    var ubicacion=l.ciudad&&l.ciudad!=='...'?(l.ciudad+' — '+l.pais):'<span style="color:var(--text3)">...</span>';
+    var ipInfo=l.ip&&l.ip!=='...'?l.ip:'<span style="color:var(--text3)">—</span>';
+    var ubicacion=l.ciudad&&l.ciudad!=='...'?(l.ciudad+' — '+l.pais):'';
     return '<tr>'+
       '<td style="font-size:11px;color:var(--text3);text-align:center">'+(i+1)+'</td>'+
       '<td><div style="font-weight:700">'+l.nombre+'</div><div style="font-family:monospace;font-size:10px;color:var(--text3)">DNI: '+l.dni+'</div></td>'+
       '<td>'+rolB+'</td>'+
       '<td style="font-size:11px"><div style="font-weight:600">'+l.fecha+'</div><div style="color:var(--text3)">'+l.hora+'</div></td>'+
+      '<td style="font-size:12px;max-width:260px">'+(l.detalle||'<span style="color:var(--text3)">—</span>')+'</td>'+
       '<td style="font-size:11px">'+
         '<div>'+dispIcon+' '+(l.disp||'?')+'</div>'+
         '<div style="color:var(--text3)">'+(l.os||'?')+'</div>'+
-        '<div style="color:var(--text3)">'+(l.browser||'?')+'</div>'+
-        '<div style="color:var(--text3);font-size:10px">'+(l.resolucion||'')+'</div>'+
       '</td>'+
       '<td style="font-size:11px">'+
         '<div style="font-family:monospace;font-weight:600">'+ipInfo+'</div>'+
         '<div style="color:var(--text3)">'+ubicacion+'</div>'+
-        '<div style="color:var(--text3);font-size:10px">'+(l.isp||'')+'</div>'+
       '</td>'+
-      '<td style="font-size:11px;color:var(--text3)">'+(l.idioma||'?')+'</td>'+
-      '</tr>';
+    '</tr>';
   }).join('');
   // Stats
   var statsEl=document.getElementById('historialStats');
@@ -4931,10 +4934,10 @@ function renderPapelera(){
   cont.innerHTML=html;
 }
 
-function delPer(id){var p=(DB.per||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Personal','¿Eliminar a '+(p?p.ape+' '+p.nom:'este registro')+'?','👤',function(){if(p)moverAPapelera('per',p);DB.per=(DB.per||[]).filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();});}
-function delEq(cat,id){var e=(DB[cat]||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Equipo','¿Eliminar '+(e?e.marca+' '+e.modelo:'este equipo')+'?','📡',function(){if(e)moverAPapelera('eq',e,{cat:cat});if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});saveDB();renderEquipos();renderDashboard();});}
-function delOT(id){var o=(DB.ot||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar OT','¿Eliminar OT '+(o?o.nro||id:'')+'?','📋',function(){if(o)moverAPapelera('ot',o);DB.ot=(DB.ot||[]).filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();});}
-function delUser(i){var u=DB._users[i];if(u&&u.rol==='admin'&&(DB._users||[]).filter(function(x){return x.rol==='admin';}).length<=1){alert('No podés eliminar el único admin.');return;}confirmDialog('Eliminar Usuario','¿Eliminar a '+(u?u.nombre:'')+'?','👤',function(){DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();});}
+function delPer(id){var p=(DB.per||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Personal','¿Eliminar a '+(p?p.ape+' '+p.nom:'este registro')+'?','👤',function(){if(p){moverAPapelera('per',p);addLog('Eliminó Personal: '+p.ape+' '+p.nom);}DB.per=(DB.per||[]).filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();});}
+function delEq(cat,id){var e=(DB[cat]||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar Equipo','¿Eliminar '+(e?e.marca+' '+e.modelo:'este equipo')+'?','📡',function(){if(e){moverAPapelera('eq',e,{cat:cat});addLog('Eliminó Equipo: '+e.marca+' '+e.modelo);}if(DB[cat])DB[cat]=DB[cat].filter(function(x){return x._id!==id;});saveDB();renderEquipos();renderDashboard();});}
+function delOT(id){var o=(DB.ot||[]).find(function(x){return x._id===id;});confirmDialog('Eliminar OT','¿Eliminar OT '+(o?o.nro||id:'')+'?','📋',function(){if(o){moverAPapelera('ot',o);addLog('Eliminó OT: '+(o.nro||id));}DB.ot=(DB.ot||[]).filter(function(x){return x._id!==id;});saveDB();renderOTList();renderDashboard();});}
+function delUser(i){var u=DB._users[i];if(u&&u.rol==='admin'&&(DB._users||[]).filter(function(x){return x.rol==='admin';}).length<=1){alert('No podés eliminar el único admin.');return;}confirmDialog('Eliminar Usuario','¿Eliminar a '+(u?u.nombre:'')+'?','👤',function(){addLog('Eliminó usuario: '+(u?u.nombre:'?'));DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();});}
 
 // ══ NOTIFICACIONES OT ══
 // ══ Notificaciones nativas del navegador (por dispositivo) ══
@@ -5045,6 +5048,24 @@ function checkOTVencidas(){
     if(venc.length>0) notifBrowser('⚠️ OTs vencidas', venc.length+' orden'+(venc.length>1?'es':'')+' de trabajo vencida'+(venc.length>1?'s':'')+'.');
     else if(prox.length>0) notifBrowser('📅 OTs por vencer', prox.length+' OT'+(prox.length>1?'s':'')+' vence'+(prox.length>1?'n':'')+' en los próximos 3 días.');
     localStorage.setItem(hoyKey, hoy);
+  }
+  // Cartel emergente (modal) — misma frecuencia que la notif nativa, para no repetir
+  var hoyKeyModal='ticom_actPendDia_'+currentUser.dni;
+  if(total>0 && localStorage.getItem(hoyKeyModal)!==hoy){
+    var txt='';
+    var icon=document.getElementById('actPendIcon');
+    if(venc.length>0){
+      txt='Tenés <b>'+venc.length+'</b> orden'+(venc.length>1?'es':'')+' de trabajo <b>vencida'+(venc.length>1?'s':'')+'</b>. Convendría revisarla'+(venc.length>1?'s':'')+' cuanto antes.';
+      if(icon) icon.textContent='⚠️';
+    } else {
+      txt='Tenés <b>'+prox.length+'</b> orden'+(prox.length>1?'es':'')+' de trabajo que vence'+(prox.length>1?'n':'')+' en los próximos días.';
+      if(icon) icon.textContent='⏰';
+    }
+    var txtEl=document.getElementById('actPendTexto');
+    if(txtEl) txtEl.innerHTML=txt;
+    var m=document.getElementById('modalActividadPendiente');
+    if(m) m.style.display='flex';
+    localStorage.setItem(hoyKeyModal, hoy);
   }
 }
 setInterval(checkOTVencidas,3600000);
@@ -7116,6 +7137,18 @@ function completarLogin(user){
 </div>
 
 <!-- Modal Configuración Admin -->
+<div id="modalActividadPendiente" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:380px;text-align:center;padding:26px 24px">
+    <div style="font-size:52px;margin-bottom:6px" id="actPendIcon">⏰</div>
+    <h3 style="margin:0 0 8px;color:#0B3566">¡Tenés actividad pendiente!</h3>
+    <p id="actPendTexto" style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px"></p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" onclick="closeModal('modalActividadPendiente')">Cerrar</button>
+      <button class="btn btn-primary" onclick="closeModal('modalActividadPendiente');showTab('ot',document.getElementById('nav-ot'))">📋 Ver Órdenes de Trabajo</button>
+    </div>
+  </div>
+</div>
+
 <div id="modalConfig" class="modal-overlay" style="display:none">
   <div class="modal-box" style="max-width:500px">
     <div class="modal-title">⚙️ Configuración del Sistema</div>
