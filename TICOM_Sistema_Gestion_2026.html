@@ -249,7 +249,14 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:13.5px;color:var(--text)
   transition:background .15s,transform .1s;
 }
 .btn-login:hover{background:var(--navy);transform:translateY(-1px)}
-.btn-login:active{transform:translateY(0)}
+.btn-login:active{transform:translateY(0) scale(.97)}
+.btn-login:disabled{opacity:.7;cursor:not-allowed}
+.btn-login.loading{position:relative;color:transparent!important}
+.btn-login.loading::after{
+  content:'';position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;
+  border:2.5px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;
+  animation:btnSpin .6s linear infinite;
+}
 #loginErr{color:#d32f2f;font-size:12px;text-align:center;margin-top:10px;min-height:16px;font-weight:500}
 .login-footer{margin-top:18px;text-align:center;font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.5px}
 
@@ -338,21 +345,42 @@ textarea{resize:vertical;min-height:65px}
 .btn{
   padding:8px 16px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);
   color:var(--text);cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;
-  transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+  transition:transform .12s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+  min-height:38px;-webkit-tap-highlight-color:transparent;
 }
-.btn:hover{background:var(--bg);border-color:#b0bec5}
-.btn-primary{background:var(--navy2);color:#fff;border-color:var(--navy)}
-.btn-primary:hover{background:var(--navy);border-color:var(--navy)}
-.btn-success{background:var(--green2);color:#fff;border-color:var(--green)}
+.btn:hover{background:var(--bg);border-color:#b0bec5;box-shadow:0 3px 10px rgba(0,0,0,.10);transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.96);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.btn:focus-visible{outline:2.5px solid #4c8dff;outline-offset:2px}
+.btn:disabled,.btn.loading{opacity:.65;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.btn-primary{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#fff;border-color:var(--navy)}
+.btn-primary:hover{background:linear-gradient(180deg,var(--navy),#04264d);border-color:var(--navy)}
+.btn-success{background:linear-gradient(180deg,var(--green2),var(--green));color:#fff;border-color:var(--green)}
 .btn-success:hover{background:var(--green)}
-.btn-danger{background:var(--red2);color:#fff;border-color:var(--red)}
+.btn-danger{background:linear-gradient(180deg,var(--red2),var(--red));color:#fff;border-color:var(--red)}
 .btn-danger:hover{background:var(--red)}
-.btn-warn{background:var(--amber2);color:#fff;border-color:var(--amber)}
+.btn-warn{background:linear-gradient(180deg,var(--amber2),var(--amber));color:#fff;border-color:var(--amber)}
 .btn-warn:hover{background:var(--amber)}
-.btn-pdf{background:#7B1FA2;color:#fff;border-color:#6A1B9A}
+.btn-pdf{background:linear-gradient(180deg,#7B1FA2,#6A1B9A);color:#fff;border-color:#6A1B9A}
 .btn-pdf:hover{background:#6A1B9A}
-.btn-sm{padding:5px 11px;font-size:11px}
+.btn-sm{padding:5px 11px;font-size:11px;min-height:32px}
 .act-row{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+/* Spinner para estados de carga */
+@keyframes btnSpin{to{transform:rotate(360deg)}}
+.btn.loading{position:relative;color:transparent!important}
+.btn.loading::after{
+  content:'';position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;
+  border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;
+  animation:btnSpin .6s linear infinite;
+}
+.btn:not(.btn-primary):not(.btn-success):not(.btn-danger):not(.btn-warn):not(.btn-pdf).loading::after{
+  border:2px solid rgba(11,53,102,.3);border-top-color:#0B3566;
+}
+/* Touch targets más grandes en mobile */
+@media (max-width:768px){
+  .btn{min-height:42px;padding:9px 14px}
+  .btn-sm{min-height:38px;padding:7px 12px}
+}
 
 /* BADGES */
 .badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.3px}
@@ -1049,9 +1077,25 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
 @keyframes mascotBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(-3deg)}}
 @keyframes mascotPirueta{0%{transform:rotate(0deg) scale(1)}25%{transform:rotate(180deg) scale(1.15)}50%{transform:rotate(360deg) scale(1)}70%{transform:rotate(360deg) scale(1.2) translateY(-14px)}100%{transform:rotate(360deg) scale(1)}}
 #mascotAvatar.pirueta{animation:mascotPirueta .9s ease-in-out}
+#mascotAvatar.nervioso{animation:mascotBob .7s ease-in-out infinite}
+.pata-saludo{opacity:0;transform-origin:80px 98px;}
+.pata-saludo.waving{opacity:1;animation:wavePata .5s ease-in-out 4;}
+@keyframes wavePata{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-38deg)}}
+#pawSaludo{transform-box:fill-box;transform-origin:50% 100%;opacity:0}
+#mascotAvatar.saludando #pawSaludo{animation:pawWave 1.6s ease-in-out}
+@keyframes pawWave{
+  0%{opacity:0;transform:rotate(0deg)}
+  12%{opacity:1}
+  28%{transform:rotate(-28deg)}
+  44%{transform:rotate(14deg)}
+  60%{transform:rotate(-28deg)}
+  76%{transform:rotate(14deg)}
+  90%{transform:rotate(0deg);opacity:1}
+  100%{opacity:0;transform:rotate(0deg)}
+}
 @keyframes mascotTail{0%,100%{transform:rotate(0deg)}50%{transform:rotate(18deg)}}
 #mascotWrap{position:fixed;bottom:20px;left:20px;z-index:9985;display:none;transition:none;pointer-events:none}
-#mascotAvatar{width:58px;height:58px;cursor:pointer;animation:mascotBob 2.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));pointer-events:auto}
+#mascotAvatar{width:64px;height:96px;cursor:pointer;animation:mascotBob 2.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));pointer-events:auto}
 #mascotAvatar:active{animation:none;transform:scale(.92)}
 #mascotBubble{display:none;background:#fff;border:2px solid #0B3566;border-radius:14px;padding:10px 30px 10px 14px;max-width:230px;font-size:12px;color:#0B3566;font-weight:600;line-height:1.4;margin-bottom:8px;box-shadow:0 6px 20px rgba(0,0,0,.22);position:relative;pointer-events:auto}
 #mascotBubble:after{content:'';position:absolute;bottom:-8px;left:20px;border-width:8px 8px 0 0;border-style:solid;border-color:#0B3566 transparent transparent transparent}
@@ -1533,6 +1577,12 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
         <button class="btn btn-success" onclick="saveRespOT()">💾 Guardar respuesta</button>
         <button class="btn btn-pdf" onclick="exportOTPDFCurrentResp()">📄 Exportar PDF completo</button>
         <button class="btn" onclick="cancelOTForm()">Cancelar</button>
+      </div>
+      <div class="act-row" style="margin-top:6px">
+        <span style="font-size:11px;color:var(--text3);align-self:center">📤 Enviar resumen por:</span>
+        <button class="btn btn-sm" style="background:#25D366;color:#fff" onclick="compartirRespuestaOT('wa')">🟢 WhatsApp</button>
+        <button class="btn btn-sm" style="background:#26A5E4;color:#fff" onclick="compartirRespuestaOT('tg')">✈️ Telegram</button>
+        <button class="btn btn-sm" style="background:#EA4335;color:#fff" onclick="compartirRespuestaOT('mail')">✉️ Gmail</button>
       </div>
       <div class="logbox" id="ot-resp-dlog">—</div>
     </div>
@@ -2446,9 +2496,19 @@ async function hashPass(text){
 }
 function looksHashed(s){ return typeof s==='string' && /^[0-9a-f]{64}$/.test(s); }
 
+// ══ Estado de carga en botones (spinner mientras procesa) ══
+function setBtnLoading(btn, on){
+  if(!btn) return;
+  btn.classList.toggle('loading', !!on);
+  btn.disabled = !!on;
+}
+function currentBtn(){ return (window.event && window.event.target && window.event.target.closest) ? window.event.target.closest('button') : null; }
+
 async function doLogin(){
   var dni=document.getElementById('lgDni').value.trim(), pass=document.getElementById('lgPass').value;
   if(checkLoginBloqueado(dni)) return;
+  var _btn=document.querySelector('.btn-login');
+  setBtnLoading(_btn,true);
   var user=DB._users.find(function(u){return u.dni===dni;});
   var ok=false;
   if(user){
@@ -2460,13 +2520,15 @@ async function doLogin(){
       if(ok){ user.pass = await hashPass(pass); saveDB(); }
     }
   }
-  if(!ok){ registrarIntentoFallido(dni); return; }
+  if(!ok){ registrarIntentoFallido(dni); setBtnLoading(_btn,false); return; }
   // Verificar si necesita 2FA
   if(needs2FA(dni)){
     generar2FA(user);
+    setBtnLoading(_btn,false);
     return;
   }
   completarLogin(user);
+  setBtnLoading(_btn,false);
 }
 function showResetPass(){
   var box=document.getElementById('resetPassBox');
@@ -2800,7 +2862,11 @@ function savePer(){var editId=document.getElementById('pEditId').value;var p={_i
     waNumero:document.getElementById('pWaNumero')?document.getElementById('pWaNumero').value.replace(/[^0-9]/g,''):'',
     waApiKey:document.getElementById('pWaApiKey')?document.getElementById('pWaApiKey').value.trim():'',
     foto:document.getElementById('perFotoData')?document.getElementById('perFotoData').value:''
-  };if(!p.ape){alert('Ingrese al menos el apellido.');return;}if(editId){var idx=DB.per.findIndex(function(x){return x._id===parseInt(editId);});if(idx>=0)DB.per[idx]=p;addLog('Editó Personal: '+p.ape+' '+p.nom);}else{DB.per.push(p);addLog('Cargó nuevo Personal: '+p.ape+' '+p.nom);}saveDB();closeModal('modalPer');renderPersonal();renderDashboard();}
+  };if(!p.ape){alert('Ingrese al menos el apellido.');return;}
+  if(p.mi && !/^\d{6,9}$/.test(p.mi.trim())){alert('El DNI debe tener solo números (6 a 9 dígitos). Revisá: "'+p.mi+'"');return;}
+  if(p.email && p.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email.trim())){alert('El email personal no parece válido: "'+p.email+'"');return;}
+  if(p.emailInst && p.emailInst.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.emailInst.trim())){alert('El email institucional no parece válido: "'+p.emailInst+'"');return;}
+  if(editId){var idx=DB.per.findIndex(function(x){return x._id===parseInt(editId);});if(idx>=0)DB.per[idx]=p;addLog('Editó Personal: '+p.ape+' '+p.nom);}else{DB.per.push(p);addLog('Cargó nuevo Personal: '+p.ape+' '+p.nom);}saveDB();closeModal('modalPer');renderPersonal();renderDashboard();}
 function delPer(id){if(!confirm('Eliminar?'))return;DB.per=DB.per.filter(function(x){return x._id!==id;});saveDB();renderPersonal();renderDashboard();}
 
 function getAllEq(){var a=[];CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){a.push(Object.assign({},e,{_cat:c}));});});return a;}
@@ -3180,6 +3246,8 @@ function saveOT(){
   var pri = document.getElementById('otPri').value;
   if(!nro){ alert('Ingresá el número de OT.'); return; }
   if(!fch){ alert('Seleccioná la fecha.'); return; }
+  var vncCheck=document.getElementById('otVnc').value;
+  if(vncCheck && vncCheck<fch){ alert('La fecha de vencimiento ('+vncCheck+') no puede ser anterior a la fecha de inicio ('+fch+').'); return; }
   var o={
     nro:nro, fch:fch, fecha:fch,
     vnc:document.getElementById('otVnc').value,
@@ -3236,7 +3304,33 @@ function saveOT(){
   document.getElementById('ot-dlog').textContent='✅ OT guardada: '+nro;
   cancelOTForm(); renderOTList(); renderDashboard();
 }
+function compartirRespuestaOT(canal){
+  var o=DB.ot.find(function(x){return x._id===otEditId;});
+  if(!o){ alert('Guardá la respuesta primero.'); return; }
+  var resp=document.getElementById('respTexto').value||o.resp||'(sin detalle cargado)';
+  var msg='📋 TICOM-ESLOMIT — OT '+(o.nro||'')+'\n'+
+    'Rubro: '+(o.rub||'-')+'\n'+
+    'Estado: '+(document.getElementById('respEst').value||o.est||'-')+'\n\n'+
+    'Respuesta:\n'+resp+'\n\n'+
+    '— Escuadrón 18 "Lomitas"';
+  var pers = (o.responsableMI?buscarPersonal(o.responsableMI):null) || buscarPersonal(o.asg||o.responsable||o.aut||'');
+  if(canal==='wa'){
+    var num = pers&&pers.waNumero ? pers.waNumero : '';
+    var url = num ? ('https://wa.me/'+num+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
+    window.open(url,'_blank');
+  } else if(canal==='tg'){
+    var url='https://t.me/share/url?url='+encodeURIComponent('TICOM-ESLOMIT')+'&text='+encodeURIComponent(msg);
+    window.open(url,'_blank');
+  } else if(canal==='mail'){
+    var email = pers&&(pers.email||pers.emailInst) ? (pers.email||pers.emailInst) : '';
+    var subject='TICOM-ESLOMIT — Respuesta OT '+(o.nro||'');
+    var url='mailto:'+email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(msg);
+    window.location.href=url;
+  }
+}
+
 function saveRespOT(){var idx=DB.ot.findIndex(function(x){return x._id===otEditId;});if(idx<0)return;DB.ot[idx].resp=document.getElementById('respTexto').value;DB.ot[idx].informe=document.getElementById('respInforme').value;DB.ot[idx].conf=document.getElementById('respConf').value;DB.ot[idx].firma=document.getElementById('respFirma').value;DB.ot[idx].firmaImg=sigPadDataURL('sigCanvasResp');DB.ot[idx].fotos=fotoDataResp.filter(function(f){return f!==null;});DB.ot[idx].adjPDF=respPDFData?respPDFData.name:'';var nuevoEst=document.getElementById('respEst').value;if(nuevoEst)DB.ot[idx].est=nuevoEst;saveDB();document.getElementById('ot-resp-dlog').textContent='Respuesta guardada.';cancelOTForm();renderOTList();renderDashboard();
+  if(nuevoEst==='completada'||nuevoEst==='Completada') mascotReaccion('completo');
   // Notificar al admin
   notificarRespuestaOT(DB.ot[idx]);
   var _oResp = JSON.parse(JSON.stringify(DB.ot[idx]));
@@ -3446,9 +3540,9 @@ function initUserForm(rolDefault){
 function editUser(i){var u=DB._users[i];document.getElementById('uDni').value=u.dni;document.getElementById('uNombre').value=u.nombre;document.getElementById('uPass').value='';document.getElementById('uPass').placeholder='Dejar en blanco para no cambiar la contraseña';document.getElementById('uRol').value=u.rol;document.getElementById('uEditIdx').value=i;document.getElementById('userErr').textContent='';document.getElementById('userModalTitle').textContent='Editar - '+u.nombre;openModal('modalUser');prevUser();}
 function togglePassVis(){var inp=document.getElementById('uPass');inp.type=inp.type==='text'?'password':'text';}
 function prevUser(){var dni=document.getElementById('uDni').value.trim()||'-';var editIdx=parseInt(document.getElementById('uEditIdx').value);var passInput=document.getElementById('uPass').value;var pass=passInput||(editIdx!==-1?'(sin cambios)':'-');var rol=document.getElementById('uRol').value==='admin'?'ADMIN':'NORMAL';var el=document.getElementById('prevUser_txt');if(el)el.textContent='DNI: '+dni+' | Pass: '+pass+' | Rol: '+rol;}
-async function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=document.getElementById('uNombre').value.trim(),pass=document.getElementById('uPass').value,rol=document.getElementById('uRol').value,editIdx=parseInt(document.getElementById('uEditIdx').value),errEl=document.getElementById('userErr');if(!dni||!nombre||(editIdx===-1&&!pass)){errEl.textContent='Todos los campos son obligatorios.';return;}if(editIdx===-1){if(DB._users.find(function(u){return u.dni===dni;})){errEl.textContent='Ya existe un usuario con ese DNI.';return;}DB._users.push({dni:dni,pass:await hashPass(pass),nombre:nombre,rol:rol});addLog('Creó usuario: '+nombre+' ('+rol+')');}else{var passHash=pass?await hashPass(pass):DB._users[editIdx].pass;DB._users[editIdx]={dni:dni,pass:passHash,nombre:nombre,rol:rol};addLog('Editó usuario: '+nombre+(pass?' (cambió contraseña)':''));if(currentUser.dni===dni){currentUser=DB._users[editIdx];document.getElementById('userLabel').textContent=currentUser.nombre+(currentUser.rol==='admin'?' ADMIN':' NORMAL');}}saveDB();closeModal('modalUser');renderUsuarios();renderUsuariosAdmin();renderDashboard();}
+async function saveUser(){var dni=document.getElementById('uDni').value.trim(),nombre=document.getElementById('uNombre').value.trim(),pass=document.getElementById('uPass').value,rol=document.getElementById('uRol').value,editIdx=parseInt(document.getElementById('uEditIdx').value),errEl=document.getElementById('userErr');if(!dni||!nombre||(editIdx===-1&&!pass)){errEl.textContent='Todos los campos son obligatorios.';return;}if(!/^\d{6,9}$/.test(dni)){errEl.textContent='El DNI debe tener solo números (6 a 9 dígitos).';return;}var _btn=currentBtn();setBtnLoading(_btn,true);try{if(editIdx===-1){if(DB._users.find(function(u){return u.dni===dni;})){errEl.textContent='Ya existe un usuario con ese DNI.';return;}DB._users.push({dni:dni,pass:await hashPass(pass),nombre:nombre,rol:rol});addLog('Creó usuario: '+nombre+' ('+rol+')');}else{var passHash=pass?await hashPass(pass):DB._users[editIdx].pass;DB._users[editIdx]={dni:dni,pass:passHash,nombre:nombre,rol:rol};addLog('Editó usuario: '+nombre+(pass?' (cambió contraseña)':''));if(currentUser.dni===dni){currentUser=DB._users[editIdx];document.getElementById('userLabel').textContent=currentUser.nombre+(currentUser.rol==='admin'?' ADMIN':' NORMAL');}}saveDB();closeModal('modalUser');renderUsuarios();renderUsuariosAdmin();renderDashboard();}finally{setBtnLoading(_btn,false);}}
 function delUser(i){if(!confirm('Eliminar usuario "'+DB._users[i].nombre+'"?'))return;DB._users.splice(i,1);saveDB();renderUsuarios();renderUsuariosAdmin();renderDashboard();}
-async function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nombre+':','');if(nueva===null)return;if(nueva.length<3){alert('Min 3 caracteres.');return;}DB._users[i].pass=await hashPass(nueva);saveDB();renderUsuarios();alert('Contrasena actualizada.');}
+async function resetPass(i){var nueva=prompt('Nueva contrasena para '+DB._users[i].nombre+':','');if(nueva===null)return;if(nueva.length<3){alert('Min 3 caracteres.');return;}var _btn=currentBtn();setBtnLoading(_btn,true);try{DB._users[i].pass=await hashPass(nueva);saveDB();renderUsuarios();alert('Contrasena actualizada.');}finally{setBtnLoading(_btn,false);}}
 
 function exportBackup(){var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='TICOM_BACKUP_'+today+'.json';a.click();URL.revokeObjectURL(url);document.getElementById('expLog').textContent='Backup exportado: TICOM_BACKUP_'+today+'.json';try{localStorage.setItem('ticom_lastBackup', Date.now());}catch(e){}}
 function checkBackupReminder(){
@@ -4559,6 +4653,8 @@ async function guardarPerfil(){
   var nueva=document.getElementById('perfilPassNueva').value;
   var confirm2=document.getElementById('perfilPassConfirm').value;
   var msg=document.getElementById('perfilMsg');
+  var _btn=currentBtn();setBtnLoading(_btn,true);
+  try{
   var u=DB._users.find(function(x){return x.dni===currentUser.dni;});
   if(!u){ msg.style.color='red'; msg.textContent='Error: usuario no encontrado.'; return; }
   var actualOk = looksHashed(u.pass) ? (await hashPass(actual))===u.pass : u.pass===actual;
@@ -4572,6 +4668,7 @@ async function guardarPerfil(){
   saveDB();
   msg.style.color='green'; msg.textContent='✅ Contraseña actualizada correctamente.';
   setTimeout(function(){ closeModal('modalPerfil'); }, 1500);
+  } finally { setBtnLoading(_btn,false); }
 }
 
 
@@ -4980,6 +5077,7 @@ function mostrarMascota(){
   var w=document.getElementById('mascotWrap');
   if(w) w.style.display='block';
   iniciarSeguimientoMascota();
+  setTimeout(function(){ mascotReaccion('saludo'); }, 600);
 }
 
 // ══ Mascota sigue al cursor (con retraso suave, tipo "corriendo detrás") ══
@@ -5003,8 +5101,8 @@ function mascotPirueta(){
 function _mascotLoop(){
   var wrap=document.getElementById('mascotWrap');
   if(wrap && wrap.style.display!=='none'){
-    var targetX = Math.min(_mascotMouseX+34, window.innerWidth-70);
-    var targetY = Math.min(_mascotMouseY+34, window.innerHeight-70);
+    var targetX = Math.min(_mascotMouseX+34, window.innerWidth-76);
+    var targetY = Math.min(_mascotMouseY+34, window.innerHeight-108);
     _mascotX += (targetX-_mascotX)*0.08;
     _mascotY += (targetY-_mascotY)*0.08;
     wrap.style.left = Math.max(4,_mascotX)+'px';
@@ -5017,6 +5115,40 @@ function ocultarBurbujaMascota(){
   var b=document.getElementById('mascotBubble');
   if(b) b.style.display='none';
 }
+function nombreCortoSaludo(){
+  if(!currentUser || !currentUser.nombre) return '';
+  var n = currentUser.nombre.trim();
+  // Formato típico: "Sarg. (TSTC) Segovia José Luis" -> "Sarg. Segovia"
+  var m = n.match(/^([^(]+?)\s*\(([^)]*)\)\s*(\S+)/);
+  if(m) return (m[1].trim()+' '+m[3]).trim();
+  var partes=n.split(' ');
+  return partes.length>1 ? partes[0]+' '+partes[1] : n;
+}
+
+function mascotReaccion(tipo){
+  var av=document.getElementById('mascotAvatar');
+  var bubble=document.getElementById('mascotBubble');
+  var msgEl=document.getElementById('mascotMsg');
+  var wrap=document.getElementById('mascotWrap');
+  if(!av||!bubble||!msgEl||!wrap||wrap.style.display==='none') return;
+  var msgs={
+    completo:['¡Genial! Una OT menos 🎉','¡Buen trabajo! 🐾','¡Así se hace! 🎖️'],
+    urgente:['¡Guau guau! Hay OTs vencidas 🚨','¡Ojo! Se está acumulando trabajo 😰'],
+    saludo:['¡Bienvenido, '+nombreCortoSaludo()+'! 🐶']
+  };
+  var arr=msgs[tipo]||msgs.saludo;
+  msgEl.textContent=arr[Math.floor(Math.random()*arr.length)];
+  if(tipo==='saludo'){
+    var pata=document.getElementById('mascotPataSaludo');
+    if(pata){ pata.classList.add('waving'); setTimeout(function(){ pata.classList.remove('waving'); }, 2300); }
+  } else {
+    mascotPirueta();
+  }
+  bubble.style.display='block';
+  setTimeout(function(){ if(bubble.style.display==='block') bubble.style.display='none'; }, 4000);
+  if(tipo==='urgente'){ av.classList.add('nervioso'); setTimeout(function(){av.classList.remove('nervioso');},8000); }
+}
+
 function mascotaTip(){
   mascotPirueta();
   var bubble=document.getElementById('mascotBubble');
@@ -5066,6 +5198,7 @@ function checkOTVencidas(){
     var m=document.getElementById('modalActividadPendiente');
     if(m) m.style.display='flex';
     localStorage.setItem(hoyKeyModal, hoy);
+    if(venc.length>0) setTimeout(function(){ mascotReaccion('urgente'); }, 500);
   }
 }
 setInterval(checkOTVencidas,3600000);
@@ -5076,7 +5209,13 @@ function checkGarantias(){
   var hoy=new Date().toISOString().split('T')[0];
   var CATS=['radio','antena','fuente','portatil','poc','pc','imp','mon','ups','ot_eq'];
   var pv=[];CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){if(!e.garantia)return;var diff=(new Date(e.garantia)-new Date(hoy))/86400000;if(diff>=0&&diff<=30)pv.push(e.marca+' '+e.modelo);});});
-  if(pv.length>0)showFbToast('🔧 '+pv.length+' equipo'+(pv.length>1?'s':'')+' con garantía por vencer');
+  if(pv.length===0) return;
+  showFbToast('🔧 '+pv.length+' equipo'+(pv.length>1?'s':'')+' con garantía por vencer');
+  var hoyKeyGar='ticom_garDia_'+currentUser.dni;
+  if(localStorage.getItem(hoyKeyGar)!==hoy){
+    notifBrowser('🔧 Garantías por vencer', pv.length+' equipo'+(pv.length>1?'s':'')+' con garantía vence en 30 días o menos: '+pv.slice(0,3).join(', ')+(pv.length>3?'...':''));
+    localStorage.setItem(hoyKeyGar, hoy);
+  }
 }
 
 // ══ BUSCADOR GLOBAL ══
@@ -7105,7 +7244,16 @@ function completarLogin(user){
     <button id="mascotBubbleClose" onclick="event.stopPropagation();ocultarBurbujaMascota()">✕</button>
   </div>
   <div id="mascotAvatar" onclick="mascotaTip()" title="Tocame para un tip">
-    <svg viewBox="0 0 100 100" width="58" height="58" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 100 150" width="64" height="96" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="83" cy="98" rx="9" ry="21" fill="#B97F42" transform="rotate(38 83 98)"/>
+      <ellipse cx="50" cy="115" rx="30" ry="33" fill="#E0A868"/>
+      <ellipse cx="50" cy="122" rx="17" ry="19" fill="#F3D6A8"/>
+      <ellipse cx="33" cy="142" rx="9" ry="10" fill="#E0A868"/>
+      <ellipse cx="67" cy="142" rx="9" ry="10" fill="#E0A868"/>
+      <g id="pawSaludo">
+        <ellipse cx="78" cy="90" rx="7" ry="17" fill="#E0A868"/>
+        <ellipse cx="78" cy="76" rx="6.5" ry="6" fill="#E0A868"/>
+      </g>
       <ellipse cx="27" cy="34" rx="13" ry="19" fill="#B97F42" transform="rotate(-22 27 34)"/>
       <ellipse cx="73" cy="34" rx="13" ry="19" fill="#B97F42" transform="rotate(22 73 34)"/>
       <ellipse cx="50" cy="58" rx="35" ry="30" fill="#E0A868"/>
@@ -7116,6 +7264,10 @@ function completarLogin(user){
       <circle cx="65" cy="50" r="1.6" fill="#fff"/>
       <ellipse cx="50" cy="66" rx="7" ry="5.5" fill="#5a3a24"/>
       <path d="M43 74 Q50 80 57 74" stroke="#5a3a24" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <g id="mascotPataSaludo" class="pata-saludo">
+        <ellipse cx="80" cy="78" rx="7" ry="20" fill="#E0A868" transform="rotate(-15 80 78)"/>
+        <circle cx="84" cy="59" r="8" fill="#E0A868"/>
+      </g>
     </svg>
   </div>
 </div>
