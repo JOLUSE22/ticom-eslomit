@@ -1791,7 +1791,17 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
     </div>
     <label>Observaciones</label>
     <textarea id="entObs" style="min-height:60px"></textarea>
-    <div class="act-row"><button class="btn btn-success" onclick="generarActaEntrega()">📄 Generar Acta PDF</button></div>
+    <div class="sec-div">Adjuntar PDF (acta firmada / respaldo)</div>
+    <div id="adjEntrega" class="adj-box" onclick="document.getElementById('adjFileEntrega').click()">
+      <span class="adj-icon">📎</span><span class="adj-label" id="adjLblEntrega">Clic para adjuntar un PDF...</span>
+      <input type="file" id="adjFileEntrega" accept=".pdf,application/pdf" style="display:none" onchange="loadAdj('entrega',this)">
+    </div>
+    <div id="adjPreviewEntrega" class="adj-preview" style="display:none">
+      <div class="adj-info"><span class="adj-fname" id="adjFnameEntrega"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('entrega')">✕</button></div>
+      <iframe id="adjFrameEntrega" class="adj-frame"></iframe>
+    </div>
+    <div class="act-row"><button class="btn btn-success" onclick="generarActaEntrega()">📄 Generar Acta PDF</button><button class="btn btn-primary" onclick="guardarDoc('entrega')">💾 Guardar con adjunto</button></div>
+    <div class="logbox" id="entrega-dlog">—</div>
   </div>
 </div>
 
@@ -1812,10 +1822,21 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
     </div>
     <label>Descripción detallada</label>
     <textarea id="bajaDesc" style="min-height:80px"></textarea>
+    <div class="sec-div">Adjuntar PDF (acta firmada / respaldo)</div>
+    <div id="adjBaja" class="adj-box" onclick="document.getElementById('adjFileBaja').click()">
+      <span class="adj-icon">📎</span><span class="adj-label" id="adjLblBaja">Clic para adjuntar un PDF...</span>
+      <input type="file" id="adjFileBaja" accept=".pdf,application/pdf" style="display:none" onchange="loadAdj('baja',this)">
+    </div>
+    <div id="adjPreviewBaja" class="adj-preview" style="display:none">
+      <div class="adj-info"><span class="adj-fname" id="adjFnameBaja"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('baja')">✕</button></div>
+      <iframe id="adjFrameBaja" class="adj-frame"></iframe>
+    </div>
     <div class="act-row">
       <button class="btn btn-success" onclick="generarActaBaja()">📄 Generar Acta PDF</button>
       <button class="btn btn-danger" onclick="darDeBajaEquipo()">❌ Marcar baja en inventario</button>
+      <button class="btn btn-primary" onclick="guardarDoc('baja')">💾 Guardar con adjunto</button>
     </div>
+    <div class="logbox" id="baja-dlog">—</div>
   </div>
 </div>
 
@@ -1838,10 +1859,21 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
     <textarea id="mantDesc" style="min-height:80px"></textarea>
     <label>Observaciones</label>
     <textarea id="mantObs" style="min-height:50px"></textarea>
+    <div class="sec-div">Adjuntar PDF (acta firmada / respaldo)</div>
+    <div id="adjMantenimiento" class="adj-box" onclick="document.getElementById('adjFileMantenimiento').click()">
+      <span class="adj-icon">📎</span><span class="adj-label" id="adjLblMantenimiento">Clic para adjuntar un PDF...</span>
+      <input type="file" id="adjFileMantenimiento" accept=".pdf,application/pdf" style="display:none" onchange="loadAdj('mantenimiento',this)">
+    </div>
+    <div id="adjPreviewMantenimiento" class="adj-preview" style="display:none">
+      <div class="adj-info"><span class="adj-fname" id="adjFnameMantenimiento"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('mantenimiento')">✕</button></div>
+      <iframe id="adjFrameMantenimiento" class="adj-frame"></iframe>
+    </div>
     <div class="act-row">
       <button class="btn btn-success" onclick="generarRegMant()">📄 Generar PDF</button>
       <button class="btn btn-primary" onclick="guardarMant()">💾 Guardar en historial</button>
+      <button class="btn btn-primary" onclick="guardarDoc('mantenimiento')">💾 Guardar con adjunto</button>
     </div>
+    <div class="logbox" id="mantenimiento-dlog">—</div>
   </div>
 </div>
 
@@ -3982,6 +4014,7 @@ function renderHistorial(){
 }
 function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta','entrega','baja','mantenimiento'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});if(v==='entrega'||v==='baja'||v==='mantenimiento') initDocForms();}
 function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}
+  else if(tipo==='entrega'||tipo==='baja'||tipo==='mantenimiento'){var pf={entrega:'ent',baja:'baja',mantenimiento:'mant'}[tipo];var nom={entrega:'Acta de Entrega',baja:'Acta de Baja',mantenimiento:'Mantenimiento'}[tipo];var nv=(document.getElementById(pf+'Nro')||{}).value||'';if(!nv){alert('Completá el N° antes de guardar.');return;}doc.titulo=nom+' '+nv;doc.nro=nv;var mm=document.getElementById(pf+'Marca'),ss=document.getElementById(pf+'Serie');if(mm)doc.marca=mm.value;if(ss)doc.serie=ss.value;}
   else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}if(adjData[tipo]&&!adjData[tipo].data){alert('El PDF adjunto todavía se está cargando. Esperá un segundo y volvé a guardar.');return;}doc.adjunto=adjData[tipo]?adjData[tipo].data:'';doc.adjuntoNombre=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
 function renderDocsGuardados(){
   var el=document.getElementById('docsGuardadosBody');
