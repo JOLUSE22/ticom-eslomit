@@ -1094,7 +1094,7 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
   100%{opacity:0;transform:rotate(0deg)}
 }
 @keyframes mascotTail{0%,100%{transform:rotate(0deg)}50%{transform:rotate(18deg)}}
-#mascotWrap{position:fixed;bottom:20px;left:20px;z-index:9985;display:none;transition:none;pointer-events:none}
+#mascotWrap{position:fixed;bottom:20px;left:20px;z-index:9985;display:none!important;transition:none;pointer-events:none}
 #mascotAvatar{width:64px;height:96px;cursor:pointer;animation:mascotBob 2.6s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25));pointer-events:auto}
 #mascotAvatar:active{animation:none;transform:scale(.92)}
 #mascotBubble{display:none;background:#fff;border:2px solid #0B3566;border-radius:14px;padding:10px 30px 10px 14px;max-width:230px;font-size:12px;color:#0B3566;font-weight:600;line-height:1.4;margin-bottom:8px;box-shadow:0 6px 20px rgba(0,0,0,.22);position:relative;pointer-events:auto}
@@ -1437,7 +1437,7 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
           <select id="otAsgSel" onchange="otAsgSelChange(this)">
             <option value="">— Seleccionar personal —</option>
           </select>
-          <input id="otAsg" placeholder="O escribí manualmente" style="margin-top:4px;font-size:11px">
+          <input id="otAsg" oninput="this.dataset.mi=''" placeholder="O escribí manualmente" style="margin-top:4px;font-size:11px">
         </div>
         <div class="col"><label>Autoriza</label><input id="otAut" placeholder="Quien autoriza"></div>
         <div class="col"><label>Unidad</label><input id="otUni" value="ESLOMIT"></div>
@@ -3354,7 +3354,7 @@ function loadFoto(i,input){var file=input.files[0];if(!file)return;if(file.size>
 function clearFoto(i){fotoDataResp[i]=null;var slot=document.getElementById('fslot'+i);if(slot){slot.innerHTML='<input type="file" id="fotoInput'+i+'" accept="image/*" style="display:none" onchange="loadFoto('+i+',this)"><span class="foto-plus">&#128247; +</span>';slot.onclick=function(){trigFoto(i);}; }}
 function loadRespPDF(input){var file=input.files[0];if(!file)return;var url=URL.createObjectURL(file);respPDFData={name:file.name,url:url};document.getElementById('respAdjLabel').textContent=file.name;document.getElementById('respPDFName').textContent=file.name;document.getElementById('respPDFFrame').src=url;document.getElementById('respPDFPreview').style.display='block';}
 function clearRespPDF(){if(respPDFData)URL.revokeObjectURL(respPDFData.url);respPDFData=null;var el=document.getElementById('respAdjLabel');if(el)el.textContent='Adjuntar PDF...';var prev=document.getElementById('respPDFPreview');if(prev)prev.style.display='none';var inp=document.getElementById('respPDFInput');if(inp)inp.value='';}
-function loadAdj(tipo,input){var file=input.files[0];if(!file)return;var url=URL.createObjectURL(file);adjData[tipo]={name:file.name,url:url};var t=tipo.charAt(0).toUpperCase()+tipo.slice(1);document.getElementById('adjLbl'+t).textContent=file.name;document.getElementById('adjFname'+t).textContent=file.name;document.getElementById('adjFrame'+t).src=url;document.getElementById('adjPreview'+t).style.display='block';}
+function loadAdj(tipo,input){var file=input.files[0];if(!file)return;if(file.size>3*1024*1024){alert('El PDF supera 3 MB. Comprimilo antes de adjuntar.');input.value='';return;}var url=URL.createObjectURL(file);adjData[tipo]={name:file.name,url:url,data:null};var reader=new FileReader();reader.onload=function(e){if(adjData[tipo])adjData[tipo].data=e.target.result;};reader.readAsDataURL(file);var t=tipo.charAt(0).toUpperCase()+tipo.slice(1);document.getElementById('adjLbl'+t).textContent=file.name;document.getElementById('adjFname'+t).textContent=file.name;document.getElementById('adjFrame'+t).src=url;document.getElementById('adjPreview'+t).style.display='block';}
 function clearAdj(tipo){if(adjData[tipo])URL.revokeObjectURL(adjData[tipo].url);delete adjData[tipo];var t=tipo.charAt(0).toUpperCase()+tipo.slice(1);document.getElementById('adjLbl'+t).textContent='Adjuntar PDF...';document.getElementById('adjPreview'+t).style.display='none';document.getElementById('adjFrame'+t).src='';document.getElementById('adjFile'+t).value='';}
 
 function renderUsuarios(){
@@ -3981,7 +3981,7 @@ function renderHistorial(){
 }
 function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta','entrega','baja','mantenimiento'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});if(v==='entrega'||v==='baja'||v==='mantenimiento') initDocForms();}
 function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}
-  else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}doc.adjunto=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
+  else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}if(adjData[tipo]&&!adjData[tipo].data){alert('El PDF adjunto todavía se está cargando. Esperá un segundo y volvé a guardar.');return;}doc.adjunto=adjData[tipo]?adjData[tipo].data:'';doc.adjuntoNombre=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='Guardado: '+doc.titulo+' - '+doc.fecha;}
 function renderDocsGuardados(){
   var el=document.getElementById('docsGuardadosBody');
   if(!el) return;
@@ -4019,6 +4019,10 @@ function renderDocsGuardados(){
 function verDocGuardado(id){
   var d=(DB.docs||[]).find(function(x){return x._id===id||String(x._id)===String(id);});
   if(!d) return;
+  if(d.adjunto&&!d.adjunto.startsWith('data:')){
+    alert('Este documento se guardó con una versión anterior del sistema: solo quedó registrado el nombre del PDF ("'+d.adjunto+'"), no el archivo.\n\nPara verlo, volvé a cargar el documento adjuntando el PDF.');
+    return;
+  }
   if(d.adjunto){
     var overlay=document.createElement('div');
     overlay.style.cssText='position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center';
@@ -4100,7 +4104,7 @@ function enviarEmail(destinatarioEmail, destinatarioNombre, asunto, mensaje, otD
   };
   emailjs.send(EJS_SERVICE, EJS_TEMPLATE, params)
     .then(function(){ console.log('Email enviado a '+destinatarioEmail); showFbToast('📧 Email enviado a '+destinatarioNombre); })
-    .catch(function(e){ console.warn('Email error:', e); });
+    .catch(function(e){ console.warn('Email error:', e); showFbToast('❌ No se pudo enviar email a '+(destinatarioNombre||destinatarioEmail)+(e&&e.text?' ('+e.text+')':'')); });
 }
 
 // Buscar personal por cualquier combinación de nombre/DNI
@@ -4108,7 +4112,7 @@ function buscarPersonal(txt){
   if(!txt) return null;
   var txtLow = txt.toLowerCase().trim();
   // Buscar por MI exacto primero
-  var porMI = (DB.per||[]).find(function(x){ return x.mi===txt || x.mi===txtLow; });
+  var porMI = (DB.per||[]).find(function(x){ return String(x.mi||'').trim()===String(txt).trim(); });
   if(porMI) return porMI;
   // Buscar por nombre
   return (DB.per||[]).find(function(x){
@@ -4124,7 +4128,14 @@ function buscarPersonal(txt){
 
 function getEmailUsuario(dniONombre){
   var p = buscarPersonal(dniONombre);
-  if(p) return { email: p.emailInst||p.email||'', nombre: p.grd+' '+p.ape+' '+p.nom };
+  if(p){
+    var lista=[];
+    [p.emailInst,p.email].forEach(function(e){
+      e=String(e||'').trim();
+      if(e && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e) && lista.map(function(x){return x.toLowerCase();}).indexOf(e.toLowerCase())<0) lista.push(e);
+    });
+    return { email: lista[0]||'', emails: lista, nombre: (p.grd||'')+' '+(p.ape||'')+' '+(p.nom||'') };
+  }
   var u = (DB._users||[]).find(function(x){ return x.dni===dniONombre; });
   if(u) return { email: '', nombre: u.nombre };
   return null;
@@ -4137,16 +4148,20 @@ function emailNuevaOT(o){
   var mi  = o.responsableMI||'';
   var asg = o.responsable||o.asg||'';
   if(!asg && !mi) return;
-  var dest = mi ? getEmailUsuario(mi) : getEmailUsuario(asg);
-  if(!dest || !dest.email) return;
+  var dest = (mi ? getEmailUsuario(mi) : null) || getEmailUsuario(asg);
+  if(!dest){ showFbToast('⚠️ OT '+o.nro+': el asignado no figura en Personal, no se envió email'); return; }
+  var correos = dest.emails || (dest.email?[dest.email]:[]);
+  if(!correos.length){ showFbToast('⚠️ '+dest.nombre+' no tiene correo cargado en Personal'); return; }
   var titulo = o.titulo||o.rub||o.dsc||'Sin título';
   var pri = (o.prioridad||o.pri||'normal').toUpperCase();
-  enviarEmail(
-    dest.email, dest.nombre,
-    'Nueva OT asignada: '+o.nro+' ['+pri+']',
-    'Se le ha asignado una nueva Orden de Trabajo en el sistema TICOM-ESLOMIT.\n\nTítulo: '+titulo+'\nDescripción: '+(o.descripcion||o.dsc||'—')+'\nFecha inicio: '+(o.fecha||o.fch||'—'),
-    o
-  );
+  correos.forEach(function(correo){
+    enviarEmail(
+      correo, dest.nombre,
+      'Nueva OT asignada: '+o.nro+' ['+pri+']',
+      'Se le ha asignado una nueva Orden de Trabajo en el sistema TICOM-ESLOMIT.\n\nTítulo: '+titulo+'\nDescripción: '+(o.descripcion||o.dsc||'—')+'\nFecha inicio: '+(o.fecha||o.fch||'—')+'\nVencimiento: '+(o.fechaLim||o.vnc||'Sin fecha')+'\n\nIngresá al sistema: https://joluse22.github.io/ticom-eslomit/TICOM_Sistema_Gestion_2026.html',
+      o
+    );
+  });
 }
 
 // Notificar al admin cuando operador responde una OT
@@ -5074,10 +5089,9 @@ var MASCOT_TIPS=[
   'Conectá Google Drive para que tus backups se suban solos ☁️'
 ];
 function mostrarMascota(){
+  // Mascota desactivada (no se muestra ni sigue al cursor)
   var w=document.getElementById('mascotWrap');
-  if(w) w.style.display='block';
-  iniciarSeguimientoMascota();
-  setTimeout(function(){ mascotReaccion('saludo'); }, 600);
+  if(w) w.style.display='none';
 }
 
 // ══ Mascota sigue al cursor (con retraso suave, tipo "corriendo detrás") ══
