@@ -1770,79 +1770,6 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
     </div>
   </div></div>
 
-  <div class="card" style="margin-top:14px">
-    <div class="card-title"><span class="ct-icon">&#128193;</span>Documentos guardados</div>
-    <div class="tbl-wrap">
-      <table class="dt">
-        <thead><tr><th>N&#176;</th><th>Tipo</th><th>Titulo</th><th>Fecha</th><th>Autor</th></tr></thead>
-        <tbody id="docsGuardadosBody"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ══ USUARIOS (admin) ══ -->
-<div id="tab-usuarios" class="panel">
-
-  <!-- SUB-TABS -->
-  <div style="display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border2);background:var(--surface);box-shadow:var(--shadow);margin-bottom:18px">
-    <button id="sutab-normal" onclick="switchUserTab('normal',this)"
-      style="flex:1;padding:14px 20px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;
-             background:#eff6ff;color:#1d4ed8;border-right:1.5px solid var(--border2);
-             display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s">
-      <span style="font-size:20px">👥</span>
-      <span>Usuarios Normales</span>
-      <span id="countNormal" style="background:#1d4ed8;color:#fff;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:800;min-width:24px;text-align:center"></span>
-    </button>
-    <button id="sutab-admin" onclick="switchUserTab('admin',this)"
-      style="flex:1;padding:14px 20px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;
-             background:var(--surface);color:var(--text3);
-             display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s">
-      <span style="font-size:20px">⭐</span>
-      <span>Administradores</span>
-      <span id="countAdmin" style="background:#f59e0b;color:#fff;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:800;min-width:24px;text-align:center"></span>
-    </button>
-  </div>
-
-  <!-- LISTA NORMALES -->
-  <div id="upanel-normal">
-    <div class="card" style="border:1.5px solid #bfdbfe">
-      <div class="card-title" style="color:#1d4ed8;border-bottom-color:#bfdbfe">
-        <span>👥</span> Usuarios Normales
-        <button id="btnNuevoUsuario" class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openModal('modalUser');initUserForm('normal')">+ Nuevo usuario</button>
-      <button class="btn btn-warn btn-sm" onclick="showResetSolicitudes()" id="btnResetPend" style="display:none">🔑 Solicitudes <span id="resetPendCount" style="background:#dc2626;color:#fff;border-radius:99px;padding:1px 7px;font-size:10px;margin-left:4px">0</span></button>
-      </div>
-      <p style="font-size:12px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;margin-bottom:12px;line-height:1.6">
-        Pueden ver el sistema y responder Órdenes de Trabajo. <strong>No pueden editar ni gestionar usuarios.</strong>
-      </p>
-      <div class="tbl-wrap">
-        <table class="dt">
-          <thead><tr><th style="width:55%">Usuario</th><th>Acceso</th><th style="text-align:right">Opciones</th></tr></thead>
-          <tbody id="bodyUsuarios"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- LISTA ADMINS -->
-  <div id="upanel-admin" style="display:none">
-    <div class="card" style="border:1.5px solid #fcd34d;background:linear-gradient(135deg,#fffbeb 0%,#fff 100%)">
-      <div class="card-title" style="color:#92400e;border-bottom-color:#fde68a">
-        <span>⭐</span> Administradores del Sistema
-        <button class="btn btn-sm" style="margin-left:auto;background:#f59e0b;color:#fff;border-color:#d97706" onclick="openModal('modalUser');initUserForm('admin')">+ Nuevo Admin</button>
-      </div>
-      <p style="font-size:12px;color:#78350f;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:9px 12px;margin-bottom:12px;line-height:1.6">
-        Acceso total al sistema: ver, editar, crear OTs, gestionar usuarios y exportar datos.
-      </p>
-      <div class="tbl-wrap">
-        <table class="dt">
-          <thead><tr><th style="width:55%">Administrador</th><th>Acceso</th><th style="text-align:right">Opciones</th></tr></thead>
-          <tbody id="bodyUsuariosAdmin"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
 <div id="df-entrega" style="display:none">
   <div class="card">
     <div class="card-title"><span class="ct-icon">📦</span>Acta de Entrega de Equipo</div>
@@ -1917,6 +1844,80 @@ table tbody tr:hover{ background:rgba(11,53,102,.04); }
     </div>
   </div>
 </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title"><span class="ct-icon">&#128193;</span>Documentos guardados</div>
+    <div class="tbl-wrap">
+      <table class="dt">
+        <thead><tr><th>N&#176;</th><th>Tipo</th><th>Titulo</th><th>Fecha</th><th>Autor</th></tr></thead>
+        <tbody id="docsGuardadosBody"><tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px">Sin documentos guardados.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ USUARIOS (admin) ══ -->
+<div id="tab-usuarios" class="panel">
+
+  <!-- SUB-TABS -->
+  <div style="display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border2);background:var(--surface);box-shadow:var(--shadow);margin-bottom:18px">
+    <button id="sutab-normal" onclick="switchUserTab('normal',this)"
+      style="flex:1;padding:14px 20px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;
+             background:#eff6ff;color:#1d4ed8;border-right:1.5px solid var(--border2);
+             display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s">
+      <span style="font-size:20px">👥</span>
+      <span>Usuarios Normales</span>
+      <span id="countNormal" style="background:#1d4ed8;color:#fff;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:800;min-width:24px;text-align:center"></span>
+    </button>
+    <button id="sutab-admin" onclick="switchUserTab('admin',this)"
+      style="flex:1;padding:14px 20px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;
+             background:var(--surface);color:var(--text3);
+             display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s">
+      <span style="font-size:20px">⭐</span>
+      <span>Administradores</span>
+      <span id="countAdmin" style="background:#f59e0b;color:#fff;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:800;min-width:24px;text-align:center"></span>
+    </button>
+  </div>
+
+  <!-- LISTA NORMALES -->
+  <div id="upanel-normal">
+    <div class="card" style="border:1.5px solid #bfdbfe">
+      <div class="card-title" style="color:#1d4ed8;border-bottom-color:#bfdbfe">
+        <span>👥</span> Usuarios Normales
+        <button id="btnNuevoUsuario" class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openModal('modalUser');initUserForm('normal')">+ Nuevo usuario</button>
+      <button class="btn btn-warn btn-sm" onclick="showResetSolicitudes()" id="btnResetPend" style="display:none">🔑 Solicitudes <span id="resetPendCount" style="background:#dc2626;color:#fff;border-radius:99px;padding:1px 7px;font-size:10px;margin-left:4px">0</span></button>
+      </div>
+      <p style="font-size:12px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 12px;margin-bottom:12px;line-height:1.6">
+        Pueden ver el sistema y responder Órdenes de Trabajo. <strong>No pueden editar ni gestionar usuarios.</strong>
+      </p>
+      <div class="tbl-wrap">
+        <table class="dt">
+          <thead><tr><th style="width:55%">Usuario</th><th>Acceso</th><th style="text-align:right">Opciones</th></tr></thead>
+          <tbody id="bodyUsuarios"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA ADMINS -->
+  <div id="upanel-admin" style="display:none">
+    <div class="card" style="border:1.5px solid #fcd34d;background:linear-gradient(135deg,#fffbeb 0%,#fff 100%)">
+      <div class="card-title" style="color:#92400e;border-bottom-color:#fde68a">
+        <span>⭐</span> Administradores del Sistema
+        <button class="btn btn-sm" style="margin-left:auto;background:#f59e0b;color:#fff;border-color:#d97706" onclick="openModal('modalUser');initUserForm('admin')">+ Nuevo Admin</button>
+      </div>
+      <p style="font-size:12px;color:#78350f;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:9px 12px;margin-bottom:12px;line-height:1.6">
+        Acceso total al sistema: ver, editar, crear OTs, gestionar usuarios y exportar datos.
+      </p>
+      <div class="tbl-wrap">
+        <table class="dt">
+          <thead><tr><th style="width:55%">Administrador</th><th>Acceso</th><th style="text-align:right">Opciones</th></tr></thead>
+          <tbody id="bodyUsuariosAdmin"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 
 </div>
 
