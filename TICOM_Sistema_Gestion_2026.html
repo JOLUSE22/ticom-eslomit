@@ -1162,6 +1162,11 @@ body.sb-mini .sb-foot .tab-icon{transform:rotate(180deg)}
 body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
 #mainContent{margin-left:var(--sbw);transition:margin-left .2s;min-width:0;flex:1}
 #sbBackdrop{display:none}
+.ac-items{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.ac-item{padding:9px 16px;border-radius:10px;border:2px solid #cbd5e1;background:#fff;font-weight:700;font-size:13px;cursor:pointer;color:#334155;font-family:inherit;transition:all .12s}
+.ac-item:hover{border-color:#b45309}
+.ac-item.on{background:#b45309;border-color:#b45309;color:#fff;box-shadow:0 3px 10px rgba(180,83,9,.3)}
+[data-theme="dark"] .ac-item{background:#1e293b;color:#e2e8f0;border-color:#475569}
 .topbar{flex-wrap:nowrap!important}
 .topbar-brand{flex:1 1 auto!important;overflow:hidden}
 #tabbar.sb .tab-txt{display:inline!important}
@@ -1723,51 +1728,6 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
   </div>
 </div>
 
-<!-- ══ ACTAS / VPN ══ -->
-<div id="tab-actas" class="panel">
-  <div class="row">
-    <div class="col">
-      <div class="card">
-        <div class="card-title"><span class="ct-icon">🔐</span>Datos del Funcionario / Acta</div>
-        <label>Tipo de documento</label>
-        <select id="aTipo" onchange="prevActa()">
-          <option>Acta de Confidencialidad</option><option>Acta de VPN</option>
-          <option>Acta de Acceso al Sistema</option><option>Memorándum interno</option>
-        </select>
-        <label>N° Documento</label><input id="aNum" value="ACTA-2026-001">
-        <label>Sistema / Aplicación</label><input id="aSis" placeholder="Ej: ERP, VPN, NAS...">
-        <label>Unidad / Repartición</label><input id="aEmp" placeholder="Ej: Escuadrón 18 Lomitas, Región 8...">
-        <label>Apellido y Nombre del Funcionario</label><input id="aFirm" placeholder="Apellido y nombre">
-        <label>Grado / Cargo / Función</label><input id="aCargo" placeholder="Ej: Sargento (TSTC), Jefe de Sección...">
-        <label>DNI / MI / CE</label><input id="aDni2" placeholder="Número de documento">
-        <label>Fecha</label><input type="date" id="aFecha">
-        <label>N° Expediente GDE</label><input id="aGDE" placeholder="Ej: GDE-ESLOMIT-2026-001">
-        <label>Observaciones / Cláusulas adicionales</label>
-        <textarea id="aObs" placeholder="Condiciones especiales, restricciones, notas..."></textarea>
-        <div class="sec-div">Adjuntar PDF de respaldo</div>
-        <div class="adj-box" onclick="document.getElementById('adjFileActa').click()">
-          <span class="adj-icon">📎</span><span class="adj-label" id="adjLblActa">Clic para adjuntar un PDF...</span>
-          <input type="file" id="adjFileActa" accept=".pdf,application/pdf" style="display:none" onchange="loadAdj('acta',this)">
-        </div>
-        <div id="adjPreviewActa" class="adj-preview" style="display:none">
-          <div class="adj-info"><span class="adj-fname" id="adjFnameActa"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('acta')">✕</button></div>
-          <iframe id="adjFrameActa" class="adj-frame"></iframe>
-        </div>
-        <div class="act-row">
-          <button class="btn" onclick="prevActa()">👁 Vista previa</button>
-          <button class="btn btn-pdf" onclick="exportPDF('acta')">📄 PDF</button>
-        </div>
-        <div class="logbox" id="acta-dlog">—</div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card" style="height:100%">
-        <div class="card-title"><span class="ct-icon">👁</span>Vista previa</div>
-        <div class="preview" id="actaPrev" style="min-height:420px">Complete los campos y presione Vista previa.</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ══ DOCUMENTOS ══ -->
 <div id="tab-docs" class="panel">
@@ -1778,7 +1738,7 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
       <option value="provision">Nota de Provisión Interna</option>
       <option value="transferencia">Nota de Transferencia</option>
       <option value="memo">Memorándum</option>
-      <option value="acta">🔐 Acta / VPN</option>
+      <option value="acta">🔐 Acta de Confidencialidad</option>
       <option value="entrega">📦 Acta de Entrega de Equipo</option>
       <option value="baja">❌ Acta de Baja de Equipo</option>
       <option value="mantenimiento">🔧 Registro de Mantenimiento</option>
@@ -1799,7 +1759,7 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
         <div class="adj-info"><span class="adj-fname" id="adjFnameRecibo"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('recibo')">✕</button></div>
         <iframe id="adjFrameRecibo" class="adj-frame"></iframe>
       </div>
-      <div class="act-row"><button class="btn" onclick="prevDoc('recibo')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('recibo')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportPDF('recibo')">📄 PDF</button></div>
+      <div class="act-row"><button class="btn" onclick="prevDoc('recibo')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('recibo')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportDocPDF('recibo')">📄 PDF</button></div>
       <div class="logbox" id="recibo-dlog">—</div>
     </div>
     <div class="card"><div class="card-title"><span class="ct-icon">👁</span>Vista previa</div><div class="preview" id="pv-recibo">Complete y presione Vista previa.</div></div>
@@ -1821,7 +1781,7 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
         <div class="adj-info"><span class="adj-fname" id="adjFnameProvision"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('provision')">✕</button></div>
         <iframe id="adjFrameProvision" class="adj-frame"></iframe>
       </div>
-      <div class="act-row"><button class="btn" onclick="prevDoc('provision')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('provision')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportPDF('provision')">📄 PDF</button></div>
+      <div class="act-row"><button class="btn" onclick="prevDoc('provision')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('provision')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportDocPDF('provision')">📄 PDF</button></div>
       <div class="logbox" id="provision-dlog">—</div>
     </div>
     <div class="card"><div class="card-title"><span class="ct-icon">👁</span>Vista previa</div><div class="preview" id="pv-provision">Complete y presione Vista previa.</div></div>
@@ -1844,7 +1804,7 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
         <div class="adj-info"><span class="adj-fname" id="adjFnameTransferencia"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('transferencia')">✕</button></div>
         <iframe id="adjFrameTransferencia" class="adj-frame"></iframe>
       </div>
-      <div class="act-row"><button class="btn" onclick="prevDoc('transferencia')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('transferencia')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportPDF('transferencia')">📄 PDF</button></div>
+      <div class="act-row"><button class="btn" onclick="prevDoc('transferencia')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('transferencia')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportDocPDF('transferencia')">📄 PDF</button></div>
       <div class="logbox" id="transferencia-dlog">—</div>
     </div>
     <div class="card"><div class="card-title"><span class="ct-icon">👁</span>Vista previa</div><div class="preview" id="pv-transferencia">Complete y presione Vista previa.</div></div>
@@ -1865,18 +1825,28 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
         <div class="adj-info"><span class="adj-fname" id="adjFnameMemo"></span><button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="clearAdj('memo')">✕</button></div>
         <iframe id="adjFrameMemo" class="adj-frame"></iframe>
       </div>
-      <div class="act-row"><button class="btn" onclick="prevDoc('memo')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('memo')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportPDF('memo')">📄 PDF</button></div>
+      <div class="act-row"><button class="btn" onclick="prevDoc('memo')">👁 Vista previa</button><button class="btn btn-success" onclick="guardarDoc('memo')">💾 Guardar</button><button class="btn btn-pdf" onclick="exportDocPDF('memo')">📄 PDF</button></div>
       <div class="logbox" id="memo-dlog">—</div>
     </div>
     <div class="card"><div class="card-title"><span class="ct-icon">👁</span>Vista previa</div><div class="preview" id="pv-memo">Complete y presione Vista previa.</div></div>
   </div></div>
 
   <div id="df-acta" style="display:none"><div class="grid2">
-    <div class="card"><div class="card-title">🔐 Acta / VPN</div>
-      <label>Tipo</label>
-      <select id="aTipo"><option>Acta de Confidencialidad</option><option>Acta de VPN</option><option>Acta de Acceso al Sistema</option><option>Memorandum interno</option></select>
-      <div class="row"><div class="col"><label>N° Documento</label><input id="aNum" value="ACTA-2026-001"></div><div class="col"><label>Fecha</label><input type="date" id="aFecha"></div></div>
-      <label>Sistema / Aplicación</label><input id="aSis" placeholder="Ej: VPN, NAS...">
+    <div class="card"><div class="card-title">🔐 Acta de Confidencialidad</div>
+      <input type="hidden" id="aTipo" value="Acta de Confidencialidad">
+      <label>Sistema / Ítem</label>
+      <div class="ac-items" id="acItems">
+        <button type="button" class="ac-item on" data-v="VPN" onclick="selActaSis(this)">🌐 VPN</button>
+        <button type="button" class="ac-item" data-v="SGL" onclick="selActaSis(this)">SGL</button>
+        <button type="button" class="ac-item" data-v="SGP" onclick="selActaSis(this)">SGP</button>
+        <button type="button" class="ac-item" data-v="SAG" onclick="selActaSis(this)">SAG</button>
+        <button type="button" class="ac-item" data-v="SIENA" onclick="selActaSis(this)">SIENA</button>
+        <button type="button" class="ac-item" data-v="" onclick="selActaSis(this)">✏️ Otro</button>
+      </div>
+      <div id="aSisOtroWrap" style="display:none"><label>Escribí el sistema o ítem</label><input id="aSisOtro" placeholder="Ej: NAS, Correo institucional, Base de datos..." oninput="syncActaSis()"></div>
+      <input type="hidden" id="aSis" value="VPN">
+      <div class="row"><div class="col"><label>N° Documento</label><input id="aNum" placeholder="AC-001/2026"></div><div class="col"><label>Fecha</label><input type="date" id="aFecha"></div></div>
+      <label>Funcionario (desde Personal)</label><select id="aPerSel" onchange="fillActaPer(this.value)"><option value="">— Elegir o completar a mano —</option></select>
       <label>Unidad</label><input id="aEmp" placeholder="Ej: Escuadrón 18 Lomitas">
       <label>Apellido y Nombre</label><input id="aFirm" placeholder="Apellido y nombre">
       <label>Grado / Cargo</label><input id="aCargo" placeholder="Ej: Sargento (TSTC)">
@@ -1895,7 +1865,7 @@ body.sb-mini #otNotifBadge{position:absolute;top:2px;right:6px}
       <div class="act-row">
         <button class="btn" onclick="prevActa()">👁 Vista previa</button>
         <button class="btn btn-success" onclick="guardarDoc('acta')">💾 Guardar</button>
-        <button class="btn btn-pdf" onclick="exportPDF('acta')">📄 PDF</button>
+        <button class="btn btn-pdf" onclick="exportDocPDF('acta')">📄 PDF</button>
       </div>
       <div class="logbox" id="acta-dlog">-</div>
     </div>
@@ -4152,7 +4122,7 @@ function renderHistorial(){
       '<div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-val">'+unicos+'</div><div class="stat-lbl">Usuarios únicos</div></div></div>';
   }
 }
-function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta','entrega','baja','mantenimiento'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});if(v==='entrega'||v==='baja'||v==='mantenimiento') initDocForms();}
+function swDoc(){var v=document.getElementById('docT').value;['recibo','provision','transferencia','memo','acta','entrega','baja','mantenimiento'].forEach(function(d){var el=document.getElementById('df-'+d);if(el)el.style.display=d===v?'block':'none';});if(v==='entrega'||v==='baja'||v==='mantenimiento'||v==='acta') initDocForms();}
 function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Math.max.apply(null,DB.docs.map(function(x){return x._id||0;}))+1:1,tipo:tipo,fecha:new Date().toLocaleDateString('es-AR'),ts:new Date().toISOString(),autor:currentUser?currentUser.nombre:'?'};if(tipo==='recibo'){doc.titulo='Recibo '+document.getElementById('rN').value;doc.nro=document.getElementById('rN').value;}else if(tipo==='provision'){doc.titulo='Provision '+document.getElementById('npN').value;doc.nro=document.getElementById('npN').value;}else if(tipo==='transferencia'){doc.titulo='Transferencia '+document.getElementById('ntN').value;doc.nro=document.getElementById('ntN').value;}else if(tipo==='memo'){doc.titulo='Memo '+document.getElementById('mN').value;doc.nro=document.getElementById('mN').value;doc.asunto=document.getElementById('mAs').value;}
   else if(tipo==='entrega'||tipo==='baja'||tipo==='mantenimiento'){var pf={entrega:'ent',baja:'baja',mantenimiento:'mant'}[tipo];var nom={entrega:'Acta de Entrega',baja:'Acta de Baja',mantenimiento:'Mantenimiento'}[tipo];var nv=(document.getElementById(pf+'Nro')||{}).value||'';if(!nv){alert('Completá el N° antes de guardar.');return;}doc.titulo=nom+' '+nv;doc.nro=nv;var mm=document.getElementById(pf+'Marca'),ss=document.getElementById(pf+'Serie');if(mm)doc.marca=mm.value;if(ss)doc.serie=ss.value;
     if((DB.docs||[]).some(function(x){return x.tipo===tipo&&String(x.nro||'').trim().toLowerCase()===nv.trim().toLowerCase();})){if(!confirm('Ya existe un documento '+nom+' con el N° '+nv+'. ¿Guardar igual?'))return;}
@@ -4176,11 +4146,11 @@ function guardarDoc(tipo){if(!DB.docs)DB.docs=[];var doc={_id:DB.docs.length?Mat
       if(eq){if(!eq.movs)eq.movs=[];eq.movs.push({fecha:hoyTxt,tipo:'Acta de baja',nro:nv,motivo:(document.getElementById('bajaMotivo')||{}).value||'',autor:doc.autor});}
     }
   }
-  else if(tipo==='acta'){doc.titulo=(document.getElementById('aTipo')?document.getElementById('aTipo').value:'Acta')+' '+document.getElementById('aNum').value;doc.nro=document.getElementById('aNum').value;doc.funcionario=document.getElementById('aFirm').value;}if(adjData[tipo]&&!adjData[tipo].data){alert('El PDF adjunto todavía se está cargando. Esperá un segundo y volvé a guardar.');return;}doc.adjunto=adjData[tipo]?adjData[tipo].data:'';doc.adjuntoNombre=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='✅ Guardado: '+doc.titulo+' - '+doc.fecha+(doc.adjunto?' (con PDF)':' (sin PDF)');
+  else if(tipo==='acta'){var asis=(document.getElementById('aSis').value||'').trim();var anro=(document.getElementById('aNum').value||'').trim();if(!asis){alert('Elegí o escribí el sistema / ítem del acta.');return;}if(!anro){alert('Completá el N° del acta.');return;}doc.titulo='Acta de Confidencialidad '+asis+' '+anro;doc.nro=anro;doc.sistema=asis;doc.funcionario=document.getElementById('aFirm').value;doc.receptor=doc.funcionario;}if(adjData[tipo]&&!adjData[tipo].data){alert('El PDF adjunto todavía se está cargando. Esperá un segundo y volvé a guardar.');return;}doc.adjunto=adjData[tipo]?adjData[tipo].data:'';doc.adjuntoNombre=adjData[tipo]?adjData[tipo].name:'';DB.docs.push(doc);saveDB();renderDocsGuardados();var logEl=document.getElementById(tipo+'-dlog');if(logEl)logEl.textContent='✅ Guardado: '+doc.titulo+' - '+doc.fecha+(doc.adjunto?' (con PDF)':' (sin PDF)');
   if(DOC_PREF[tipo]){if(doc.equipo&&tipo!=='baja'){if(typeof renderEquipos==='function')renderEquipos();if(typeof renderDashboard==='function')renderDashboard();showFbToast('✅ '+doc.titulo+' guardada · inventario actualizado');}else showFbToast('✅ '+doc.titulo+' guardada');
     var el=document.getElementById(DOC_PREF[tipo][0]);if(el)el.value=sugerirNroDoc(tipo);if(typeof clearAdj==='function'&&adjData[tipo])clearAdj(tipo);}
   if(typeof addLog==='function')addLog('Guardó documento '+doc.titulo);}
-var DG_TIPOS={recibo:{l:'Recibo',i:'🧾',c:'#0d9488'},provision:{l:'Provisión',i:'📦',c:'#2563eb'},transferencia:{l:'Transferencia',i:'🔁',c:'#7c3aed'},memo:{l:'Memorándum',i:'📝',c:'#475569'},acta:{l:'Acta/VPN',i:'🔐',c:'#b45309'},entrega:{l:'Entrega',i:'📤',c:'#16a34a'},baja:{l:'Baja',i:'❌',c:'#dc2626'},mantenimiento:{l:'Mantenim.',i:'🔧',c:'#ea580c'}};
+var DG_TIPOS={recibo:{l:'Recibo',i:'🧾',c:'#0d9488'},provision:{l:'Provisión',i:'📦',c:'#2563eb'},transferencia:{l:'Transferencia',i:'🔁',c:'#7c3aed'},memo:{l:'Memorándum',i:'📝',c:'#475569'},acta:{l:'Confidencialidad',i:'🔐',c:'#b45309'},entrega:{l:'Entrega',i:'📤',c:'#16a34a'},baja:{l:'Baja',i:'❌',c:'#dc2626'},mantenimiento:{l:'Mantenim.',i:'🔧',c:'#ea580c'}};
 var dgFiltroTipo='';
 function dgSetTipo(t){dgFiltroTipo=(dgFiltroTipo===t?'':t);renderDocsGuardados();}
 function dgFechaISO(d){if(d.ts)return d.ts.slice(0,7);var m=String(d.fecha||'').split('/');return m.length===3?(m[2]+'-'+('0'+m[1]).slice(-2)):'';}
@@ -4205,7 +4175,7 @@ function renderDocsGuardados(){
     var tiene=d.adjunto&&String(d.adjunto).indexOf('data:')===0;
     if(fp==='si'&&!tiene)return false; if(fp==='no'&&tiene)return false;
     if(fm&&dgFechaISO(d)!==fm)return false;
-    if(q){var txt=[d.nro,d.titulo,d.autor,d.equipo,d.receptor,d.marca,d.serie,d.asunto,d.fecha].join(' ').toLowerCase();if(txt.indexOf(q)<0)return false;}
+    if(q){var txt=[d.nro,d.titulo,d.autor,d.sistema,d.funcionario,d.equipo,d.receptor,d.marca,d.serie,d.asunto,d.fecha].join(' ').toLowerCase();if(txt.indexOf(q)<0)return false;}
     return true;
   });
   if(!docs.length){
@@ -4222,7 +4192,7 @@ function renderDocsGuardados(){
     var td2=document.createElement('td'); var bd=document.createElement('span'); bd.className='dg-badge'; bd.textContent=t.i+' '+t.l; td2.appendChild(bd); tr.appendChild(td2);
     var td3=document.createElement('td'); var tt=document.createElement('div'); tt.textContent=d.titulo||''; td3.appendChild(tt);
     var tag=document.createElement('span'); tag.className=tiene?'dg-pdf':'dg-nopdf'; tag.textContent=tiene?'📎 PDF':'sin PDF'; tt.appendChild(tag);
-    var sub=[]; if(d.equipo)sub.push('🖥 '+d.equipo); if(d.receptor)sub.push('👤 '+d.receptor); if(d.ubi)sub.push('📍 '+d.ubi);
+    var sub=[]; if(d.sistema)sub.push('🔐 '+d.sistema); if(d.equipo)sub.push('🖥 '+d.equipo); if(d.receptor)sub.push('👤 '+d.receptor); if(d.ubi)sub.push('📍 '+d.ubi);
     if(sub.length){var sd=document.createElement('div'); sd.className='dg-sub'; sd.textContent=sub.join('  ·  '); td3.appendChild(sd);}
     tr.appendChild(td3);
     var td4=document.createElement('td'); td4.style.fontSize='11px'; td4.textContent=d.fecha||''; tr.appendChild(td4);
@@ -4282,10 +4252,10 @@ function delDocGuardado(id){
 }
 function prevDoc(t){var el=document.getElementById('pv-'+t);if(el)el.textContent=toText(buildDoc(t));}
 function prevActa(){document.getElementById('actaPrev').textContent=toText(buildActa());}
-function buildActa(){var tipo=document.getElementById('aTipo').value,sis=document.getElementById('aSis').value||'[NO ESPECIFICADO]';var cuerpos={'Acta de Confidencialidad':'El/la firmante declara que toda informacion relacionada con el sistema "'+sis+'" es de caracter estrictamente confidencial. Queda prohibida la divulgacion no autorizada.','Acta de VPN':'El/la firmante recibe acceso VPN al sistema "'+sis+'". Se compromete a utilizarlo solo para tareas autorizadas y a no compartir credenciales.','Acta de Acceso al Sistema':'El/la firmante recibe credenciales de acceso al sistema "'+sis+'". Se compromete a mantener su confidencialidad.','Memorandum interno':'El/la firmante ha sido notificado sobre los procedimientos del sistema "'+sis+'".'};return{title:tipo.toUpperCase(),num:document.getElementById('aNum').value,lines:[['Unidad',document.getElementById('aEmp').value||'-'],['Funcionario',document.getElementById('aFirm').value||'-'],['Grado/Cargo',document.getElementById('aCargo').value||'-'],['DNI/MI/CE',document.getElementById('aDni2').value||'-'],['Expediente GDE',(document.getElementById('aGDE')||{value:'-'}).value||'-'],['Fecha',document.getElementById('aFecha').value],['Sistema',sis],['',''],['TEXTO DEL ACTA',''],['',cuerpos[tipo]||''],['',''],['Observaciones',document.getElementById('aObs').value||'-'],['PDF adjunto',adjData['acta']?adjData['acta'].name:'(sin adjunto)'],['',''],['Firma','______________________________'],['Aclaracion','______________________________'],['DNI','______________________________'],['Fecha de firma','______________________________']]};}
+function buildActa(){var sis=(document.getElementById('aSis').value||'').trim()||'[NO ESPECIFICADO]';var esVPN=/^vpn$/i.test(sis);var cuerpo='El/la firmante declara conocer y aceptar que toda información, dato, credencial y documentación a la que acceda mediante el sistema "'+sis+'" es de carácter estrictamente CONFIDENCIAL y de uso exclusivo para el cumplimiento de sus funciones. Se compromete a: no divulgar, copiar ni transferir dicha información a terceros no autorizados; no compartir su usuario ni contraseña; cerrar la sesión al finalizar su uso; e informar de inmediato a la Sección TICOM cualquier incidente o uso indebido detectado.'+(esVPN?' Asimismo, el acceso VPN será utilizado únicamente desde equipos autorizados y para tareas de servicio.':'')+' El incumplimiento de lo aquí establecido dará lugar a las acciones disciplinarias que correspondan. Este compromiso subsiste aun después de finalizado el acceso.';return{title:'ACTA DE CONFIDENCIALIDAD - '+sis.toUpperCase(),num:document.getElementById('aNum').value,lines:[['Sistema / Ítem',sis],['Unidad',document.getElementById('aEmp').value||'-'],['Funcionario',document.getElementById('aFirm').value||'-'],['Grado/Cargo',document.getElementById('aCargo').value||'-'],['DNI/MI/CE',document.getElementById('aDni2').value||'-'],['Expediente GDE',(document.getElementById('aGDE')||{value:'-'}).value||'-'],['Fecha',document.getElementById('aFecha').value||new Date().toLocaleDateString('es-AR')],['',''],['TEXTO DEL ACTA',''],['',cuerpo],['',''],['Observaciones',document.getElementById('aObs').value||'-'],['PDF adjunto',adjData['acta']?adjData['acta'].name:'(sin adjunto)'],['',''],['Firma del funcionario','______________________________'],['Aclaración','______________________________'],['',''],['Firma Jefe TICOM','______________________________']]};}
 function buildDoc(type){if(type==='recibo')return{title:'CONSTANCIA / RECIBO',num:document.getElementById('rN').value,lines:[['Fecha',document.getElementById('rF').value],['Emisor',document.getElementById('rDe').value||'-'],['Concepto',document.getElementById('rCon').value||'-'],['Observaciones',document.getElementById('rOb').value||'-'],['PDF adjunto',adjData['recibo']?adjData['recibo'].name:'(sin adjunto)'],['',''],['Firma','______________________________'],['Aclaracion','______________________________']]};if(type==='provision')return{title:'NOTA DE PROVISION INTERNA',num:document.getElementById('npN').value,lines:[['Fecha',document.getElementById('npF').value],['Area solicitante',document.getElementById('npA').value||'-'],['Destinatario',document.getElementById('npD').value||'-'],['Prioridad',document.getElementById('npP').value],['',''],['ITEMS SOLICITADOS',''],['',document.getElementById('npI').value||'-'],['',''],['JUSTIFICACION',''],['',document.getElementById('npJ').value||'-'],['PDF adjunto',adjData['provision']?adjData['provision'].name:'(sin adjunto)'],['',''],['Solicitante','______________________________'],['Autorizacion','______________________________']]};if(type==='transferencia')return{title:'NOTA DE TRANSFERENCIA',num:document.getElementById('ntN').value,lines:[['Fecha',document.getElementById('ntF').value],['Transferido por',document.getElementById('ntDe').value||'-'],['Transferido a',document.getElementById('ntA').value||'-'],['Estado del bien',document.getElementById('ntE').value],['N serie',document.getElementById('ntSerie').value||'-'],['',''],['DESCRIPCION',''],['',document.getElementById('ntI').value||'-'],['PDF adjunto',adjData['transferencia']?adjData['transferencia'].name:'(sin adjunto)'],['',''],['Entrega','______________________________'],['Recibe','______________________________']]};if(type==='memo')return{title:'MEMORANDUM',num:document.getElementById('mN').value,lines:[['Fecha',document.getElementById('mF').value],['Para',document.getElementById('mPa').value||'-'],['De',document.getElementById('mDe').value||'-'],['Asunto',document.getElementById('mAs').value||'-'],['',''],['',document.getElementById('mCu').value||'-'],['PDF adjunto',adjData['memo']?adjData['memo'].name:'(sin adjunto)']]};}
 function toText(d){var s='========================================\n  '+d.title+' - '+d.num+'\n========================================\n';for(var i=0;i<d.lines.length;i++){var k=d.lines[i][0],v=d.lines[i][1];if(!k&&!v){s+='\n';continue;}if(!k){s+=v+'\n';continue;}if(!v){s+='\n'+k+'\n'+('-').repeat(k.length)+'\n';continue;}s+=k.padEnd(22)+v+'\n';}s+='\n========================================\nTICOM-ESLOMIT - '+new Date().toLocaleString('es-AR');return s;}
-function exportPDF(type){var data=type==='acta'?buildActa():buildDoc(type);makePDF(data);var el=document.getElementById(type+'-dlog');if(el)el.textContent='PDF generado: '+data.num;}
+function exportDocPDF(type){var data=type==='acta'?buildActa():buildDoc(type);makePDF(data);var el=document.getElementById(type+'-dlog');if(el)el.textContent='PDF generado: '+data.num;}
 function makePDF(data){var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight(),y=0;doc.setFillColor(11,53,102);doc.rect(0,0,pw,18,'F');doc.setTextColor(230,241,251);doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.text('SISTEMA DE INVENTARIO TICOM-ESLOMIT',pw/2,7,{align:'center'});doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text('Escuadron 18 Lomitas - GNA - Las Lomitas, Formosa - '+new Date().toLocaleString('es-AR'),pw/2,13,{align:'center'});y=28;doc.setTextColor(11,53,102);doc.setFontSize(15);doc.setFont('helvetica','bold');doc.text(data.title,pw/2,y,{align:'center'});y+=7;doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);doc.text('N: '+data.num,pw/2,y,{align:'center'});y+=5;doc.setDrawColor(11,53,102);doc.setLineWidth(0.7);doc.line(14,y,pw-14,y);y+=7;doc.setFontSize(9);doc.setTextColor(25,25,25);for(var i=0;i<data.lines.length;i++){var k=data.lines[i][0],v=data.lines[i][1];if(y>ph-22){doc.addPage();y=18;}if(!k&&!v){y+=4;continue;}if(!k){doc.setFont('helvetica','normal');var ls=doc.splitTextToSize(v,pw-28);doc.text(ls,14,y);y+=ls.length*5+1;}else if(!v){y+=2;doc.setFont('helvetica','bold');doc.setTextColor(11,53,102);doc.text(k,14,y);doc.setTextColor(25,25,25);y+=5;doc.setDrawColor(180,200,230);doc.setLineWidth(0.3);doc.line(14,y,pw-14,y);y+=4;}else{doc.setFont('helvetica','bold');doc.text(k+':',14,y);doc.setFont('helvetica','normal');var ls2=doc.splitTextToSize(v,pw-62);doc.text(ls2,56,y);y+=Math.max(ls2.length*5,5)+1;}}doc.setFillColor(11,53,102);doc.rect(0,ph-10,pw,10,'F');doc.setTextColor(180,210,240);doc.setFontSize(7);doc.text('TICOM-ESLOMIT 2026 - Documento de uso interno',pw/2,ph-4,{align:'center'});doc.save((data.num||'doc').replace(/[\\s/]/g,'-')+'.pdf');}
 function makePDFConFotos(data,fotos){makePDF(data);if(!fotos||!fotos.length)return;var doc2=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});var pw=doc2.internal.pageSize.getWidth(),ph=doc2.internal.pageSize.getHeight();doc2.setFillColor(11,53,102);doc2.rect(0,0,pw,14,'F');doc2.setTextColor(230,241,251);doc2.setFontSize(9);doc2.setFont('helvetica','bold');doc2.text('TOMA FOTOGRAFICA - '+data.num,pw/2,9,{align:'center'});var fy=22,fw=85,fh=60,margin=14,gap=8,col=0;fotos.forEach(function(b64,i){try{doc2.addImage(b64,'JPEG',margin+col*(fw+gap),fy,fw,fh);doc2.setFontSize(7);doc2.setFont('helvetica','normal');doc2.setTextColor(100,100,100);doc2.text('Foto '+(i+1),margin+col*(fw+gap)+fw/2,fy+fh+4,{align:'center'});col++;if(col>=2){col=0;fy+=fh+12;}if(fy>ph-30){doc2.addPage();fy=22;col=0;}}catch(err){}});doc2.save((data.num||'fotos').replace(/[\\s/]/g,'-')+'-FOTOS.pdf');}
 
@@ -5645,9 +5615,13 @@ function initDocForms(){
     CATS.forEach(function(c){(DB[c]||[]).forEach(function(e){var opt=document.createElement('option');opt.value=c+'|'+e._id;opt.textContent=c.toUpperCase()+': '+e.marca+' '+e.modelo+' (S/N: '+(e.serie||e.prov||'—')+')';sel.appendChild(opt);});});
   });
   fillPersonalSelect('entPerSel','');fillPersonalSelect('mantTecSel','');
+  var aps=document.getElementById('aPerSel');if(aps){fillPersonalSelect('aPerSel','');aps.options[0].textContent='— Elegir o completar a mano —';}
   autoNumerarDocs(false);
 }
-var DOC_PREF={entrega:['entNro','AE'],baja:['bajaNro','AB'],mantenimiento:['mantNro','MNT']};
+var DOC_PREF={entrega:['entNro','AE'],baja:['bajaNro','AB'],mantenimiento:['mantNro','MNT'],acta:['aNum','AC']};
+function selActaSis(btn){document.querySelectorAll('#acItems .ac-item').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');var v=btn.getAttribute('data-v');var w=document.getElementById('aSisOtroWrap');w.style.display=v?'none':'block';if(!v){var o=document.getElementById('aSisOtro');o.focus();}syncActaSis();}
+function syncActaSis(){var on=document.querySelector('#acItems .ac-item.on');var v=on?on.getAttribute('data-v'):'';document.getElementById('aSis').value=v||((document.getElementById('aSisOtro')||{}).value||'').trim();}
+function fillActaPer(mi){var p=(DB.per||[]).find(function(x){return String(x.mi||'')===String(mi);});if(!p)return;document.getElementById('aFirm').value=((p.ape||'')+' '+(p.nom||'')).trim();document.getElementById('aCargo').value=p.grd||'';document.getElementById('aDni2').value='MI '+(p.mi||'')+(p.ce?' / CE '+p.ce:'');var u=document.getElementById('aEmp');if(u&&!u.value)u.value='Escuadrón 18 "Lomitas"';}
 function sugerirNroDoc(tipo){var cfg=DOC_PREF[tipo];if(!cfg)return'';var anio=new Date().getFullYear();var re=new RegExp('^'+cfg[1]+'-(\\d+)/'+anio+'$','i');var max=0;(DB.docs||[]).forEach(function(d){if(d.tipo!==tipo)return;var m=String(d.nro||'').trim().match(re);if(m)max=Math.max(max,parseInt(m[1],10));});return cfg[1]+'-'+('00'+(max+1)).slice(-3)+'/'+anio;}
 function autoNumerarDocs(forzar){Object.keys(DOC_PREF).forEach(function(t){var el=document.getElementById(DOC_PREF[t][0]);if(el&&(forzar||!el.value.trim()))el.value=sugerirNroDoc(t);});}
 function getEqFromSel(val){if(!val||!val.includes('|'))return null;var p=val.split('|'),cat=p[0],id=parseInt(p[1]);return(DB[cat]||[]).find(function(x){return x._id===id;});}
